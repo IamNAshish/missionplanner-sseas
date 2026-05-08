@@ -3,12 +3,12 @@
   <colors>
     <ThemeColor>
       <strColorItemName>Background</strColorItemName>
-      <clrColor Web="#262728" />
+      <clrColor Web="#0E141A" />
       <strVariableName>BGColor</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Control Background</strColorItemName>
-      <clrColor Web="#434445" />
+      <clrColor Web="#1C2834" />
       <strVariableName>ControlBGColor</strVariableName>
     </ThemeColor>
     <ThemeColor>
@@ -18,82 +18,82 @@
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>TextBox Background</strColorItemName>
-      <clrColor Web="#434445" />
+      <clrColor Web="#1C2834" />
       <strVariableName>BGColorTextBox</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Button Text</strColorItemName>
-      <clrColor Web="#405704" />
+      <clrColor Web="White" />
       <strVariableName>ButtonTextColor</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Button Background top</strColorItemName>
-      <clrColor Web="#94C11F" />
+      <clrColor Web="#00AEEF" />
       <strVariableName>ButBG</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Button Background bottom</strColorItemName>
-      <clrColor Web="#CDE296" />
+      <clrColor Web="#5BCFFF" />
       <strVariableName>ButBGBot</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>ProgressBar Top</strColorItemName>
-      <clrColor Web="#668B1A" />
+      <clrColor Web="#0087B8" />
       <strVariableName>ProgressBarColorTop</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>ProgressBar Bottom</strColorItemName>
-      <clrColor Web="#7CA428" />
+      <clrColor Web="#00AEEF" />
       <strVariableName>ProgressBarColorBot</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>ProgressBar Outline</strColorItemName>
-      <clrColor Web="#96AE70" />
+      <clrColor Web="#4A90B8" />
       <strVariableName>ProgressBarOutlineColor</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>BannerColor1</strColorItemName>
-      <clrColor Web="#405704" />
+      <clrColor Web="#003D55" />
       <strVariableName>BannerColor1</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>BannerColor2</strColorItemName>
-      <clrColor Web="#94C11F" />
+      <clrColor Web="#00AEEF" />
       <strVariableName>BannerColor2</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Disabled Button</strColorItemName>
-      <clrColor Web="#2B3A03" Alpha="150" />
+      <clrColor Web="#142830" Alpha="150" />
       <strVariableName>ColorNotEnabled</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Button Mouseover</strColorItemName>
-      <clrColor Web="#2B3A03" Alpha="73" />
+      <clrColor Web="#0078A8" Alpha="73" />
       <strVariableName>ColorMouseOver</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Button Mousedown</strColorItemName>
-      <clrColor Web="#2B3A03" Alpha="73" />
+      <clrColor Web="#005A80" Alpha="73" />
       <strVariableName>ColorMouseDown</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>CurrentPPM Background</strColorItemName>
-      <clrColor Web="Green" />
+      <clrColor Web="#00C9A7" />
       <strVariableName>CurrentPPMBackground</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Graph Chart Fill</strColorItemName>
-      <clrColor Web="#1F1F20" />
+      <clrColor Web="#121920" />
       <strVariableName>ZedGraphChartFill</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Graph Pane Fill</strColorItemName>
-      <clrColor Web="#373738" />
+      <clrColor Web="#1A252E" />
       <strVariableName>ZedGraphPaneFill</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Graph Legend Fill</strColorItemName>
-      <clrColor Web="#858483" />
+      <clrColor Web="#2D3D4C" />
       <strVariableName>ZedGraphLegendFill</strVariableName>
     </ThemeColor>
     <ThemeColor>
@@ -103,17 +103,17 @@
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>BackStageView Button Area</strColorItemName>
-      <clrColor Web="Black" />
+      <clrColor Web="#0A0F14" />
       <strVariableName>BSVButtonAreaBGColor</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>BSV Unselected Text</strColorItemName>
-      <clrColor Web="WhiteSmoke" />
+      <clrColor Web="#A8B8C8" />
       <strVariableName>UnselectedTextColour</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>Horizontal ProgressBar</strColorItemName>
-      <clrColor Web="#94C11F" />
+      <clrColor Web="#00AEEF" />
       <strVariableName>HorizontalPBValueColor</strVariableName>
     </ThemeColor>
     <ThemeColor>
@@ -123,22 +123,22 @@
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>HUD Ground top</strColorItemName>
-      <clrColor Web="#9bb824" />
+      <clrColor Web="#4A5F6E" />
       <strVariableName>HudGroundTop</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>HUD Ground bottom</strColorItemName>
-      <clrColor Web="#414f07" />
+      <clrColor Web="#152028" />
       <strVariableName>HudGroundBot</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>HUD Sky top</strColorItemName>
-      <clrColor Web="Blue" />
+      <clrColor Web="#0099CC" />
       <strVariableName>HudSkyTop</strVariableName>
     </ThemeColor>
     <ThemeColor>
       <strColorItemName>HUD Sky bottom</strColorItemName>
-      <clrColor Web="LightBlue" />
+      <clrColor Web="#66D9FF" />
       <strVariableName>HudSkyBot</strVariableName>
     </ThemeColor>
   </colors>

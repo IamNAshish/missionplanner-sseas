@@ -51,6 +51,7 @@ namespace MissionPlanner
 {
     public partial class MainV2 : Form
     {
+        
         private static readonly ILog log =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -596,8 +597,9 @@ namespace MissionPlanner
 
         public void updateLayout(object sender, EventArgs e)
         {
-            MenuSimulation.Visible = DisplayConfiguration.displaySimulation;
-            MenuHelp.Visible = DisplayConfiguration.displayHelp;
+            MenuMore.Visible = false;
+            MenuSimulation.Visible = true;// false;// DisplayConfiguration.displaySimulation;
+            MenuHelp.Visible = false; //DisplayConfiguration.displayHelp;
             MissionPlanner.Controls.BackstageView.BackstageView.Advanced = DisplayConfiguration.isAdvancedMode;
 
             // force autohide on
@@ -701,9 +703,42 @@ namespace MissionPlanner
 
             InitializeComponent();
 
-            //Init Theme table and load BurntKermit as a default
-            ThemeManager.thmColor = new ThemeColorTable(); //Init colortable
-            ThemeManager.thmColor.InitColors(); //This fills up the table with BurntKermit defaults.
+            // Default: keep Simulation + Help hidden behind the "more" toggle.
+            SetMoreMenuExpanded(false);
+
+            // 23 april Move Setup + Config/Tune actions to the MainMenu right-click (CTX_mainmenu).
+            // Keep existing handlers by wiring the context items to the same click methods.
+            try
+            {
+                if (MenuInitConfig != null)
+                    MenuInitConfig.Visible = false;
+                if (MenuConfigTune != null)
+                    MenuConfigTune.Visible = false;
+
+                if (CTX_mainmenu != null)
+                {
+                    var ctxSetup = new ToolStripMenuItem("Setup");
+                    ctxSetup.Name = "CTX_MenuInitConfig";
+                    ctxSetup.Click += MenuSetup_Click;
+
+                    var ctxConfigTune = new ToolStripMenuItem("Config/Tuning");
+                    ctxConfigTune.Name = "CTX_MenuConfigTune";
+                    ctxConfigTune.Click += MenuTuning_Click;
+
+                    // Insert at top so it's easy to discover.
+                    CTX_mainmenu.Items.Insert(0, new ToolStripSeparator() { Name = "CTX_sep_setup_config" });
+                    CTX_mainmenu.Items.Insert(0, ctxConfigTune);
+                    CTX_mainmenu.Items.Insert(0, ctxSetup);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Warn("CTX_mainmenu setup/config menu init failed", ex);
+            }
+
+            // Init theme table then load default .mpsystheme (Saif Seas palette in BurntKermit.mpsystheme)
+            ThemeManager.thmColor = new ThemeColorTable();
+            ThemeManager.thmColor.InitColors();
             ThemeManager.thmColor
                 .SetTheme(); //Set the colors, this need to handle the case when not all colors are defined in the theme file
 
@@ -799,7 +834,12 @@ namespace MissionPlanner
             if (splash != null)
             {
                 this.Text = splash?.Text;
+
                 titlebar = splash?.Text;
+
+                this.Text = "Saif Seas Planner V1.0";
+                titlebar = "Saif Seas Planner V1.0";
+
             }
 
             if (!MONO) // windows only
@@ -1310,6 +1350,27 @@ namespace MissionPlanner
 
         public void MenuSetup_Click(object sender, EventArgs e)
         {
+            // Lock screen before any main GUI windows are shown.
+            // Uses Settings.Instance["lock_pin"] (default "1234") and requires exactly 4 digits.
+            if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
+            {
+                Settings.Instance["lock_pin"] = "1234";
+            }
+
+            using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
+            {
+                var result = lockScreen.ShowDialog();
+                if (result != DialogResult.OK)
+                {
+                    return;
+                }
+            }
+            /////lock
+
+
+
+
+
             if (Settings.Instance.GetBoolean("password_protect") == false)
             {
                 MyView.ShowScreen("HWConfig");
@@ -1340,8 +1401,54 @@ namespace MissionPlanner
             MyView.ShowScreen("Simulation");
         }
 
+        private bool _moreMenuExpanded;
+
+        private void MenuMore_Click(object sender, EventArgs e)
+        {
+            SetMoreMenuExpanded(!_moreMenuExpanded);
+        }
+
+        private void SetMoreMenuExpanded(bool expanded)
+        {
+            _moreMenuExpanded = expanded;
+
+            if (MenuSimulation != null)
+                MenuSimulation.Visible = expanded;
+            if (MenuHelp != null)
+                MenuHelp.Visible = expanded;
+            if (MenuInitConfig != null)
+                MenuInitConfig.Visible = expanded;
+            if (MenuConfigTune != null)
+                MenuConfigTune.Visible = expanded;
+
+            if (MenuMore != null)
+                MenuMore.Text = expanded ? "«" : "»";
+        }
+
         private void MenuTuning_Click(object sender, EventArgs e)
         {
+            // Lock screen before any main GUI windows are shown.
+            // Uses Settings.Instance["lock_pin"] (default "1234") and requires exactly 4 digits.
+            if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
+            {
+                Settings.Instance["lock_pin"] = "1234";
+            }
+
+            using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
+            {
+                var result = lockScreen.ShowDialog();
+                if (result != DialogResult.OK)
+                {
+                    return;
+                }
+            }
+            /////lock
+
+
+
+
+
+
             if (Settings.Instance.GetBoolean("password_protect") == false)
             {
                 MyView.ShowScreen("SWConfig");
@@ -1722,7 +1829,9 @@ namespace MissionPlanner
                     Settings.Instance[_connectionControl.CMB_serialport.Text.Replace(" ","_") + "_BAUD"] =
                         _connectionControl.CMB_baudrate.Text;
 
-                    this.Text = titlebar + " " + comPort.MAV.VersionString + " on " + comPort.MAV.SerialString;
+                    // Ashishhh
+                    //this.Text = titlebar + " " + comPort.MAV.VersionString + " on " + comPort.MAV.SerialString;
+                    this.Text = "saif seas";
 
                     // refresh config window if needed
                     if (MyView.current != null && showui)
@@ -3144,8 +3253,10 @@ namespace MissionPlanner
         }
 
 
-        protected override void OnLoad(EventArgs e)
+        protected async override void OnLoad(EventArgs e)
         {
+            //await Task.Delay(1000); //delay to ensure correct icon laoding
+
             // check if its defined, and force to show it if not known about
             if (Settings.Instance["menu_autohide"] == null)
             {
@@ -3849,6 +3960,18 @@ namespace MissionPlanner
             Enum.TryParse(inactiveDisplayStyleStr, out inactiveDisplayStyle);
             GMapMarkerBase.InactiveDisplayStyle = inactiveDisplayStyle;
             Settings.Instance["GMapMarkerBase_InactiveDisplayStyle"] = inactiveDisplayStyle.ToString();
+
+
+
+            //test closing splash when mainv2 is ready
+            //base.OnLoad(e);
+
+            //await Task.Delay(100);
+
+            //if (Program.Splash != null)
+            //{
+            //    Program.Splash.Close();
+            //}
         }
 
         private void BGLogMessagesMetaData(object nothing)
@@ -4414,18 +4537,7 @@ namespace MissionPlanner
             Console.WriteLine("MainV2_KeyDown " + e.ToString());
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                System.Diagnostics.Process.Start(
-                    "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mich146%40hotmail%2ecom&lc=AU&item_name=Michael%20Oborne&no_note=0&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHostedGuest");
-            }
-            catch
-            {
-                CustomMessageBox.Show("Link open failed. check your default webpage association");
-            }
-        }
+        
 
         [StructLayout(LayoutKind.Sequential)]
         public class DEV_BROADCAST_HDR
@@ -4665,11 +4777,13 @@ namespace MissionPlanner
         {
             try
             {
-                System.Diagnostics.Process.Start("https://ardupilot.org/?utm_source=Menu&utm_campaign=MP");
+                System.Diagnostics.Process.Start("https://saifseas.com/");
+                    /* Ashishhh("https://ardupilot.org/?utm_source=Menu&utm_campaign=MP");
+                     */
             }
             catch
             {
-                CustomMessageBox.Show("Failed to open url https://ardupilot.org");
+                CustomMessageBox.Show("Failed to open url https://saifseas.com");
             }
         }
 

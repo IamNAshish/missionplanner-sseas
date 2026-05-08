@@ -161,6 +161,25 @@ namespace MissionPlanner
 
             System.Windows.Forms.Application.EnableVisualStyles();
             XmlConfigurator.Configure(LogManager.GetRepository(Assembly.GetCallingAssembly()));
+
+            // Lock screen before any main GUI windows are shown.
+            // Uses Settings.Instance["lock_pin"] (default "1234") and requires exactly 4 digits.
+
+
+            //if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
+            //{
+            //    Settings.Instance["lock_pin"] = "1234";
+            //}
+
+            //using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
+            //{
+            //    var result = lockScreen.ShowDialog();
+            //    if (result != DialogResult.OK)
+            //    {
+            //        return;
+            //    }
+            //}
+
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
                 var repository = LogManager.GetRepository() as Hierarchy;
@@ -227,6 +246,7 @@ namespace MissionPlanner
             {
                 // 128*128
                 IconFile = new Bitmap(Settings.GetRunningDirectory() + "icon.png");
+                MessageBox.Show("dir: " + Settings.GetRunningDirectory().ToString());
             }
             else
             {
@@ -269,7 +289,7 @@ namespace MissionPlanner
             if (SplashBG != null)
             {
                 Splash.BackgroundImage = SplashBG;
-                Splash.pictureBox1.Visible = false;
+                //Splash.pictureBox1.Visible = false; //Ashishhh
             }
 
             Console.WriteLine("IconFile");
@@ -281,7 +301,9 @@ namespace MissionPlanner
                 : System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Splash.Text = name + " " + Application.ProductVersion + " build " + strVersion;
             Console.WriteLine("Splash.Show()");
-            Splash.Show();
+            Splash.Show(); //old code commented Ashish test..
+            //Splash.ShowDialog(); //new code wait until splash closes
+
 
             Console.WriteLine("Debugger.IsAttached " + Debugger.IsAttached);
             if (Debugger.IsAttached)
@@ -469,7 +491,15 @@ namespace MissionPlanner
             {
                 Thread.CurrentThread.Name = "Base Thread";
                 Console.WriteLine("Application.Run(new MainV2())");
-                Application.Run(new MainV2());
+                Application.Run(new MainV2()); //old code commented test Ashish
+                
+                ////new code 
+                //MainV2 mainForm = null;
+                //Task.Run(() =>
+                //{
+                //    mainForm = new MainV2();  // heavy initialization
+                //});
+                ////new code
             }
             catch (Exception ex)
             {

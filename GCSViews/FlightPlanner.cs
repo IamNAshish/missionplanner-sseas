@@ -54,11 +54,21 @@ using MissionPlanner.ArduPilot.Mavlink;
 using System.Drawing.Imaging;
 using SharpKml.Engine;
 using MissionPlanner.Controls.Waypoints;
+using static IronPython.Modules._ast;
+using SixLabors.ImageSharp.PixelFormats;
+using ZedGraph;
+using Renci.SshNet.Common;
 
 namespace MissionPlanner.GCSViews
 {
     public partial class FlightPlanner : MyUserControl, IDeactivate, IActivate
     {
+        private static readonly Dictionary<string, List<Locationwp>> MissionCacheByMav =
+            new Dictionary<string, List<Locationwp>>();
+        private MAVLink.MAV_MISSION_TYPE? _lastMissionTypeForCache;
+        private static readonly string MissionPerMavDirectory =
+            Path.Combine(Settings.GetDataDirectory(), "missions-per-mav");
+
         public FlightPlanner()
         {
             InitializeComponent();
@@ -90,6 +100,20 @@ namespace MissionPlanner.GCSViews
         internal GMapPolygon drawnpolygon;
         internal PointLatLng MouseDownEnd;
         internal string wpfilename;
+        private string currentPlanFileForMarkerColor;
+
+        // Marker color order for shifted plans.
+        // _01 uses index 0, _02 uses index 1, etc. Wraps if more plans exist.
+        // Change this list to update the plan marker colors.
+        private static readonly GMarkerGoogleType[] PlanMarkerColorOrder =
+        {
+            GMarkerGoogleType.green,  // _01 (master)
+            GMarkerGoogleType.purple,  // _02 (violet ledu)
+            GMarkerGoogleType.yellow,   // _03
+            GMarkerGoogleType.blue,    // _04
+            GMarkerGoogleType.orange,  // _05
+            GMarkerGoogleType.red      // _06
+        };
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static Propagation prop;
         private static GMapOverlay rallypointoverlay;
@@ -109,7 +133,8 @@ namespace MissionPlanner.GCSViews
         public GMapOverlay geofenceoverlay;
         public GMapPolygon geofencepolygon;
         private bool grid;
-        private List<int> groupmarkers = new List<int>();
+        // Selected marker tags for group operations (e.g. "1", "2", ..., "H")
+        private HashSet<string> groupmarkers = new HashSet<string>();
         private List<List<Locationwp>> history = new List<List<Locationwp>>();
         private bool isMouseClickOffMenu;
         private bool isMouseDown;
@@ -334,16 +359,300 @@ namespace MissionPlanner.GCSViews
                 CustomMessageBox.Show("Please fix your default alt value");
                 TXT_DefaultAlt.Text = (50 * CurrentState.multiplieralt).ToString("0");
             }
+
+            RestoreMissionForCurrentMav();
+            _lastMissionTypeForCache = (MAVLink.MAV_MISSION_TYPE?) cmb_missiontype?.SelectedValue;
         }
 
         public void Deactivate()
         {
+            CacheMissionForCurrentMav();
             config(true);
             timer1.Stop();
         }
 
+        private string GetMissionCacheKey()
+        {
+            var portname = MainV2.comPort?.BaseStream?.PortName ?? "NOPORT";
+            var sysid = MainV2.comPort?.sysidcurrent ?? 0;
+            var compid = MainV2.comPort?.compidcurrent ?? 0;
+            var mtype = (MAVLink.MAV_MISSION_TYPE?) cmb_missiontype?.SelectedValue ?? MAVLink.MAV_MISSION_TYPE.MISSION;
+
+            return $"{portname}:{sysid}:{compid}:{(int) mtype}";
+        }
+
+        private string GetMissionCacheKey(MAVLink.MAV_MISSION_TYPE missionType)
+        {
+            var portname = MainV2.comPort?.BaseStream?.PortName ?? "NOPORT";
+            var sysid = MainV2.comPort?.sysidcurrent ?? 0;
+            var compid = MainV2.comPort?.compidcurrent ?? 0;
+            return $"{portname}:{sysid}:{compid}:{(int) missionType}";
+        }
+
+        private void CacheMissionForCurrentMav()
+        {
+            try
+            {
+                if (Disposing || IsDisposed)
+                    return;
+
+                if (cmb_missiontype?.SelectedValue == null)
+                    return;
+
+                var key = GetMissionCacheKey();
+                var list = GetCommandList();
+                var missionType = (MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue;
+
+                lock (MissionCacheByMav)
+                {
+                    MissionCacheByMav[key] = list;
+                }
+
+                PersistMissionToDisk(missionType, list);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+            }
+        }
+
+        private string GetMissionFilePath(MAVLink.MAV_MISSION_TYPE missionType)
+        {
+            var portname = MainV2.comPort?.BaseStream?.PortName ?? "NOPORT";
+            var sysid = MainV2.comPort?.sysidcurrent ?? 0;
+            var compid = MainV2.comPort?.compidcurrent ?? 0;
+
+            // normalize port name for windows filenames
+            foreach (var c in Path.GetInvalidFileNameChars())
+                portname = portname.Replace(c, '_');
+
+            var ext = missionType == MAVLink.MAV_MISSION_TYPE.MISSION ? "mission" : "waypoints";
+
+            return Path.Combine(MissionPerMavDirectory, $"{portname}_sys{sysid}_comp{compid}_{missionType}.{ext}");
+        }
+
+        private void PersistMissionToDisk(MAVLink.MAV_MISSION_TYPE missionType, List<Locationwp> list)
+        {
+            try
+            {
+                Directory.CreateDirectory(MissionPerMavDirectory);
+
+                var file = GetMissionFilePath(missionType);
+
+                if (missionType == MAVLink.MAV_MISSION_TYPE.MISSION)
+                {
+                    // Persist as .mission (JSON) for best fidelity
+                    var withHome = list.Select(a => (Locationwp) a).ToList();
+
+                    Locationwp home = new Locationwp();
+                    try
+                    {
+                        home.id = (ushort) MAVLink.MAV_CMD.WAYPOINT;
+                        home.lat = (double.Parse(TXT_homelat.Text));
+                        home.lng = (double.Parse(TXT_homelng.Text));
+                        home.alt = (float.Parse(TXT_homealt.Text) / CurrentState.multiplieralt);
+                    }
+                    catch
+                    {
+                        // ignore invalid home
+                    }
+
+                    withHome.Insert(0, home);
+
+                    var format =
+                        MissionFile.ConvertFromLocationwps(withHome, (byte) (altmode) CMB_altmode.SelectedValue);
+                    MissionFile.WriteFile(file, format);
+                    Console.WriteLine("###############" + file );
+                    return;
+                }
+
+                // Fence/Rally: persist as .waypoints (QGC WPL 110) without adding Home.
+                WriteQgcWpl110(file, list, includeHome: false);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+            }
+        }
+
+        private List<Locationwp> TryLoadMissionFromDisk(MAVLink.MAV_MISSION_TYPE missionType)
+        {
+            try
+            {
+                var file = GetMissionFilePath(missionType);
+                if (!File.Exists(file))
+                    return null;
+
+                if (file.EndsWith(".mission", StringComparison.OrdinalIgnoreCase))
+                {
+                    var format = MissionFile.ReadFile(file);
+                    var cmds = MissionFile.ConvertToLocationwps(format);
+                    // Mission files include home at index 0
+                    if (cmds.Count > 0)
+                        cmds.RemoveAt(0);
+                    return cmds;
+                }
+
+                // .waypoints: first line is header, WaypointFile parses it
+                var cmds2 = WaypointFile.ReadWaypointFile(file);
+                // Fence/Rally files don’t include home; Mission files do. For safety: if fence/rally and first looks like home, drop it.
+                if ((missionType == MAVLink.MAV_MISSION_TYPE.FENCE || missionType == MAVLink.MAV_MISSION_TYPE.RALLY) &&
+                    cmds2.Count > 0 && cmds2[0].id == (ushort) MAVLink.MAV_CMD.WAYPOINT)
+                {
+                    cmds2.RemoveAt(0);
+                }
+
+                return cmds2;
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                return null;
+            }
+        }
+
+        private void WriteQgcWpl110(string file, List<Locationwp> list, bool includeHome)
+        {
+            using (StreamWriter sw = new StreamWriter(file))
+            {
+                sw.WriteLine("QGC WPL 110");
+
+                int seq = 0;
+                if (includeHome)
+                {
+                    try
+                    {
+                        sw.WriteLine("0\t1\t0\t16\t0\t0\t0\t0\t" +
+                                     double.Parse(TXT_homelat.Text).ToString("0.0000000", new CultureInfo("en-US")) +
+                                     "\t" +
+                                     double.Parse(TXT_homelng.Text).ToString("0.0000000", new CultureInfo("en-US")) +
+                                     "\t" +
+                                     (double.Parse(TXT_homealt.Text) / CurrentState.multiplieralt).ToString("0.000000",
+                                         new CultureInfo("en-US")) +
+                                     "\t1");
+                        seq = 1;
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex);
+                        sw.WriteLine("0\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1");
+                        seq = 1;
+                    }
+                }
+
+                for (int a = 0; a < list.Count; a++)
+                {
+                    var wp = list[a];
+                    ushort mode = wp.id;
+
+                    sw.Write((a + seq)); // seq
+                    sw.Write("\t" + 0); // current
+                    sw.Write("\t" + ((int) CMB_altmode.SelectedValue).ToString()); // frame (best-effort)
+                    sw.Write("\t" + mode);
+                    sw.Write("\t" + wp.p1.ToString("0.00000000", new CultureInfo("en-US")));
+                    sw.Write("\t" + wp.p2.ToString("0.00000000", new CultureInfo("en-US")));
+                    sw.Write("\t" + wp.p3.ToString("0.00000000", new CultureInfo("en-US")));
+                    sw.Write("\t" + wp.p4.ToString("0.00000000", new CultureInfo("en-US")));
+                    sw.Write("\t" + wp.lat.ToString("0.00000000", new CultureInfo("en-US")));
+                    sw.Write("\t" + wp.lng.ToString("0.00000000", new CultureInfo("en-US")));
+                    sw.Write("\t" + wp.alt.ToString("0.000000", new CultureInfo("en-US")));
+                    sw.Write("\t" + 1);
+                    sw.WriteLine("");
+                }
+            }
+        }
+
+        private void RestoreMissionForCurrentMav()
+        {
+            try
+            {
+                if (Disposing || IsDisposed)
+                    return;
+
+                if (cmb_missiontype?.SelectedValue == null)
+                    return;
+
+                var key = GetMissionCacheKey();
+                List<Locationwp> cached = null;
+
+                lock (MissionCacheByMav)
+                {
+                    if (MissionCacheByMav.TryGetValue(key, out var temp) && temp != null)
+                        cached = temp.Select(a => (Locationwp) a).ToList();
+                }
+
+                if (cached != null)
+                {
+                    processToScreen(cached, append: false);
+                    writeKML();
+                    return;
+                }
+
+                // disk fallback (persists across reloads/app restarts)
+                var missionType = (MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue;
+                var disk = TryLoadMissionFromDisk(missionType);
+                if (disk != null)
+                {
+                    processToScreen(disk, append: false);
+                    writeKML();
+                    return;
+                }
+
+                // fallback to the currently selected vehicle's downloaded points
+                if ((MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue == MAVLink.MAV_MISSION_TYPE.RALLY)
+                {
+                    BUT_Add.Visible = false;
+                    processToScreen(MainV2.comPort.MAV.rallypoints.Select(a => (Locationwp) a.Value).ToList());
+                }
+                else if ((MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue == MAVLink.MAV_MISSION_TYPE.FENCE)
+                {
+                    BUT_Add.Visible = false;
+                    processToScreen(MainV2.comPort.MAV.fencepoints.Select(a => (Locationwp) a.Value).ToList());
+                }
+                else
+                {
+                    BUT_Add.Visible = true;
+                    processToScreen(MainV2.comPort.MAV.wps.Select(a => (Locationwp) a.Value).ToList());
+                }
+
+                writeKML();
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+            }
+        }
+
+        bool ctrlA = false;
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            //CTRL + A
+            // Select all plan markers on the map (including Home "H") for group drag.
+            if (keyData == (Keys.Control | Keys.A) && (MainMap?.Focused == true || MainMap?.ContainsFocus == true))
+            {
+                ctrlA = true;
+                try
+                {
+                    groupmarkers.Clear();
+
+                    var wp = MainMap.Overlays.FirstOrDefault(a => a.Id == "WPOverlay");
+                    if (wp != null)
+                    {
+                        foreach (var marker in wp.Markers)
+                            groupmarkeradd(marker);
+                    }
+
+                    // Refresh to show selection highlight (no writeKML here, it would rebuild markers).
+                    MainMap.Refresh();
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex);
+                }
+
+                return true;
+            }
+
             // undo
             if (keyData == (Keys.Control | Keys.Z))
             {
@@ -1074,21 +1383,38 @@ namespace MissionPlanner.GCSViews
                             home.alt = (float)MainV2.comPort.MAV.cs.PlannedHomeLocation.Alt;
                         }
                     }
-                    catch { }
+                    catch{}
 
                     // remove the current blank row that has not been populated yet
                     if (!noBlankRow)
                     {
-                        currentlist.RemoveAt(selectedrow);
+                        try
+                        {
+                            Console.WriteLine("\n\n selectedrow :" + selectedrow + "\n");//test
+                            currentlist.RemoveAt(selectedrow);
+                                                        
+                        }
+                        catch
+                        {
+                            //CustomMessageBox.Show("ERROR A4: A invalid entry has been detected\n");
+
+                        }
                     }
                     currentlist.Insert(0, home);
                     // add history
-                    history.Add(currentlist);
+                    try
+                    {
+                        history.Add(currentlist);
+                    }
+                    catch (Exception ex)
+                    {
+                        //CustomMessageBox.Show("ERROR A3: A invalid entry has been detected\n" + ex.Message, Strings.ERROR);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                CustomMessageBox.Show("A invalid entry has been detected\n" + ex.Message, Strings.ERROR);
+                //CustomMessageBox.Show("ERROR A2: A invalid entry has been detected\n" + ex.Message, Strings.ERROR);
             }
 
             // remove more than 40 revisions
@@ -1419,7 +1745,10 @@ namespace MissionPlanner.GCSViews
                 {
                     wpOverlay = new WPOverlay();
                     wpOverlay.overlay.Id = "WPOverlay";
-
+                    var planMarkerType = GetPlanMarkerTypeFromWaypointFilename(currentPlanFileForMarkerColor ?? wpfilename);
+                    wpOverlay.MissionMarkerType = planMarkerType;
+                    wpOverlay.MissionRouteColor = GetPlanRouteColorFromMarkerType(planMarkerType);
+                    //WPOverlay.route2.Stroke = new Pen(Color.Khaki, 4); //test .. Ashish
                     try
                     {
                         if (TXT_WPRad.Text == "") TXT_WPRad.Text = startupWPradius;
@@ -1622,7 +1951,7 @@ namespace MissionPlanner.GCSViews
 
             ChangeColumnHeader(MAVLink.MAV_CMD.DO_DIGICAM_CONTROL.ToString());
 
-            writeKML();
+            writeKML(); 
         }
 
         internal static void addpolygonmarker(Control src, string tag, double lng, double lat, int alt, Color? color, GMapOverlay overlay)
@@ -1809,6 +2138,26 @@ namespace MissionPlanner.GCSViews
 
         public void BUT_loadwpfile_Click(object sender, EventArgs e)
         {
+            if (checkBox_multiplePlans.Checked)
+            {
+                using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+                {
+                    fbd.Description = "Select folder containing waypoint files";
+                    if (Directory.Exists(Settings.Instance["WPFileDirectory"] ?? ""))
+                        fbd.SelectedPath = Settings.Instance["WPFileDirectory"];
+
+
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                    {
+                        string selectedPath = fbd.SelectedPath;
+
+                        LoadWaypointFiles(selectedPath);
+                    }
+                }
+                return;
+            }
+
+
             using (OpenFileDialog fd = new OpenFileDialog())
             {
                 fd.Filter = "All Supported Types|*.txt;*.waypoints;*.shp;*.plan;*.kml";
@@ -1819,6 +2168,7 @@ namespace MissionPlanner.GCSViews
 
                 if (File.Exists(file))
                 {
+                    currentPlanFileForMarkerColor = file;
                     Settings.Instance["WPFileDirectory"] = Path.GetDirectoryName(file);
                     if (file.ToLower().EndsWith(".shp"))
                     {
@@ -2162,6 +2512,26 @@ namespace MissionPlanner.GCSViews
 
         public void Cmb_missiontype_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // cache the mission we are leaving (since SelectedValue already changed)
+            try
+            {
+                if (_lastMissionTypeForCache.HasValue)
+                {
+                    var key = GetMissionCacheKey(_lastMissionTypeForCache.Value);
+                    var list = GetCommandList();
+                    lock (MissionCacheByMav)
+                    {
+                        MissionCacheByMav[key] = list;
+                    }
+
+                    PersistMissionToDisk(_lastMissionTypeForCache.Value, list);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+            }
+
             // switch the mavcmd list and init
             Activate();
 
@@ -2173,30 +2543,18 @@ namespace MissionPlanner.GCSViews
             if (fence.Count() > 0) MainMap.Overlays.Remove(fence.First());
             if (rally.Count() > 0) MainMap.Overlays.Remove(rally.First());
 
-            // update the displayed items
-            if ((MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue == MAVLink.MAV_MISSION_TYPE.RALLY)
-            {
-                BUT_Add.Visible = false;
-                processToScreen(MainV2.comPort.MAV.rallypoints.Select(a => (Locationwp) a.Value).ToList());
+            // switching mission type should keep a separate set per (sysid,compid,mission-type)
+            RestoreMissionForCurrentMav();
 
-            }
-            else if ((MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue == MAVLink.MAV_MISSION_TYPE.FENCE)
+            if ((MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue == MAVLink.MAV_MISSION_TYPE.FENCE)
             {
-                BUT_Add.Visible = false;
-                processToScreen(MainV2.comPort.MAV.fencepoints.Select(a => (Locationwp) a.Value).ToList());
-
                 Common.MessageShowAgain("FlightPlan Fence", "Please use the Polygon drawing tool to draw " +
                                                             "Inclusion and Exclusion areas (round circle to the left)," +
                                                             " once drawn use the same icon to convert it to a inclusion " +
                                                             "or exclusion fence");
             }
-            else
-            {
-                BUT_Add.Visible = true;
-                processToScreen(MainV2.comPort.MAV.wps.Select(a => (Locationwp) a.Value).ToList());
-            }
 
-            writeKML();
+            _lastMissionTypeForCache = (MAVLink.MAV_MISSION_TYPE?) cmb_missiontype?.SelectedValue;
         }
 
         private void comboBoxMapType_SelectedValueChanged(object sender, EventArgs e)
@@ -3157,7 +3515,8 @@ namespace MissionPlanner.GCSViews
                 {
                     try
                     {
-                        if (groupmarkers.Contains(a)) Commands.Rows.RemoveAt(a - 1); // home is 0
+                        // only numeric tagged markers map to command rows; home ("H") is excluded
+                        if (groupmarkers.Contains(a.ToString())) Commands.Rows.RemoveAt(a - 1); // home is 0
                     }
                     catch (Exception ex)
                     {
@@ -3408,6 +3767,7 @@ namespace MissionPlanner.GCSViews
 
         public void FlightPlanner_FormClosing(object sender, FormClosingEventArgs e)
         {
+            CacheMissionForCurrentMav();
             timer1.Stop();
             stopInjectCustomMap = true;
         }
@@ -3484,10 +3844,13 @@ namespace MissionPlanner.GCSViews
                 switchDockingToolStripMenuItem_Click(null, null);
             }
 
+            
+
             Visible = true;
 
             timer1.Start();
         }
+
 
         /// <summary>
         /// Format distance according to prefer distance unit
@@ -5020,26 +5383,32 @@ namespace MissionPlanner.GCSViews
             POI.POIEdit(CurrentPOIMarker);
         }
 
-        public void prefetchToolStripMenuItem_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Download/cache map tiles for offline use (same flow as Flight Planner prefetch).
+        /// </summary>
+        public static void PrefetchMapTiles(GMapControl map, IWin32Window owner)
         {
-            RectLatLng area = MainMap.SelectedArea;
+            if (map == null)
+                return;
+
+            RectLatLng area = map.SelectedArea;
             if (area.IsEmpty)
             {
                 var res = CustomMessageBox.Show("No ripp area defined, ripp displayed on screen?", "Rip",
                     MessageBoxButtons.YesNo);
                 if (res == (int) DialogResult.Yes)
                 {
-                    area = MainMap.ViewArea;
+                    area = map.ViewArea;
                 }
             }
 
             if (!area.IsEmpty)
             {
-                int maxzoom = MainMap.MaxZoom;
-                int minzoom = MainMap.MinZoom;
-                TilePrefetcherMenu tilePrefetcherMenu = new TilePrefetcherMenu(MainMap.MinZoom, MainMap.MaxZoom, area, MainMap.MapProvider);
+                int maxzoom = map.MaxZoom;
+                int minzoom = map.MinZoom;
+                TilePrefetcherMenu tilePrefetcherMenu = new TilePrefetcherMenu(map.MinZoom, map.MaxZoom, area, map.MapProvider);
 
-                if (tilePrefetcherMenu.ShowDialog(this) != DialogResult.OK)
+                if (tilePrefetcherMenu.ShowDialog(owner) != DialogResult.OK)
                 {
                     tilePrefetcherMenu.Dispose();
                     return;
@@ -5051,20 +5420,20 @@ namespace MissionPlanner.GCSViews
                 for (int i = minzoom; i <= maxzoom; i++)
                 {
                     try
-                {
-                    TilePrefetcher obj = new TilePrefetcher();
-                    ThemeManager.ApplyThemeTo(obj);
-                    obj.ShowCompleteMessage = false;
-                    obj.Start(area, i, MainMap.MapProvider, 0, 0);
-
-                    if (obj.UserAborted)
                     {
-                        obj.Dispose();
-                        break;
-                    }
+                        TilePrefetcher obj = new TilePrefetcher();
+                        ThemeManager.ApplyThemeTo(obj);
+                        obj.ShowCompleteMessage = false;
+                        obj.Start(area, i, map.MapProvider, 0, 0);
 
-                    obj.Dispose();
-                }
+                        if (obj.UserAborted)
+                        {
+                            obj.Dispose();
+                            break;
+                        }
+
+                        obj.Dispose();
+                    }
                     catch
                     {
                     }
@@ -5075,6 +5444,11 @@ namespace MissionPlanner.GCSViews
                 CustomMessageBox.Show("Select map area holding ALT", "GMap.NET", MessageBoxButtons.OK,
                     MessageBoxIcon.Exclamation);
             }
+        }
+
+        public void prefetchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PrefetchMapTiles(MainMap, this);
         }
 
         public void prefetchWPPathToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7336,19 +7710,38 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
             return serverUrl + "version=1.1.0&Request=GetCapabilities&service=WMS";
         }
 
+        private static bool IsSelectablePlanMarkerTag(string tag)
+        {
+            if (string.IsNullOrWhiteSpace(tag))
+                return false;
+
+            if (tag == "H")
+                return true;
+
+            // Most plan markers use numeric tags (WP#, ROI, etc).
+            if (int.TryParse(tag, out _))
+                return true;
+
+            return false;
+        }
+
         private void groupmarkeradd(GMapMarker marker)
         {
-            System.Diagnostics.Debug.WriteLine("add marker " + marker.Tag.ToString());
-            groupmarkers.Add(int.Parse(marker.Tag.ToString()));
-            if (marker is GMapMarkerWP)
-            {
-                ((GMapMarkerWP) marker).selected = true;
-            }
+            if (marker?.Tag == null)
+                return;
 
-            if (marker is GMapMarkerRect)
-            {
-                ((GMapMarkerWP) ((GMapMarkerRect) marker).InnerMarker).selected = true;
-            }
+            var tag = marker.Tag.ToString();
+            if (!IsSelectablePlanMarkerTag(tag))
+                return;
+
+            System.Diagnostics.Debug.WriteLine("add marker " + tag);
+            groupmarkers.Add(tag);
+
+            if (marker is GMapMarkerWP wp)
+                wp.selected = true;
+
+            if (marker is GMapMarkerRect rect && rect.InnerMarker is GMapMarkerWP innerWp)
+                innerWp.selected = true;
         }
 
         private void MainMap_MouseDown(object sender, MouseEventArgs e)
@@ -7356,13 +7749,18 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
             if (isMouseClickOffMenu)
                 return;
 
+            // Make sure the map has focus so keyboard shortcuts (e.g. Ctrl+A) work naturally.
+            if (!MainMap.Focused)
+                MainMap.Focus();
+
+
             MouseDownStart = MainMap.FromLocalToLatLng(e.X, e.Y);
 
             //   Console.WriteLine("MainMap MD");
 
             if (e.Button == MouseButtons.Left && (groupmarkers.Count > 0 || Control.ModifierKeys == Keys.Control))
             {
-                // group move
+                //group move
                 isMouseDown = true;
                 isMouseDraging = false;
 
@@ -7425,19 +7823,18 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
 
                     var markers = MainMap.Overlays.First(a => a.Id == "WPOverlay");
 
-                    Hashtable seen = new Hashtable();
+                    var seen = new HashSet<string>();
 
                     foreach (var markerid in groupmarkers)
                     {
-                        if (seen.ContainsKey(markerid))
+                        if (!seen.Add(markerid))
                             continue;
 
-                        seen[markerid] = 1;
                         for (int a = 0; a < markers.Markers.Count; a++)
                         {
                             var marker = markers.Markers[a];
 
-                            if (marker.Tag != null && marker.Tag.ToString() == markerid.ToString())
+                            if (marker.Tag != null && marker.Tag.ToString() == markerid)
                             {
                                 var temp = new PointLatLng(marker.Position.Lat, marker.Position.Lng);
                                 temp.Offset(latdif, -lngdif);
@@ -7671,10 +8068,7 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
                         {
                             try
                             {
-                                if (marker.Tag != null)
-                                {
-                                    groupmarkeradd(marker);
-                                }
+                                groupmarkeradd(marker);
                             }
                             catch (Exception ex)
                             {
@@ -7689,13 +8083,56 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
 
                 if (!isMouseDraging)
                 {
-                    if (CurentRectMarker != null)
+                    if (CurentRectMarker != null || ctrlA)
                     {
+
                         // cant add WP in existing rect
+
+                        //if already we have selected all (ctrl + A) and then clicking => dont add waypoint also unselect 
+                        try
+                        {
+                            ctrlA = false;//reset flag
+
+                            //method 1 worked but could be heavy
+                            groupmarkers.Clear();// remove all selected markers
+                            MainMap.Refresh();//redraw without selection didnt worked 
+                            writeKML(); //working but could be heavy 
+
+                            //method 2
+                            //so lets remove all the waypoints manually 
+                            //var wpOverlay = MainMap.Overlays.FirstOrDefault(a => a.Id == "WPOverlay");
+
+                            //if (wpOverlay != null)
+                            //{
+                            //    foreach (var marker in wpOverlay.Markers)
+                            //    {
+                            //        if (marker == null)
+                            //            continue;
+
+                            //        if (marker is GMapMarkerWP wp)
+                            //            wp.selected = false;
+
+                            //        if (marker is GMapMarkerRect rect && rect.InnerMarker is GMapMarkerWP innerWp)
+                            //            innerWp.selected = false;
+                            //    }
+                            //}
+                            //MainMap.Refresh();
+                            
+
+                        }
+                        catch (Exception ex)
+                        {
+                            log.Error(ex);
+                        }
+                        
+
+                            
+                        
                     }
                     else
                     {
                         AddWPToMap(currentMarker.Position.Lat, currentMarker.Position.Lng, 0);
+                                              
                     }
                 }
                 else
@@ -7709,13 +8146,13 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
 
                         var markers = MainMap.Overlays.First(a => a.Id == "WPOverlay");
 
-                        foreach (var markerid in groupmarkers.Distinct())
+                        foreach (var markerid in groupmarkers)
                         {
                             for (int a = 0; a < markers.Markers.Count; a++)
                             {
                                 var marker = markers.Markers[a];
 
-                                if (marker.Tag != null && marker.Tag.ToString() == markerid.ToString())
+                                if (marker.Tag != null && marker.Tag.ToString() == markerid)
                                 {
                                     dest[marker.Tag.ToString()] = marker.Position;
                                     break;
@@ -8525,6 +8962,757 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
             }
 
             return true;
+        }
+
+        private void btn_copyshift_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if ((MAVLink.MAV_MISSION_TYPE)cmb_missiontype.SelectedValue != MAVLink.MAV_MISSION_TYPE.MISSION)
+                {
+                    CustomMessageBox.Show("Only available for missions", Strings.ERROR);
+                    return;
+                }
+
+                if (!double.TryParse(tb_distance.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var shiftMeters))
+                {
+                    CustomMessageBox.Show("Invalid Shift (m) value", Strings.ERROR);
+                    return;
+                }
+
+                if (!double.TryParse(tb_angle.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var angleDeg))
+                {
+                    CustomMessageBox.Show("Invalid Angle (deg) value", Strings.ERROR);
+                    return;
+                }
+
+                var cmds = GetCommandList();
+                if (cmds == null || cmds.Count < 2)
+                {
+                    CustomMessageBox.Show("No waypoints to copy", Strings.ERROR);
+                    return;
+                }
+
+                // Convert bearing+distance into a constant EN offset (meters).
+                var angRad = angleDeg * MathHelper.deg2rad;
+                var east = Math.Sin(angRad) * shiftMeters;
+                var north = Math.Cos(angRad) * shiftMeters;
+
+                var shifted = new List<Locationwp>(cmds.Count) { cmds[0] }; // keep home as 0th entry
+
+                ////test working
+                //for (var i = 1; i < cmds.Count; i++)
+                //{
+                //    ////////var c = cmds[i];
+                //    var c = cmds[i];//.Clone();
+
+                //    // Copy command as-is; only offset if it's a location command and has coords.
+                //    if (Locationwp.isLocationCommand(c.id) && (Math.Abs(c.lat) > 0.0000001 || Math.Abs(c.lng) > 0.0000001))
+                //    {
+                //        var p = new PointLatLngAlt(c.lat, c.lng, c.alt);
+                //        var p2 = p.gps_offset(east, north);
+                //        c.lat = p2.Lat;
+                //        c.lng = p2.Lng;
+                //    }
+
+                //    shifted.Add(c);
+                //}
+                /////test working end
+
+                for (var i = 1; i < cmds.Count; i++)
+                {
+                    var c = cmds[i];
+
+                    if (Locationwp.isLocationCommand(c.id) &&
+                        (Math.Abs(c.lat) > 0.0000001 || Math.Abs(c.lng) > 0.0000001))
+                    {
+                        var p = new PointLatLngAlt(c.lat, c.lng, c.alt);
+                        var p2 = p.gps_offset(east, north);
+                        c.lat = p2.Lat;
+                        c.lng = p2.Lng;
+                    }
+
+                    shifted.Add(c);
+                }
+
+
+                processToScreen(shifted, append: false);//true); test true working
+                updateUndoBuffer(false);
+                writeKML();
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show("Copy+Shift failed: " + ex.Message, Strings.ERROR);
+                log.Error(ex);
+            }
+        }
+
+        private void btn_copyshift2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if ((MAVLink.MAV_MISSION_TYPE)cmb_missiontype.SelectedValue != MAVLink.MAV_MISSION_TYPE.MISSION)
+                {
+                    CustomMessageBox.Show("Only available for missions", Strings.ERROR);
+                    return;
+                }
+
+                if (!int.TryParse(tb_no_of_plans.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var planCount) ||
+                    planCount < 1)
+                {
+                    CustomMessageBox.Show("Invalid No of Plans value (must be >= 1)", Strings.ERROR);
+                    return;
+                }
+
+                if (!double.TryParse(tb_distance.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var shiftMeters))
+                {
+                    CustomMessageBox.Show("Invalid Shift (m) value", Strings.ERROR);
+                    return;
+                }
+
+                if (!double.TryParse(tb_angle.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var angleDeg))
+                {
+                    CustomMessageBox.Show("Invalid Angle (deg) value", Strings.ERROR);
+                    return;
+                }
+
+                // Base home used for shifted plans (QGC WPL 110 header seq 0).
+                double baseHomeLat = double.Parse(TXT_homelat.Text);
+                double baseHomeLng = double.Parse(TXT_homelng.Text);
+                float baseHomeAltInternal = (float.Parse(TXT_homealt.Text) / CurrentState.multiplieralt);
+
+                var masterCmds = GetCommandList();
+                if (masterCmds == null || masterCmds.Count < 1)
+                {
+                    CustomMessageBox.Show("No waypoints to save", Strings.ERROR);
+                    return;
+                }
+
+                string masterFile;
+                using (var fd = new SaveFileDialog())
+                {
+                    fd.Filter = "Mission|*.waypoints;*.txt|Mission JSON|*.mission";
+                    fd.DefaultExt = ".waypoints";
+                    fd.InitialDirectory = Settings.Instance["WPFileDirectory"] ?? "";
+                    fd.FileName = wpfilename;
+
+                    var result = fd.ShowDialog();
+                    masterFile = fd.FileName;
+
+                    
+                    if (string.IsNullOrWhiteSpace(masterFile) || result != DialogResult.OK)
+                        return;
+                }
+
+                Settings.Instance["WPFileDirectory"] = Path.GetDirectoryName(masterFile);
+
+
+                //
+
+
+                //old
+                // Save master (unshifted) first using the same output format as savewaypoints().
+                //SaveWaypointsToFile(masterFile, masterCmds);
+
+                //var dir = Path.GetDirectoryName(masterFile) ?? ""; //old
+
+
+                var ext = Path.GetExtension(masterFile);
+                var baseName = Path.GetFileNameWithoutExtension(masterFile);
+                //creating dir with same name as master plan
+                var dir = Path.Combine(Path.GetDirectoryName(masterFile) ?? "", Path.GetFileNameWithoutExtension(masterFile));
+                Directory.CreateDirectory(dir);
+                //Save master (unshifted) first using the same output format as savewaypoints()
+                var masterFileInDir = Path.Combine(dir, baseName +"_01"+ ext);
+                SaveWaypointsToFile(masterFileInDir, masterCmds);
+                
+                                           
+
+                // Convert bearing+distance into a constant EN offset (meters).
+                var angRad = angleDeg * MathHelper.deg2rad;
+                var eastUnit = Math.Sin(angRad) * shiftMeters;
+                var northUnit = Math.Cos(angRad) * shiftMeters;
+
+                // Generate shifted plans 2..N (shift multiplier 1..N-1).
+                for (var planIndex = 1; planIndex < planCount; planIndex++) 
+                {
+                    var east = eastUnit * planIndex;
+                    var north = northUnit * planIndex;
+
+                    var shifted = new List<Locationwp>(masterCmds.Count);
+
+                    // Shift the header "home" too (seq 0 in QGC WPL 110).
+                    var baseHome = new PointLatLngAlt(baseHomeLat, baseHomeLng, baseHomeAltInternal);
+                    var shiftedHomePoint = baseHome.gps_offset(east, north);
+                    var homeOverride = new Locationwp
+                    {
+                        id = (ushort)MAVLink.MAV_CMD.WAYPOINT,
+                        lat = shiftedHomePoint.Lat,
+                        lng = shiftedHomePoint.Lng,
+                        alt = baseHomeAltInternal
+                    };
+
+                    // if you want first marker not to shift use this and below for loop from 1  Ashish 
+                    //if (masterCmds.Count > 0)
+                    //    shifted.Add(masterCmds[0]); // keep first point consistent 
+
+                    Console.WriteLine("\n\n\n\n#######################\npoints are:"+ masterCmds.Count); //test.. Ashish
+
+                   
+
+
+
+
+                    for (var i = 0; i < masterCmds.Count; i++)
+                    {
+                        var c = masterCmds[i];
+
+                        if (Locationwp.isLocationCommand(c.id) &&
+                            (Math.Abs(c.lat) > 0.0000001 || Math.Abs(c.lng) > 0.0000001))
+                        {
+                            var p = new PointLatLngAlt(c.lat, c.lng, c.alt);
+                            var p2 = p.gps_offset(east, north);
+                            c.lat = p2.Lat;
+                            c.lng = p2.Lng;
+                        }
+
+                        shifted.Add(c);
+                    }
+
+                    var suffix = "_" + (planIndex + 1).ToString("D2", CultureInfo.InvariantCulture);
+                    var file = Path.Combine(dir, baseName + suffix + ext); //working old
+                    
+                    //var file = Path.Combine(dir, baseName + suffix + ext); //test
+                    SaveWaypointsToFile(file, shifted, homeOverride);
+                }
+
+                lbl_wpfile.Text = "Saved " + Path.GetFileName(masterFile) + " + " + (planCount - 1) + " shifted";
+
+
+                //after saving file open same dir and load those files to dropdown
+                LoadWaypointFiles(dir); //call only the files that are having name of the masterFileWeJustSaved_01,_02
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show("Copy+Shift failed: " + ex.Message, Strings.ERROR);
+                log.Error(ex);
+            }
+
+            
+            
+
+
+
+        }
+
+        private void SaveWaypointsToFile(string file, List<Locationwp> commandList, Locationwp? homeOverride = null)
+        {
+            if (string.IsNullOrWhiteSpace(file))
+                throw new ArgumentException("Invalid file", nameof(file));
+
+            if (commandList == null)
+                throw new ArgumentNullException(nameof(commandList));
+
+            try
+            {
+                // QGC WPL 110 header (seq 0) and .mission home waypoint can be overridden.
+                // When btn_copyshift2 generates shifted plans, we want the header home to shift too.
+                double homeLat = double.Parse(TXT_homelat.Text);
+                double homeLng = double.Parse(TXT_homelng.Text);
+                float homeAltInternal = (float.Parse(TXT_homealt.Text) / CurrentState.multiplieralt);
+
+                if (homeOverride.HasValue)
+                {
+                    homeLat = homeOverride.Value.lat;
+                    homeLng = homeOverride.Value.lng;
+                    homeAltInternal = homeOverride.Value.alt;
+                }
+
+                if (file.EndsWith(".mission", StringComparison.OrdinalIgnoreCase))
+                {
+                    var list = new List<Locationwp>(commandList);
+                    var home = new Locationwp();
+                    try
+                    {
+                        home.id = (ushort)MAVLink.MAV_CMD.WAYPOINT;
+                        home.lat = homeLat;
+                        home.lng = homeLng;
+                        home.alt = homeAltInternal;
+                    }
+                    catch
+                    {
+                        // keep default home if parsing fails
+                    }
+
+                    list.Insert(0, home);
+
+                    var format = MissionFile.ConvertFromLocationwps(list, (byte)(altmode)CMB_altmode.SelectedValue);
+                    MissionFile.WriteFile(file, format);
+                    return;
+                }
+
+                using (var sw = new StreamWriter(file))
+                {
+                    sw.WriteLine("QGC WPL 110");
+                    try
+                    {
+                        sw.WriteLine("0\t1\t0\t16\t0\t0\t0\t0\t" +
+                                     homeLat.ToString("0.0000000", new CultureInfo("en-US")) +
+                                     "\t" +
+                                     homeLng.ToString("0.0000000", new CultureInfo("en-US")) +
+                                     "\t" +
+                                     homeAltInternal.ToString("0.000000", new CultureInfo("en-US")) +
+                                     "\t1");
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex);
+                        sw.WriteLine("0\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1");
+                    }
+
+                    for (int a = 0; a < commandList.Count; a++)
+                    {
+                        var item = commandList[a];
+                        sw.Write((a + 1)); // seq
+                        sw.Write("\t" + 0); // current
+                        sw.Write("\t" + ((int)item.frame).ToString(CultureInfo.InvariantCulture)); // frame
+                        sw.Write("\t" + item.id);
+                        sw.Write("\t" + item.p1.ToString("0.00000000", new CultureInfo("en-US")));
+                        sw.Write("\t" + item.p2.ToString("0.00000000", new CultureInfo("en-US")));
+                        sw.Write("\t" + item.p3.ToString("0.00000000", new CultureInfo("en-US")));
+                        sw.Write("\t" + item.p4.ToString("0.00000000", new CultureInfo("en-US")));
+                        sw.Write("\t" + item.lat.ToString("0.00000000", new CultureInfo("en-US")));
+                        sw.Write("\t" + item.lng.ToString("0.00000000", new CultureInfo("en-US")));
+                        sw.Write("\t" + (item.alt / CurrentState.multiplieralt).ToString("0.000000", new CultureInfo("en-US")));
+                        sw.Write("\t" + 1);
+                        sw.WriteLine("");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                CustomMessageBox.Show(Strings.ERROR);
+                throw;
+            }
+        }
+
+
+        
+
+        private string _plansFolderPath;
+        private string[] _allPlanFilesInFolder = Array.Empty<string>();
+        private readonly List<string> _extraPlanOverlayIds = new List<string>();
+
+        private void ClearExtraPlanOverlays()
+        {
+            if (_extraPlanOverlayIds.Count == 0)
+                return;
+
+            try
+            {
+                foreach (var id in _extraPlanOverlayIds)
+                {
+                    var matches = MainMap.Overlays.Where(o => o.Id == id).ToList();
+                    foreach (var ov in matches)
+                        MainMap.Overlays.Remove(ov);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+            }
+            finally
+            {
+                _extraPlanOverlayIds.Clear();
+                MainMap.Refresh();
+            }
+        }
+
+        private static List<Locationwp> ReadPlanFileToCommands(string file)
+        {
+            if (string.IsNullOrWhiteSpace(file))
+                return null;
+
+            // Keep this "read-only": do NOT touch the Commands grid / current plan state.
+            try
+            {
+                var ext = Path.GetExtension(file)?.ToLowerInvariant();
+
+                if (ext == ".mission" || ext == ".plan")
+                {
+                    var format = MissionFile.ReadFile(file);
+                    return MissionFile.ConvertToLocationwps(format);
+                }
+
+                // default to QGC WPL 110 waypoints parsing (also used by readQGC110wpfile)
+                return WaypointFile.ReadWaypointFile(file);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private void AddPlanOverlayToMap(string file, int index)
+        {
+            var cmdsAll = ReadPlanFileToCommands(file);
+            if (cmdsAll == null || cmdsAll.Count == 0)
+                return;
+
+            // Heuristic: if first item looks like a home waypoint, treat it as home and remove from mission list.
+            PointLatLngAlt home = PointLatLngAlt.Zero;
+            var missionItems = cmdsAll;
+            try
+            {
+                var first = cmdsAll[0];
+                if (first.id == (ushort) MAVLink.MAV_CMD.WAYPOINT &&
+                    Math.Abs(first.lat) > 0.0000001 && Math.Abs(first.lng) > 0.0000001)
+                {
+                    home = new PointLatLngAlt(first.lat, first.lng, first.alt, "H")
+                    {
+                        Tag2 = CMB_altmode.SelectedValue?.ToString()
+                    };
+                    missionItems = cmdsAll.Skip(1).ToList();
+                }
+            }
+            catch
+            {
+                // fall back to "no home" overlay
+                missionItems = cmdsAll;
+                home = PointLatLngAlt.Zero;
+            }
+
+            var overlay = new WPOverlay
+            {
+                MissionMarkerType = GetPlanMarkerTypeFromWaypointFilename(file),
+                MissionRouteColor = GetPlanRouteColorFromMarkerType(GetPlanMarkerTypeFromWaypointFilename(file))
+            };
+
+            var overlayId = "WPOverlay_plan_" + index.ToString(CultureInfo.InvariantCulture);
+            overlay.overlay.Id = overlayId;
+
+            try
+            {
+                if (TXT_WPRad.Text == "") TXT_WPRad.Text = startupWPradius;
+                if (TXT_loiterrad.Text == "") TXT_loiterrad.Text = "30";
+
+                overlay.CreateOverlay(home,
+                    missionItems,
+                    double.Parse(TXT_WPRad.Text) / CurrentState.multiplierdist,
+                    double.Parse(TXT_loiterrad.Text) / CurrentState.multiplierdist,
+                    CurrentState.multiplieralt);
+            }
+            catch
+            {
+                return;
+            }
+
+            // Don't allow interaction with extra plan overlays (editing uses the main "WPOverlay")
+            foreach (var m in overlay.overlay.Markers)
+                m.IsHitTestVisible = false;
+
+            foreach (var r in overlay.overlay.Routes)
+                r.IsHitTestVisible = false;
+
+            // Remove any previous overlay with same id, then add.
+            var existing = MainMap.Overlays.Where(o => o.Id == overlayId).ToList();
+            foreach (var e in existing)
+                MainMap.Overlays.Remove(e);
+
+            MainMap.Overlays.Add(overlay.overlay);
+            _extraPlanOverlayIds.Add(overlayId);
+        }
+
+        private void ShowAllPlansOnMap()
+        {
+            ClearExtraPlanOverlays();
+
+            // Use whatever list we currently have (folder load); fall back to comboBox tag.
+            var files = (_allPlanFilesInFolder != null && _allPlanFilesInFolder.Length > 0)
+                ? _allPlanFilesInFolder
+                : (comboBox_plans.Tag as string[]);
+
+            if (files == null || files.Length == 0)
+                return;
+
+            // Avoid duplicating the currently edited plan overlay ("WPOverlay").
+            for (var i = 0; i < files.Length; i++)
+            {
+                var file = files[i];
+                if (string.IsNullOrWhiteSpace(file) || !File.Exists(file))
+                    continue;
+
+                // If this file is currently selected/loaded, the main "WPOverlay" already shows it.
+                // Still safe to render it again, but we skip to avoid double-plotting.
+                if (!string.IsNullOrWhiteSpace(currentPlanFileForMarkerColor) &&
+                    string.Equals(currentPlanFileForMarkerColor, file, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                AddPlanOverlayToMap(file, i + 1);
+            }
+
+            MainMap.Refresh();
+        }
+
+        private static string GetPlanSeriesKey(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                return string.Empty;
+
+            try
+            {
+                // Series key: directory + baseName without the _NN suffix if present
+                // Examples:
+                //  - "Survey_01.waypoints" -> "Survey"
+                //  - "Survey.waypoints" -> "Survey"
+                var dir = Path.GetDirectoryName(filePath) ?? string.Empty;
+                var name = Path.GetFileNameWithoutExtension(filePath) ?? string.Empty;
+
+                var match = Regex.Match(name, @"^(.*)_\d{2}$", RegexOptions.IgnoreCase);
+                var baseName = match.Success ? match.Groups[1].Value : name;
+
+                return Path.Combine(dir, baseName).ToLowerInvariant();
+            }
+            catch
+            {
+                return filePath.ToLowerInvariant();
+            }
+        }
+
+        private void RebindPlansCombo(string[] fullPaths, string preferredSelectionFullPath = null)
+        {
+            comboBox_plans.BeginUpdate();
+            try
+            {
+                comboBox_plans.Items.Clear();
+
+                if (fullPaths == null || fullPaths.Length == 0)
+                {
+                    comboBox_plans.Tag = Array.Empty<string>();
+                    comboBox_plans.SelectedIndex = -1;
+                    return;
+                }
+
+                // show only file names
+                var fileNames = fullPaths.Select(Path.GetFileName).ToArray();
+                comboBox_plans.Items.AddRange(fileNames);
+                comboBox_plans.Tag = fullPaths;
+
+                // keep selection if possible
+                var idx = -1;
+                if (!string.IsNullOrWhiteSpace(preferredSelectionFullPath))
+                    idx = Array.IndexOf(fullPaths, preferredSelectionFullPath);
+
+                comboBox_plans.SelectedIndex = idx >= 0 ? idx : 0;
+            }
+            finally
+            {
+                comboBox_plans.EndUpdate();
+            }
+        }
+
+        private void ApplyPlansVisibilityToDropdown()
+        {
+            // Preserve current selection if possible
+            var currentFullPaths = comboBox_plans.Tag as string[];
+            var selectedFullPath =
+                (currentFullPaths != null &&
+                 comboBox_plans.SelectedIndex >= 0 &&
+                 comboBox_plans.SelectedIndex < currentFullPaths.Length)
+                    ? currentFullPaths[comboBox_plans.SelectedIndex]
+                    : null;
+
+            if (isVisible) // show all plans
+            {
+                RebindPlansCombo(_allPlanFilesInFolder, selectedFullPath);
+                return;
+            }
+
+            // hide "other series" plans - keep only the series that the selected plan belongs to
+            var key = GetPlanSeriesKey(selectedFullPath ?? _allPlanFilesInFolder.FirstOrDefault());
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                RebindPlansCombo(_allPlanFilesInFolder, selectedFullPath);
+                return;
+            }
+
+            var filtered = _allPlanFilesInFolder.Where(f => GetPlanSeriesKey(f) == key).ToArray();
+            RebindPlansCombo(filtered, selectedFullPath);
+        }
+
+        private void LoadWaypointFiles(string folderPath)
+        {
+            try
+            {
+                var files = Directory.GetFiles(folderPath, "*.waypoints");
+
+                if (files.Length == 0)
+                {
+                    MessageBox.Show("No .waypoints files found.");
+                    return;
+                }
+
+                _plansFolderPath = folderPath;
+                _allPlanFilesInFolder = files;
+
+                // Apply current visibility mode (eye open = all, eye closed = current series)
+                ApplyPlansVisibilityToDropdown();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading files: " + ex.Message);
+            }
+        }
+
+        private void comboBox_plans_SelectedIndexChanged(object sender, EventArgs e)
+        {
+                
+
+
+            try
+            {
+                if (comboBox_plans.SelectedIndex < 0)
+                    return;
+
+                // full paths stored earlier (C# 7.3 compatible)
+                var fullPaths = comboBox_plans.Tag as string[];
+                if (fullPaths == null || fullPaths.Length == 0)
+                    return;
+
+
+
+
+                string file = fullPaths[comboBox_plans.SelectedIndex];
+                currentPlanFileForMarkerColor = file;
+
+                if (!File.Exists(file))
+                {
+                    CustomMessageBox.Show("File not found", Strings.ERROR);
+                    return;
+                }
+
+                // Use same format detection as BUT_loadwpfile_Click.
+                Settings.Instance["WPFileDirectory"] = Path.GetDirectoryName(file);
+
+                if (file.ToLower().EndsWith(".shp"))
+                {
+                    LoadSHPFile(file);
+                }
+                else if (file.ToLower().EndsWith(".kml"))
+                {
+                    var kml = File.ReadAllText(file);
+                    var parser = new Parser();
+                    parser.ElementAdded += processKMLMission;
+                    parser.ParseString(kml, false);
+                }
+                else
+                {
+                    string line = "";
+                    using (var fstream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (var fs = new StreamReader(fstream))
+                    {
+                        line = fs.ReadLine();
+                    }
+
+                    if (!string.IsNullOrEmpty(line) && line.StartsWith("{"))
+                    {
+                        var format = MissionFile.ReadFile(file);
+                        var cmds = MissionFile.ConvertToLocationwps(format);
+                        processToScreen(cmds);
+                        writeKML();
+                        MainMap.ZoomAndCenterMarkers("WPOverlay");
+                    }
+                    else
+                    {
+                        wpfilename = file;
+                        readQGC110wpfile(file);
+                    }
+                }
+
+                lbl_wpfile.Text = "Loaded " + Path.GetFileName(file);
+                updateUndoBuffer(false);
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show("Error A1: " + ex.Message, Strings.ERROR);
+            }
+
+
+            //////////////////
+            /////////////////
+        }
+
+        private static GMarkerGoogleType GetPlanMarkerTypeFromWaypointFilename(string filePath)
+        {
+            if (PlanMarkerColorOrder == null || PlanMarkerColorOrder.Length == 0)
+                return GMarkerGoogleType.green;
+
+            if (string.IsNullOrWhiteSpace(filePath))
+                return PlanMarkerColorOrder[0];
+
+            try
+            {
+                //expecting: name_01.waypoints, name_02.waypoints, etc.
+                var filename = Path.GetFileName(filePath);
+                if (string.IsNullOrWhiteSpace(filename))
+                    return PlanMarkerColorOrder[0];
+
+                var match = Regex.Match(filename, @"_(\d{2})\.(waypoints|txt)$", RegexOptions.IgnoreCase);
+                if (!match.Success)
+                    return PlanMarkerColorOrder[0];
+
+                if (!int.TryParse(match.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var planNumber) ||
+                    planNumber < 1)
+                    return PlanMarkerColorOrder[0];
+
+                var idx = (planNumber - 1) % PlanMarkerColorOrder.Length;
+                return PlanMarkerColorOrder[idx];
+            }
+            catch
+            {
+                return PlanMarkerColorOrder[0];
+            }
+        }
+
+        private static Color GetPlanRouteColorFromMarkerType(GMarkerGoogleType markerType)
+        {
+            switch (markerType)
+            {
+                case GMarkerGoogleType.purple:
+                    return Color.Purple;
+                case GMarkerGoogleType.yellow:
+                    return Color.Gold;
+                case GMarkerGoogleType.blue:
+                    return Color.Blue;
+                case GMarkerGoogleType.orange:
+                    return Color.Orange;
+                case GMarkerGoogleType.red:
+                    return Color.Red;
+                case GMarkerGoogleType.green:
+                default:
+                    return Color.Green;
+            }
+        }
+
+        // eye-open = show all plans in folder; eye-closed = show only the current plan-series
+        private bool isVisible = false;
+        private void btn_seeAllPlans_Click(object sender, EventArgs e)
+        {
+            isVisible = !isVisible; //toggle
+
+            if (isVisible)
+            {
+                btn_seeAllPlans.BackgroundImage = Properties.Resources.eye_open;
+                ShowAllPlansOnMap();
+                MainMap.Zoom = MainMap.Zoom - 0.5;
+                MainMap.Zoom = MainMap.Zoom + 0.5;
+            }
+            else
+            {
+                btn_seeAllPlans.BackgroundImage = Properties.Resources.eye_close;
+                ClearExtraPlanOverlays();
+            }
+                        
         }
     }
 }

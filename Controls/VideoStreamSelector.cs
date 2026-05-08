@@ -16,20 +16,64 @@ namespace MissionPlanner.Controls
     {
 
         public string gstreamer_pipeline = "";
+
+        class StreamOption
+        {
+            public string Name { get; set; }
+            public string Pipeline { get; set; }
+        }
+
         public VideoStreamSelector()
         {
             InitializeComponent();
 
-            // Populate the combobox with the available video streams
-            cmb_detectedstreams.DisplayMember = "Key";
-            cmb_detectedstreams.ValueMember = "Value";
-            cmb_detectedstreams.DataSource = CameraProtocol.VideoStreams.Values.Select
-            (
-                x => new KeyValuePair<string, mavlink_video_stream_information_t>
-                (
-                    System.Text.Encoding.UTF8.GetString(x.name).Split('\0')[0], x
-                )
-            ).ToList();
+            //populate the combobox with available MAVLink streams + local webcams (if available).
+            //tthe gstreamer backend expects an appsink named "outsink" outputting BGRA frames.
+            var options = new List<StreamOption>();
+
+            try
+            {
+                options.AddRange(CameraProtocol.VideoStreams.Values.Select(x =>
+                {
+                    var name = Encoding.UTF8.GetString(x.name).Split('\0')[0];
+                    return new StreamOption
+                    {
+                        Name = name,
+                        Pipeline = CameraProtocol.GStreamerPipeline(x),
+                    };
+                }));
+            }
+            catch
+            {
+                //ignore and keep UI functional even if MAVLink stream parsing fails
+            }
+
+            try
+            {
+                var devices = WebCamService.Capture.getDevices();
+                for (int i = 0; i < devices.Count; i++)
+                {
+                    var devName = devices[i];
+
+                    //Windows: ksvideosrc is generally available in GStreamer (MinGW builds).
+                    //let ksvideosrc choose default caps; we enforce BGRA for our appsink.
+                    var pipeline = $"ksvideosrc device-index={i} ! videoconvert ! video/x-raw,format=BGRA ! appsink name=outsink";
+
+                    options.Add(new StreamOption
+                    {
+                        Name = $"Webcam: {devName}",
+                        Pipeline = pipeline,
+                    });
+                }
+            }
+            catch
+            {
+                //ignore DirectShow may be unavailable (non-Windows/mono builds, missing deps, etc.)
+            }
+
+            cmb_detectedstreams.DisplayMember = nameof(StreamOption.Name);
+            cmb_detectedstreams.ValueMember = nameof(StreamOption.Pipeline);
+            cmb_detectedstreams.DataSource = options;
 
             Utilities.ThemeManager.ApplyThemeTo(this);
         }
@@ -49,7 +93,7 @@ namespace MissionPlanner.Controls
         {
             if (cmb_detectedstreams.SelectedValue == null)
                 return;
-            txt_gstreamraw.Text = CameraProtocol.GStreamerPipeline((mavlink_video_stream_information_t)cmb_detectedstreams.SelectedValue);
+            txt_gstreamraw.Text = cmb_detectedstreams.SelectedValue.ToString();
         }
     }
 }

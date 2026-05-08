@@ -56,6 +56,15 @@ namespace MissionPlanner.GCSViews
 
         internal PointLatLng MouseDownStart;
 
+        PictureBox _picOfflineMaps;
+        PictureBox _picLogExport;
+        PictureBox _picCameraMiniToggle;
+
+        // Left side (HUD + Actions tabs) collapse/expand
+        private MissionPlanner.Controls.MyButton _butToggleLeftPanel;
+        private bool _leftPanelUserCollapsed;
+        private int _leftPanelLastSplitterDistance = -1;
+
         //The file path of the selected script
         internal string selectedscript = "";
 
@@ -201,6 +210,8 @@ namespace MissionPlanner.GCSViews
             Format_SD_Card,
         }
 
+
+
         private Dictionary<int, string> NIC_table = new Dictionary<int, string>()
         {
             {0, "UNKNOWN" },
@@ -240,6 +251,21 @@ namespace MissionPlanner.GCSViews
 
             InitializeComponent();
 
+
+            this.tb_battery.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceHud, "battery_remaining", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0 %")); // 08may26_task1_3
+             
+
+
+
+
+
+
+
+            // Disabled: right-click context menu on left-side tabs Customize and Multiline opt in right click.
+            // can be enable later by restoring these ContextMenuStrip assignments.
+            this.tabControlactions.ContextMenuStrip = null;
+            this.SubMainLeft.Panel2.ContextMenuStrip = null;
+
             log.Info("Components Done");
 
             instance = this;
@@ -250,13 +276,16 @@ namespace MissionPlanner.GCSViews
             this.tabControlactions.ControlRemoved += (sender, e) => ManageLeftPanelVisibility();
             this.panel_persistent.ControlAdded += (sender, e) => ManageLeftPanelVisibility();
             this.panel_persistent.ControlRemoved += (sender, e) => ManageLeftPanelVisibility();
-            //    _serializer = new DockStateSerializer(dockContainer1);
-            //    _serializer.SavePath = Application.StartupPath + Path.DirectorySeparatorChar + "FDscreen.xml";
-            //    dockContainer1.PreviewRenderer = new PreviewRenderer();
+            //_serializer = new DockStateSerializer(dockContainer1);
+            //_serializer.SavePath = Application.StartupPath + Path.DirectorySeparatorChar + "FDscreen.xml";
+            //dockContainer1.PreviewRenderer = new PreviewRenderer();
             //
             mymap = gMapControl1;
             myhud = hud1;
             MainHcopy = MainH;
+
+            SetupOfflineMapsMapButton();
+            InitLeftPanelToggleUi();
 
             mymap.Paint += mymap_Paint;
 
@@ -412,7 +441,7 @@ namespace MissionPlanner.GCSViews
             MainV2.comPort.ParamListChanged += FlightData_ParentChanged;
 
             //HUD Theming, color setup
-            myhud.groundColor1 = ThemeManager.HudGroundTop;
+            myhud.groundColor1 = Color.Blue;//ThemeManager.HudGroundTop;
             myhud.groundColor2 = ThemeManager.HudGroundBot;
             myhud.skyColor1 = ThemeManager.HudSkyTop;
             myhud.skyColor2 = ThemeManager.HudSkyBot;
@@ -737,6 +766,8 @@ namespace MissionPlanner.GCSViews
                 return;
 
             tabControlactions.TabPages.Clear();
+            tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
+            tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
 
             foreach (var tabname in tabarray)
             {
@@ -3092,9 +3123,9 @@ namespace MissionPlanner.GCSViews
             }
             else
             {
-                // green
-                hud1.groundColor1 = Color.FromArgb(0x9b, 0xb8, 0x24);
-                hud1.groundColor2 = Color.FromArgb(0x41, 0x4f, 0x07);
+                // water type blue(default)..#1F73B7 
+                hud1.groundColor1 = Color.FromArgb(0x1f, 0x73, 0xb7);
+                hud1.groundColor2 = Color.FromArgb(0x0b, 0x2f, 0x4a);
             }
 
             Settings.config["groundColorToolStripMenuItem"] = groundColorToolStripMenuItem.Checked.ToString();
@@ -3311,15 +3342,108 @@ namespace MissionPlanner.GCSViews
             };
 
             bool controlsEmpty = controlsToCheck.Sum(x => x.Controls.Count) == 0;
-            bool panelVisible = !MainH.Panel1Collapsed;
+            bool panelVisible = !MainH.Panel1Collapsed; //orginal code
 
             // if controls are empty, but panel is visible -> hide
             if (controlsEmpty && panelVisible)
                 MainH.Panel1Collapsed = true;
+            
 
-            // if controls have content, but panel is hidden -> show
-            if (!controlsEmpty && !panelVisible)
+            // if controls have content, but panel is hidden -> show (unless user manually collapsed)
+            if (!_leftPanelUserCollapsed && !controlsEmpty && !panelVisible)
                 MainH.Panel1Collapsed = false;
+
+            MainH.Panel1Collapsed = true; //default hidden even if have contents  // 07may26_task5
+
+            UpdateLeftPanelToggleUi();
+        }
+
+
+        // hides left panel i.e hud1 and controlpanel
+        private void InitLeftPanelToggleUi()
+        {
+            try
+            {
+                _butToggleLeftPanel = new MissionPlanner.Controls.MyButton
+                {
+                    Name = "BUT_toggleLeftPanel",
+                    Size = new Size(22, 70),
+                    Location = new Point(0, 120),
+                    Anchor = AnchorStyles.Top | AnchorStyles.Left,
+                    Text = "<"
+                };
+
+                _butToggleLeftPanel.Click += (s, e) =>
+                {
+                    SetLeftPanelCollapsed(!MainH.Panel1Collapsed, userInitiated: true);
+                };
+
+                MainH.Panel2.Controls.Add(_butToggleLeftPanel);
+                _butToggleLeftPanel.BringToFront();
+
+                MainH.Panel2.ControlAdded += (s, e) =>
+                {
+                    // keep toggle accessible above overlays added later
+                    _butToggleLeftPanel?.BringToFront();
+                };
+
+                UpdateLeftPanelToggleUi();
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+            }
+        }
+
+        private void SetLeftPanelCollapsed(bool collapsed, bool userInitiated)
+        {
+            if (MainH == null)
+                return;
+
+            if (userInitiated)
+                _leftPanelUserCollapsed = collapsed;
+
+            if (collapsed)
+            {
+                if (!MainH.Panel1Collapsed)
+                    _leftPanelLastSplitterDistance = MainH.SplitterDistance;
+
+                MainH.Panel1Collapsed = true;
+            }
+            else
+            {
+                MainH.Panel1Collapsed = false;
+
+                if (_leftPanelLastSplitterDistance > 0)
+                {
+                    try { MainH.SplitterDistance = _leftPanelLastSplitterDistance; }
+                    catch { /* ignore invalid splitter distance during resize */ }
+                }
+            }
+
+            UpdateLeftPanelToggleUi();
+        }
+
+        private void UpdateLeftPanelToggleUi()
+        {
+            if (_butToggleLeftPanel == null || MainH == null)
+                return;
+
+            bool collapsed = MainH.Panel1Collapsed;
+            _butToggleLeftPanel.Text = collapsed ? ">" : "<";
+            _butToggleLeftPanel.Visible = true;
+
+            try
+            {
+                if (toolTip1 != null)
+                    toolTip1.SetToolTip(_butToggleLeftPanel, collapsed ? "Show HUD/Actions" : "Hide HUD/Actions");
+            }
+            catch
+            {
+                // ignore tooltip errors during init/dispose
+            }
+
+            _butToggleLeftPanel.BringToFront();
         }
 
         private void loadFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6550,22 +6674,222 @@ namespace MissionPlanner.GCSViews
             }
         }
 
+        void SetupOfflineMapsMapButton()
+        {
+            _picOfflineMaps = new PictureBox
+            {
+                Name = "picOfflineMaps",
+                Size = new Size(36, 36),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Cursor = Cursors.Hand,
+                TabStop = false,
+                BackColor = Color.Transparent
+            };
+            try
+            {
+                using (var ic = global::MissionPlanner.Properties.Resources.offline_map_ico)
+                {
+                    if (ic != null)
+                        _picOfflineMaps.Image = ic.ToBitmap();
+                }
+            }
+            catch
+            {
+            }
+
+            _picOfflineMaps.Click += (_, __) =>
+            {
+                try
+                {
+                    FlightPlanner.PrefetchMapTiles(gMapControl1, this);
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex);
+                    CustomMessageBox.Show(ex.Message, Strings.ERROR);
+                }
+            };
+
+            splitContainer1.Panel2.Controls.Add(_picOfflineMaps);
+            _picOfflineMaps.BringToFront();
+            toolTip1.SetToolTip(_picOfflineMaps, "Offline maps download (hold ALT and drag to select an area)");
+
+            _picLogExport = new PictureBox
+            {
+                Name = "picLogExport",
+                Size = new Size(36, 36),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Cursor = Cursors.Hand,
+                TabStop = false,
+                BackColor = Color.Transparent
+            };
+            try
+            {
+                var bmp = global::MissionPlanner.Properties.Resources.log_files_ico;
+                if (bmp != null)
+                    _picLogExport.Image = (Bitmap)bmp.Clone();
+            }
+            catch
+            {
+            }
+
+            _picLogExport.Click += (_, __) =>
+            {
+                try
+                {
+                    BUT_logbrowse_Click(null, null);
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex);
+                    CustomMessageBox.Show(ex.Message, Strings.ERROR);
+                }
+            };
+
+            splitContainer1.Panel2.Controls.Add(_picLogExport);
+            _picLogExport.BringToFront();
+            toolTip1.SetToolTip(_picLogExport, "Log files :browse, review, and export telemetry logs");
+
+            _picCameraMiniToggle = new PictureBox
+            {
+                Name = "picCameraMiniToggle",
+                Size = new Size(36, 36),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Cursor = Cursors.Hand,
+                TabStop = false,
+                BackColor = Color.Transparent
+            };
+            try
+            {
+                var camBmp = global::MissionPlanner.Properties.Resources.camera_icon;
+                if (camBmp != null)
+                    _picCameraMiniToggle.Image = (Bitmap)camBmp.Clone();
+            }
+            catch
+            {
+            }
+
+            _picCameraMiniToggle.Click += (_, __) =>
+            {
+                try
+                {
+                    ToggleGimbalMiniVideoFromMapButton();
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex);
+                    CustomMessageBox.Show(ex.Message, Strings.ERROR);
+                }
+            };
+
+            splitContainer1.Panel2.Controls.Add(_picCameraMiniToggle);
+            _picCameraMiniToggle.BringToFront();
+            toolTip1.SetToolTip(_picCameraMiniToggle,
+                "Camera — show or hide mini video on the map (bottom-right). Right-click the video for stream and gimbal options.");
+
+            LayoutMapOverlayToolButtons();
+            LayoutCameraMiniToggleButton();
+        }
+
+        /// <summary>
+        /// True when gimbal video is shown as the floating mini panel on the map (not full-screen or pop-out).
+        /// </summary>
+        bool IsGimbalMiniVideoActive()
+        {
+            return _gimbalVideoControl != null && !_gimbalVideoControl.IsDisposed
+                                             && _gimbalVideoControl.Visible
+                                             && _gimbalVideoControl.Dock == DockStyle.None
+                                             && splitContainer1.Panel2.Controls.Contains(_gimbalVideoControl);
+        }
+
+        void ToggleGimbalMiniVideoFromMapButton()
+        {
+            if (MainV2.MONO)
+                return;
+
+            if (_gimbalVideoControl != null && !_gimbalVideoControl.IsDisposed && _gimbalVideoControl.Visible &&
+                _gimbalVideoControl.Dock == DockStyle.Fill)
+            {
+                gimbalVideoMiniToolStripMenuItem_Click(null, null);
+                return;
+            }
+
+            if (IsGimbalMiniVideoActive())
+            {
+                gimbalVideoMiniToolStripMenuItem_Click(null, null);
+                var gv = _gimbalVideoControl;
+                if (gv != null && !gv.IsDisposed)
+                {
+                    gv.Visible = false;
+                    gv.Stop();
+                    gv.Dispose();
+                }
+
+                return;
+            }
+
+            gimbalVideoMiniToolStripMenuItem_Click(null, null);
+        }
+
+        void LayoutCameraMiniToggleButton()
+        {
+            if (_picCameraMiniToggle == null || _picCameraMiniToggle.IsDisposed)
+                return;
+            const int pad = 8;
+            var x = pad;
+            var y = pad;
+            try
+            {
+                if (windDir1 != null && !windDir1.IsDisposed)
+                    x = windDir1.Right + 6;
+            }
+            catch
+            {
+            }
+
+            _picCameraMiniToggle.Location = new Point(x, y);
+        }
+
+        void LayoutMapOverlayToolButtons()
+        {
+            if (_picOfflineMaps == null || _picOfflineMaps.IsDisposed)
+                return;
+            const int marginFromRight = 52;
+            const int topY = 6;
+            const int gap = 4;
+            var x = Math.Max(4, splitContainer1.Panel2.ClientSize.Width - _picOfflineMaps.Width - marginFromRight);
+            _picOfflineMaps.Location = new Point(x, topY);
+
+            if (_picLogExport != null && !_picLogExport.IsDisposed)
+            {
+                _picLogExport.Location = new Point(x, _picOfflineMaps.Bottom + gap);
+            }
+        }
+
         // Resize the mini video or mini map when the container is resized
         private void splitContainer1_Panel2_Resize(object sender, EventArgs e)
         {
+            LayoutMapOverlayToolButtons();
+            LayoutCameraMiniToggleButton();
+
             bool miniVideo = splitContainer1.Panel2.Contains(_gimbalVideoControl)
                 && _gimbalVideoControl?.Dock == DockStyle.None
                 && _gimbalVideoControl.Visible;
             bool miniMap = gMapControl1.Dock == DockStyle.None && gMapControl1.Visible;
             if (miniVideo)
             {
-                var width = (int)(splitContainer1.Panel2.Width * 0.3);
-                var height = (int)(splitContainer1.Panel2.Height * 0.3);
-                var aspectRatio = _gimbalVideoControl.VideoBox.Image.Width / (double)_gimbalVideoControl.VideoBox.Image.Height;
-                (width, height) = (
-                    Math.Min(width, (int)(height * aspectRatio)),
-                    Math.Min(height, (int)(width / aspectRatio))
-                );
+                var width = (int)(splitContainer1.Panel2.Width * 0.38); //ashish
+                var height = (int)(splitContainer1.Panel2.Height * 0.34);
+                var img = _gimbalVideoControl.VideoBox?.Image;
+                if (img != null && img.Width > 0 && img.Height > 0)
+                {
+                    var aspectRatio = img.Width / (double)img.Height;
+                    (width, height) = (
+                        Math.Min(width, (int)(height * aspectRatio)),
+                        Math.Min(height, (int)(width / aspectRatio))
+                    );
+                }
+
                 var x = splitContainer1.Panel2.Width - width - TRK_zoom.Width;
                 var y = splitContainer1.Panel2.Height - height;
                 _gimbalVideoControl.Location = new Point(x, y);
@@ -6613,7 +6937,7 @@ namespace MissionPlanner.GCSViews
 
         private void gimbalVideoMiniToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // If the gimbal video is in its own window, close it
+            //if the gimbal video is in its own window, close it
             var containingForm = gimbalVideoControl.Parent as Form;
 
             // Fill the panel with the map

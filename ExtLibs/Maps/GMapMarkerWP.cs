@@ -18,7 +18,12 @@ namespace MissionPlanner.Maps
         static Font font;
 
         public GMapMarkerWP(PointLatLng p, string wpno)
-            : base(p, GMarkerGoogleType.green)
+            : this(p, wpno, GMarkerGoogleType.green)
+        {
+        }
+
+        public GMapMarkerWP(PointLatLng p, string wpno, GMarkerGoogleType type)
+            : base(p, type)
         {
             this.wpno = wpno;
             if (font == null)

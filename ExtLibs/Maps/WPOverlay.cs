@@ -16,6 +16,10 @@ namespace MissionPlanner.ArduPilot
     {
         public GMapOverlay overlay = new GMapOverlay("WPOverlay");
 
+        public GMarkerGoogleType MissionMarkerType { get; set; } = GMarkerGoogleType.green;
+        public Color MissionRouteColor { get; set; } = Color.Green;
+        //public static GMapRoute route2 = new GMapRoute("wp route"); //test.. Ashish
+
         /// <summary>
         /// list of points as per the mission
         /// </summary>
@@ -389,7 +393,7 @@ namespace MissionPlanner.ArduPilot
                 GMapMarker m = null;                
                 if(type == MAVLink.MAV_MISSION_TYPE.MISSION)
                 {
-                    m = new GMapMarkerWP(point, tag);
+                    m = new GMapMarkerWP(point, tag, MissionMarkerType);
                     if (alt.HasValue)
                     {
                         m.ToolTipMode = MarkerTooltipMode.OnMouseOver;
@@ -443,7 +447,7 @@ namespace MissionPlanner.ArduPilot
             if (fullpointlist.Count == 0)
                 return;
 
-            GMapRoute route = new GMapRoute("wp route");
+            GMapRoute route = new GMapRoute("wp route");  ///test .. Ashish
             GMapRoute homeroute = new GMapRoute("home route");
 
             PointLatLngAlt lastpnt = fullpointlist[0];
@@ -569,10 +573,12 @@ namespace MissionPlanner.ArduPilot
                         return;
                     }
 
-                    route.Points.Add(x);
+                    route.Points.Add(x);// actual code
+                    //route2.Points.Add(x);// test .. Ashish
                 });
 
-                homeroute.Stroke = new Pen(Color.Yellow, 2);
+                homeroute.Stroke = new Pen(MissionRouteColor, 2);
+
                 // if we have a large distance between home and the first/last point, it hangs on the draw of a the dashed line.
                 if (homepoint.GetDistance(lastpoint) < 5000 && homepoint.GetDistance(firstpoint) < 5000)
                     homeroute.Stroke.DashStyle = DashStyle.Dash;
@@ -583,9 +589,15 @@ namespace MissionPlanner.ArduPilot
                     overlay.Routes.Add(homeroute);
                 }
 
-                route.Stroke = new Pen(Color.Yellow, 4);
+                //actual code
+                route.Stroke = new Pen(MissionRouteColor, 4);
                 route.Stroke.DashStyle = DashStyle.Custom;
                 overlay.Routes.Add(route);
+
+                //test.. Ashish
+                //route2.Stroke = new Pen(Color.Red, 4);
+                //route2.Stroke.DashStyle = DashStyle.Custom;
+                //overlay.Routes.Add(route2);
             }
         }
     }

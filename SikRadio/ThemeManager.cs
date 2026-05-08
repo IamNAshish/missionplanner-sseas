@@ -86,8 +86,8 @@ namespace MissionPlanner.Utilities
 
         private static void ApplyBurntKermitTheme(Control temp, int level)
         {
-            var BGColor = Color.FromArgb(0x26, 0x27, 0x28); // background
-            var ControlBGColor = Color.FromArgb(0x43, 0x44, 0x45); // editable bg color
+            var BGColor = Color.FromArgb(14, 20, 26); // Saif Seas slate background
+            var ControlBGColor = Color.FromArgb(28, 40, 52); // panel / input
             var TextColor = Color.White;
 
             if (level == 0)
@@ -106,7 +106,7 @@ namespace MissionPlanner.Utilities
                 }
                 else if (ctl.GetType() == typeof (MyButton))
                 {
-                    var PrimeColor = Color.FromArgb(0x94, 0xc1, 0x1f);
+                    var PrimeColor = Color.FromArgb(0, 174, 239); // brand cyan
 
                     var but = (MyButton) ctl;
                     //but.BGGradTop = Color.FromArgb(PrimeColor.R, PrimeColor.G, PrimeColor.B);
