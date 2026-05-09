@@ -245,15 +245,81 @@ namespace MissionPlanner.GCSViews
 
         private bool transponderNeverConnected = true;
 
+        private Bitmap originalVehicleImage_top = Properties.Resources.drone_top;// 09may26_task2
+        private Bitmap originalVehicleImage_rearView = Properties.Resources.drone_rearView;// 09may26_task3
+        
+
         public FlightData()
         {
             log.Info("Ctor Start");
 
             InitializeComponent();
 
+            //hud1 shifting to tabpageDynamics
 
             this.tb_battery.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceHud, "battery_remaining", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0 %")); // 08may26_task1_3
-             
+  
+            // 08may26_task1_4 start
+            var binding = new Binding("Text", this.bindingSourceHud, "connected", true);
+
+            binding.Format += (s, e) =>
+            {
+                if (e.Value is bool connected)
+                {
+                    e.Value = connected ? "Connected" : "Disconnected";
+
+                    lbl_Connected.ForeColor = connected
+                        ? Color.LimeGreen
+                        : Color.Red;
+                }
+            };
+
+            this.lbl_Connected.DataBindings.Add(binding);
+            // 08may26_task1_4 end
+
+
+            //hud1 property ARM/DISARM 
+            //this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("status", this.bindingSourceHud, "armed", true));
+
+            ///////////////////////////ekade ravali
+            // 08may26_task1_5 start
+            binding = new Binding("Text", this.bindingSourceHud, "armed", true);
+
+            binding.Format += (s, e) =>
+            {
+                if (e.Value != null)
+                {
+                    bool armed = Convert.ToBoolean(e.Value);
+
+                    e.Value = armed ? "ARMED" : "DISARMED";
+
+                    lbl_ARM.ForeColor = armed
+                        ? Color.LimeGreen
+                        : Color.Red;
+                }
+            };
+
+            this.lbl_ARM.DataBindings.Add(binding);
+            // 08may26_task1_5 end
+
+            //09may26_task1
+            this.tb_yaw.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceHud, "yaw", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged,0, "0 deg"));
+
+
+            //09may26_task2 start ..
+            //heading
+            var heading = Convert.ToSingle(MainV2.comPort.MAV.cs.yaw);
+            //private Bitmap originalVehicleImage_top =Properties.Resources.drone_top;//moved to ouside globally
+            pictureBox_yaw.Image =  RotateImage(originalVehicleImage_top, heading);
+            //09may26_task2 end ..
+
+            //09may26_task3 start ..
+            //roll
+            heading = Convert.ToSingle(MainV2.comPort.MAV.cs.roll);
+            pictureBox_roll.Image = RotateImage(originalVehicleImage_rearView, heading);
+            //09may26_task2 end ..
+
+
 
 
 
@@ -452,6 +518,32 @@ namespace MissionPlanner.GCSViews
             tabControlactions.Multiline = Settings.Instance.GetBoolean("tabControlactions_Multiline", false);
 
         }
+
+
+        // 09may26_task1
+        private Bitmap RotateImage(Image image, float angle)
+        {
+            Bitmap rotated = new Bitmap(image.Width, image.Height);
+
+            using (Graphics g = Graphics.FromImage(rotated))
+            {
+                g.TranslateTransform(image.Width / 2f, image.Height / 2f);
+
+                g.RotateTransform(angle);
+
+                g.TranslateTransform(-image.Width / 2f, -image.Height / 2f);
+
+                g.DrawImage(image, new Point(0, 0));
+            }
+
+            return rotated;
+        }
+
+
+
+
+
+
 
         public void Activate()
         {
@@ -6996,6 +7088,29 @@ namespace MissionPlanner.GCSViews
 
             // Pass `this` to keep the pop-out always on top
             form.Show(this);
+        }
+
+
+        //testing
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            
+            float heading = 0;
+
+            if (float.TryParse(textBox1.Text, out heading))
+            {
+                var old = pictureBox_yaw.Image;
+                var old2 = pictureBox_roll.Image;
+
+                pictureBox_yaw.Image =
+                    RotateImage(originalVehicleImage_top, heading);
+                pictureBox_roll.Image =
+                    RotateImage(originalVehicleImage_rearView, heading);
+
+                old?.Dispose();
+                old2?.Dispose();
+            }
+        
         }
     }
 }
