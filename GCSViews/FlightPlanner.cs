@@ -58,6 +58,8 @@ using static IronPython.Modules._ast;
 using SixLabors.ImageSharp.PixelFormats;
 using ZedGraph;
 using Renci.SshNet.Common;
+using Dowding.Model;
+using static MissionPlanner.Controls.ConnectionControl;
 
 namespace MissionPlanner.GCSViews
 {
@@ -945,6 +947,57 @@ namespace MissionPlanner.GCSViews
 
             frmProgressReporter.Dispose();
         }
+
+        // 11may26_task3
+        //AssignPlanToVehicle : in swarm this fun will assign plans to drones/auvs 
+        private void AssignPlanToVehicle(string missionFile,port_sysid vehicle)
+        {
+            try
+            {
+                if (!File.Exists(missionFile))
+                {
+                    CustomMessageBox.Show("Mission file not found");
+                    return;
+                }
+
+                // Load mission
+                var mission = MissionFile.ReadFile(missionFile);
+
+                var list = MissionFile.ConvertToLocationwps(mission);
+
+                processToScreen(list, append: false);
+
+                updateUndoBuffer(false);
+
+                // Backup current target
+                var oldPort = MainV2.comPort;
+                var oldSysid = MainV2.comPort.sysidcurrent;
+                var oldCompid = MainV2.comPort.compidcurrent;
+
+                // Switch target vehicle
+                MainV2.comPort = vehicle.port;
+                MainV2.comPort.sysidcurrent = (byte)vehicle.sysid;
+                MainV2.comPort.compidcurrent = (byte)vehicle.compid;
+
+                // Reuse existing upload logic
+                BUT_write_Click(null, null);
+
+                // Restore previous vehicle
+                MainV2.comPort = oldPort;
+                MainV2.comPort.sysidcurrent = oldSysid;
+                MainV2.comPort.compidcurrent = oldCompid;
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show(
+                    "Assignment failed: " + ex.Message);
+            }
+
+        }
+
+
+
+
 
         /// <summary>
         /// Writes the mission from the datagrid and values to the EEPROM
@@ -9713,6 +9766,94 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
                 ClearExtraPlanOverlays();
             }
                         
+        }
+
+        // 11may26_task3
+        //this is used to get the drones/auvs list
+        private List<port_sysid> GetVehicles()
+        {
+            var result = new List<port_sysid>();
+
+            foreach (var port in MainV2.Comports.ToArray())
+            {
+                var list = port.MAVlist.GetRawIDS();
+
+                foreach (int item in list)
+                {
+                    var temp = new port_sysid()
+                    {
+                        compid = (item % 256),
+                        sysid = (item / 256),
+                        port = port
+                    };
+
+                    if (temp.compid ==
+                        (int)MAVLink.MAV_COMPONENT.MAV_COMP_ID_MISSIONPLANNER)
+                        continue;
+
+                    result.Add(temp);
+                }
+            }
+
+            return result;
+        }
+        // 11may26_task3 
+        private async void btn_SwarmRun_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var vehicles = GetVehicles();
+
+                if (vehicles.Count == 0)
+                {
+                    CustomMessageBox.Show("No vehicles found");
+                    return;
+                }
+
+                if (!(comboBox_plans.Tag is string[] fullPaths))
+                {
+                    CustomMessageBox.Show("No plans loaded");
+                    return;
+                }
+
+                int count = Math.Min(
+                    vehicles.Count,
+                    fullPaths.Length);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var v = vehicles[i];
+
+                    string file = fullPaths[i];
+
+                    // switch target vehicle
+                    MainV2.comPort = v.port;
+                    MainV2.comPort.sysidcurrent = (byte)v.sysid;
+                    MainV2.comPort.compidcurrent = (byte)v.compid;
+
+                    // load mission
+                    var mission = MissionFile.ReadFile(file);
+
+                    var list = MissionFile.ConvertToLocationwps(mission);
+
+                    processToScreen(list, append: false);
+
+                    updateUndoBuffer(false);
+
+                    // upload using existing pipeline
+                    BUT_write_Click(null, null);
+
+                    // wait before next upload
+                    await Task.Delay(5000);
+                }
+
+                CustomMessageBox.Show("Swarm upload complete");
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show(
+                    "Swarm upload failed: " + ex.Message);
+            }
         }
     }
 }

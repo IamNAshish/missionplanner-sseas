@@ -81,9 +81,9 @@
             // 
             // cmb_sysid
             // 
-            this.cmb_sysid.BackColor = System.Drawing.Color.Black;
+            this.cmb_sysid.BackColor = System.Drawing.Color.Red; //test
             this.cmb_sysid.DropDownWidth = 200;
-            this.cmb_sysid.ForeColor = System.Drawing.Color.White;
+            this.cmb_sysid.ForeColor = System.Drawing.Color.Red;
             this.cmb_sysid.FormattingEnabled = true;
             resources.ApplyResources(this.cmb_sysid, "cmb_sysid");
             this.cmb_sysid.Name = "cmb_sysid";

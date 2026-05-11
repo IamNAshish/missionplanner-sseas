@@ -234,6 +234,7 @@ namespace MissionPlanner.GCSViews
             this.Dist = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AZ = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TagData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btn_SwarmRun = new MissionPlanner.Controls.MyButton();
             this.panel5.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panelWaypoints.SuspendLayout();
@@ -298,6 +299,7 @@ namespace MissionPlanner.GCSViews
             // panel5
             // 
             this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel5.Controls.Add(this.btn_SwarmRun);
             this.panel5.Controls.Add(this.but_writewpfast);
             this.panel5.Controls.Add(this.BUT_write);
             this.panel5.Controls.Add(this.BUT_read);
@@ -1616,6 +1618,14 @@ namespace MissionPlanner.GCSViews
             this.TagData.Name = "TagData";
             this.TagData.ReadOnly = true;
             // 
+            // btn_SwarmRun
+            // 
+            resources.ApplyResources(this.btn_SwarmRun, "btn_SwarmRun");
+            this.btn_SwarmRun.Name = "btn_SwarmRun";
+            this.btn_SwarmRun.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.btn_SwarmRun.UseVisualStyleBackColor = true;
+            this.btn_SwarmRun.Click += new System.EventHandler(this.btn_SwarmRun_Click);
+            // 
             // FlightPlanner
             // 
             this.BackColor = System.Drawing.SystemColors.Control;
@@ -1800,6 +1810,19 @@ namespace MissionPlanner.GCSViews
         private ToolStripMenuItem offsetPolygonToolStripMenuItem;
         private ToolStripMenuItem offsetPolygonToolStripMenuItem2;
         public CheckBox chk_usemavftp;
+        private ToolStripMenuItem gDALOpacityToolStripMenuItem;
+        private MyButton BUT_InjectCustomMap;
+        private ProgressBar progressBarInjectCustomMap;
+        private NumericUpDown Zoomlevel;
+        private Button btn_copyshift2;
+        private TextBox tb_angle;
+        private TextBox tb_distance;
+        private ContextMenu contextMenu1;
+        private TextBox tb_no_of_plans;
+        public ComboBox comboBox_plans;
+        private Panel panel6;
+        public CheckBox checkBox_multiplePlans;
+        private Button btn_seeAllPlans;
         private DataGridViewComboBoxColumn Command;
         private DataGridViewTextBoxColumn Param1;
         private DataGridViewTextBoxColumn Param2;
@@ -1821,18 +1844,6 @@ namespace MissionPlanner.GCSViews
         private DataGridViewTextBoxColumn Dist;
         private DataGridViewTextBoxColumn AZ;
         private DataGridViewTextBoxColumn TagData;
-        private ToolStripMenuItem gDALOpacityToolStripMenuItem;
-        private MyButton BUT_InjectCustomMap;
-        private ProgressBar progressBarInjectCustomMap;
-        private NumericUpDown Zoomlevel;
-        private Button btn_copyshift2;
-        private TextBox tb_angle;
-        private TextBox tb_distance;
-        private ContextMenu contextMenu1;
-        private TextBox tb_no_of_plans;
-        public ComboBox comboBox_plans;
-        private Panel panel6;
-        public CheckBox checkBox_multiplePlans;
-        private Button btn_seeAllPlans;
+        public MyButton btn_SwarmRun;
     }
 }

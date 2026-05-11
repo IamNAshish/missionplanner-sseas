@@ -330,14 +330,14 @@ namespace MissionPlanner.GCSViews
             // Disabled: right-click context menu on left-side tabs Customize and Multiline opt in right click.
             // can be enable later by restoring these ContextMenuStrip assignments.
             this.tabControlactions.ContextMenuStrip = null;
-            this.SubMainLeft.Panel2.ContextMenuStrip = null;
+            this.SubMainRight.Panel2.ContextMenuStrip = null;
 
             log.Info("Components Done");
 
             instance = this;
 
-            this.SubMainLeft.Panel1.ControlAdded += (sender, e) => ManageLeftPanelVisibility();
-            this.SubMainLeft.Panel1.ControlRemoved += (sender, e) => ManageLeftPanelVisibility();
+            this.SubMainRight.Panel1.ControlAdded += (sender, e) => ManageLeftPanelVisibility();
+            this.SubMainRight.Panel1.ControlRemoved += (sender, e) => ManageLeftPanelVisibility();
             this.tabControlactions.ControlAdded += (sender, e) => ManageLeftPanelVisibility();
             this.tabControlactions.ControlRemoved += (sender, e) => ManageLeftPanelVisibility();
             this.panel_persistent.ControlAdded += (sender, e) => ManageLeftPanelVisibility();
@@ -2743,8 +2743,8 @@ namespace MissionPlanner.GCSViews
             //GetFormFromGuid(GetOrCreateGuid("fd_hud_guid")).Controls.Add(hud1);
             ((sender as Form).Tag as Control).Controls.Add(hud1);
             //SubMainLeft.Panel1.Controls.Add(hud1);
-            if (hud1.Parent == SubMainLeft.Panel1)
-                SubMainLeft.Panel1Collapsed = false;
+            if (hud1.Parent == SubMainRight.Panel1)
+                SubMainRight.Panel1Collapsed = false;
             huddropout = false;
         }
 
@@ -3361,13 +3361,13 @@ namespace MissionPlanner.GCSViews
             if (huddropout)
                 return;
 
-            if(hud1.Parent == SubMainLeft.Panel1)
-                SubMainLeft.Panel1Collapsed = true;
+            if(hud1.Parent == SubMainRight.Panel1)
+                SubMainRight.Panel1Collapsed = true;
             Form dropout = new Form();
             dropout.Text = "HUD Dropout";
             dropout.Size = new Size(hud1.Width, hud1.Height + 20);
             dropout.Tag = hud1.Parent;
-            SubMainLeft.Panel1.Controls.Remove(hud1);
+            SubMainRight.Panel1.Controls.Remove(hud1);
             dropout.Controls.Add(hud1);
             dropout.Resize += dropout_Resize;
             dropout.FormClosed += dropout_FormClosed;
@@ -3390,11 +3390,11 @@ namespace MissionPlanner.GCSViews
         {
             Console.WriteLine("HUD resize " + hud1.Width + " " + hud1.Height); // +"\n"+ System.Environment.StackTrace);
 
-            if (hud1.Parent == this.SubMainLeft.Panel1)
+            if (hud1.Parent == this.SubMainRight.Panel1)
             {
-                var ht = SubMainLeft.SplitterDistance;
+                var ht = SubMainRight.SplitterDistance;
                 if (ht >= hud1.Height + 5 || ht <= hud1.Height - 5)
-                    SubMainLeft.SplitterDistance = hud1.Height;
+                    SubMainRight.SplitterDistance = hud1.Height;
             }
         }
 
@@ -3428,7 +3428,7 @@ namespace MissionPlanner.GCSViews
             // Define controls to check, ADD THEM HERE
             List<Control> controlsToCheck = new List<Control>()
             {
-                SubMainLeft.Panel1, // contains hud1
+                SubMainRight.Panel1, // contains hud1
                 panel_persistent,   // might contain plugin controls
                 tabControlactions   // contains the tabs
             };
@@ -5321,17 +5321,17 @@ namespace MissionPlanner.GCSViews
 
             MainH.Panel2.SuspendLayout();
 
-            if (this.SubMainLeft.Panel1.Controls.Contains(hud1))
+            if (this.SubMainRight.Panel1.Controls.Contains(hud1))
             {
                 Settings.Instance["HudSwap"] = "true";
                 MainH.Panel2.Controls.Add(hud1);
-                SubMainLeft.Panel1.Controls.Add(tableMap);
+                SubMainRight.Panel1.Controls.Add(tableMap);
             }
             else
             {
                 Settings.Instance["HudSwap"] = "false";
                 MainH.Panel2.Controls.Add(tableMap);
-                SubMainLeft.Panel1.Controls.Add(hud1);
+                SubMainRight.Panel1.Controls.Add(hud1);
             }
 
             MainH.Panel2.ResumeLayout();
