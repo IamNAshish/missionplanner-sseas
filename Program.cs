@@ -491,8 +491,18 @@ namespace MissionPlanner
             {
                 Thread.CurrentThread.Name = "Base Thread";
                 Console.WriteLine("Application.Run(new MainV2())");
-                Application.Run(new MainV2()); //old code commented test Ashish
-                
+                //Application.Run(new MainV2()); //old code commented test Ashish
+
+                try
+                {
+                    Application.Run(new MainV2());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("MainV2 says:"+ex.ToString());
+                }
+
+
                 ////new code 
                 //MainV2 mainForm = null;
                 //Task.Run(() =>

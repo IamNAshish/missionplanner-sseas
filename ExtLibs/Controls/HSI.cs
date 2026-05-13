@@ -17,6 +17,8 @@ namespace MissionPlanner.Controls
         int _heading = 0;
         int _navbearing = 0;
 
+        private Image boat = Image.FromFile(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"boat_top.png")); // 13may26_task1_3
+
         [System.ComponentModel.Browsable(true)]
         public int Heading
         {
@@ -154,17 +156,38 @@ namespace MissionPlanner.Controls
 
             e.Graphics.RotateTransform(Heading);
 
-            Pen or = new Pen(Color.DarkOrange,2);
-            // body
-            e.Graphics.DrawLine(or, 0, 30, 0, -10);
-            // wing
-            e.Graphics.DrawLine(or, -30, 0, 30, 0);
-            //tail
-            e.Graphics.DrawLine(or, -10, 25, 10, 25);
 
-            e.Graphics.DrawLine(new Pen(Color.White,2),0,-_radiusoutside,0,-_radiusinside);
+            // 13may6_task1_3 
+            // this was aircraft drawing 
+            //Pen or = new Pen(Color.DarkOrange,2);
+            //// body
+            //e.Graphics.DrawLine(or, 0, 30, 0, -10);
+            //// wing
+            //e.Graphics.DrawLine(or, -30, 0, 30, 0);
+            ////tail
+            //e.Graphics.DrawLine(or, -10, 25, 10, 25);
 
-            e.Graphics.RotateTransform(NavHeading - Heading);
+            //Image boat = Image.FromFile(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,@"Resources\boat_top.png"));//not working // 13may26_task1_3
+            
+            //Image boat = Image.FromFile(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"boat_top.png")); //working  sent to global // 13may26_task1_3
+
+            //13may6_task1_3  this was for aircraft
+            //e.Graphics.DrawImage(
+            //    boat,
+            //    -20,
+            //    -20,
+            //    40,
+            //    40);
+
+
+            int boatsize = Width / 2;
+            e.Graphics.DrawImage(boat,-boatsize / 2,-boatsize / 2,boatsize,boatsize);// 13may6_task1_3
+
+
+
+            //e.Graphics.DrawLine(new Pen(Color.White,2),0,-_radiusoutside,0,-_radiusinside); // 13may26_task1_3
+
+            e.Graphics.RotateTransform(NavHeading - Heading); 
 
             Point[] headbug = new Point[7];
             headbug[0] = new Point(-5, -_radiusoutside + 0);
@@ -175,9 +198,9 @@ namespace MissionPlanner.Controls
             headbug[5] = new Point(5, -_radiusoutside + 4);
             headbug[6] = new Point(5, -_radiusoutside + 0);
 
-            e.Graphics.DrawLines(or, headbug);
+            //e.Graphics.DrawLines(or, headbug); // 13may26_task1_3
 
-          //  this.Invalidate();
+            //  this.Invalidate();
         }
 
         protected override void OnResize(EventArgs e)

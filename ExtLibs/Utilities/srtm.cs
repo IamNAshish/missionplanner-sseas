@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text.RegularExpressions;
+﻿using GMap.NET;
 using ICSharpCode.SharpZipLib.Zip;
-using System.Threading;
-using System.Collections;
-using System.Net.Http;
-using System.Threading.Tasks;
 using log4net;
-using GMap.NET;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Geometry;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Transactions;
 
 namespace MissionPlanner.Utilities
@@ -100,6 +101,11 @@ namespace MissionPlanner.Utilities
 
             StartQueueProcess();
 
+            //if (!Directory.Exists(datadirectory))
+            //{
+            //    Directory.CreateDirectory(datadirectory);
+            //}// 13may6_task1
+
             Directory.GetFiles(datadirectory).ToList().ForEach(x =>
             {
                 var fi = new FileInfo(x);
@@ -186,7 +192,7 @@ namespace MissionPlanner.Utilities
                     }
                 }
 
-                if (cache.ContainsKey(filename) || File.Exists(datadirectory + Path.DirectorySeparatorChar + filename))
+                if (cache.ContainsKey(filename) || File.Exists(datadirectory + System.IO.Path.DirectorySeparatorChar + filename))
                 {
                     // srtm hgt files
 
@@ -201,7 +207,7 @@ namespace MissionPlanner.Utilities
                         }
 
                         using (
-                            FileStream fs = new FileStream(datadirectory + Path.DirectorySeparatorChar + filename,
+                            FileStream fs = new FileStream(datadirectory + System.IO.Path.DirectorySeparatorChar + filename,
                                 FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
 
@@ -293,11 +299,11 @@ namespace MissionPlanner.Utilities
                 string filename2 = "srtm_" + Math.Round((lng + 2.5 + 180) / 5, 0).ToString("00") + "_" +
                                    Math.Round((60 - lat + 2.5) / 5, 0).ToString("00") + ".asc";
 
-                if (File.Exists(datadirectory + Path.DirectorySeparatorChar + filename2))
+                if (File.Exists(datadirectory + System.IO.Path.DirectorySeparatorChar + filename2))
                 {
                     using (
                         StreamReader sr =
-                            new StreamReader(readFile(datadirectory + Path.DirectorySeparatorChar + filename2)))
+                            new StreamReader(readFile(datadirectory + System.IO.Path.DirectorySeparatorChar + filename2)))
                     {
 
                         int nox = 0;
@@ -590,9 +596,9 @@ namespace MissionPlanner.Utilities
         static async Task get3secfile(object name)
         {
             // check file doesnt already exist
-            if (File.Exists(datadirectory + Path.DirectorySeparatorChar + (string) name))
+            if (File.Exists(datadirectory + System.IO.Path.DirectorySeparatorChar + (string) name))
             {
-                FileInfo fi = new FileInfo(datadirectory + Path.DirectorySeparatorChar + (string) name);
+                FileInfo fi = new FileInfo(datadirectory + System.IO.Path.DirectorySeparatorChar + (string) name);
                 if (fi.Length != 0)
                     return;
             }
@@ -651,7 +657,7 @@ namespace MissionPlanner.Utilities
                 using (Stream resstream = await res.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 using (
                     BinaryWriter bw =
-                        new BinaryWriter(File.Create(datadirectory + Path.DirectorySeparatorChar + filename + ".zip")))
+                        new BinaryWriter(File.Create(datadirectory + System.IO.Path.DirectorySeparatorChar + filename + ".zip")))
                 {
                     byte[] buf1 = new byte[1024*4];
 
@@ -674,7 +680,7 @@ namespace MissionPlanner.Utilities
                     FastZip fzip = new FastZip();
 
                     lock(extract)
-                        fzip.ExtractZip(datadirectory + Path.DirectorySeparatorChar + filename + ".zip", datadirectory, "");
+                        fzip.ExtractZip(datadirectory + System.IO.Path.DirectorySeparatorChar + filename + ".zip", datadirectory, "");
 
                     fzip = null;
                 }
@@ -694,14 +700,14 @@ namespace MissionPlanner.Utilities
 
             string name = new Uri(url).AbsolutePath;
 
-            name = Path.GetFileName(name.TrimEnd('/'));
+            name = System.IO.Path.GetFileName(name.TrimEnd('/'));
 
-            if (File.Exists(datadirectory + Path.DirectorySeparatorChar + name))
+            if (File.Exists(datadirectory + System.IO.Path.DirectorySeparatorChar + name))
             {
-                var fi = new FileInfo(datadirectory + Path.DirectorySeparatorChar + name);
+                var fi = new FileInfo(datadirectory + System.IO.Path.DirectorySeparatorChar + name);
                 if (fi.Length > 0 && fi.LastWriteTime.AddDays(7) > DateTime.Now)
                 {
-                    using (StreamReader sr = new StreamReader(datadirectory + Path.DirectorySeparatorChar + name))
+                    using (StreamReader sr = new StreamReader(datadirectory + System.IO.Path.DirectorySeparatorChar + name))
                     {
                         while (!sr.EndOfStream)
                         {
@@ -742,7 +748,7 @@ namespace MissionPlanner.Utilities
                     }
                 }
 
-                using (StreamWriter sw = new StreamWriter(datadirectory + Path.DirectorySeparatorChar + name))
+                using (StreamWriter sw = new StreamWriter(datadirectory + System.IO.Path.DirectorySeparatorChar + name))
                 {
                     list.ForEach(x =>
                     {

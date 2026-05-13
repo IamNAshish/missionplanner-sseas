@@ -329,7 +329,8 @@ namespace MissionPlanner.GCSViews
 
             // Disabled: right-click context menu on left-side tabs Customize and Multiline opt in right click.
             // can be enable later by restoring these ContextMenuStrip assignments.
-            this.tabControlactions.ContextMenuStrip = null;
+            
+            //this.tabControlactions.ContextMenuStrip = null; //13may26_task1_1 commented to enable right click for now 
             this.SubMainRight.Panel2.ContextMenuStrip = null;
 
             log.Info("Components Done");
