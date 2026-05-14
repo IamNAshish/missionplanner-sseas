@@ -9791,6 +9791,12 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
                         (int)MAVLink.MAV_COMPONENT.MAV_COMP_ID_MISSIONPLANNER)
                         continue;
 
+
+                    string name = temp.ToString().ToLower(); //14may26_task2 
+                    if (name.Contains("telemetry")) //14may26_task2
+                        continue; //14may26_task2
+                    //now after //14may26_task2 we will not have telemetry vehicle in the for loop of swarm write  button i.e btn_SwarmRun_Click
+
                     result.Add(temp);
                 }
             }
@@ -9800,6 +9806,9 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
         // 11may26_task3 
         private async void btn_SwarmRun_Click(object sender, EventArgs e)
         {
+
+            // 14may26_task1 commented old swarm logic which dosnt work for .waypoints files
+            /*
             try
             {
                 var vehicles = GetVehicles();
@@ -9831,11 +9840,12 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
                     MainV2.comPort.sysidcurrent = (byte)v.sysid;
                     MainV2.comPort.compidcurrent = (byte)v.compid;
 
-                    // load mission
+                    MessageBox.Show("eeee", file);
+
+                    // load mission   
                     var mission = MissionFile.ReadFile(file);
-
                     var list = MissionFile.ConvertToLocationwps(mission);
-
+                    
                     processToScreen(list, append: false);
 
                     updateUndoBuffer(false);
@@ -9854,6 +9864,84 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
                 CustomMessageBox.Show(
                     "Swarm upload failed: " + ex.Message);
             }
+        
+        */
+
+
+            try
+            {
+                var vehicles = GetVehicles();
+                
+
+                if (vehicles.Count == 0)
+                {
+                    CustomMessageBox.Show("No vehicles found!! \n వాహనాలు లేవు రా అయ్య !!");
+                    return;
+                }
+
+                var fullPaths = comboBox_plans.Tag as string[];
+
+                if (fullPaths == null || fullPaths.Length == 0)
+                {
+                    CustomMessageBox.Show("No plans loaded");
+                    return;
+                }
+
+                MessageBox.Show("vehicles.Count="+vehicles.Count+"  fullPaths.Length="+fullPaths.Length);
+
+                int count = Math.Min(vehicles.Count ,fullPaths.Length); 
+
+                int k = 0;
+                for (int i = 0; i < count; i++)
+                {
+                    //MessageBox.Show("current vehicle compid:" + vehicles[k].compid.ToString());
+                    //MessageBox.Show("current vehicle.port:" + vehicles[k].port.ToString());
+                    //MessageBox.Show("current vehicle.sysid:" + vehicles[k].sysid.ToString());
+
+                    
+                    //MessageBox.Show(vehicles[k].port.ToString().ToLower().Contains("surfaceboat").ToString());
+                    if (vehicles[k].compid != 1) // 14may26_task2 i.e not a sufraceboat
+                    {
+
+                        k += 1;
+                        if (k >= count)
+                        {
+                            MessageBox.Show("Reached last vehicle");
+                            continue;
+                        }
+                    }
+
+                    var v = vehicles[k];
+
+                    // switch vehicle target
+                    MainV2.comPort = v.port;
+                    MainV2.comPort.sysidcurrent = (byte)v.sysid;
+                    MainV2.comPort.compidcurrent = (byte)v.compid;
+
+                    // load corresponding plan
+                    comboBox_plans.SelectedIndex = i;
+
+                    Application.DoEvents();
+
+                    // upload using existing upload pipeline
+                    BUT_write_Click(null, null);
+
+                    // temporary delay between uploads
+                    await Task.Delay(5000);
+
+                    //next vehicle
+                    k += 1; // 14may26_task2
+                }
+
+                CustomMessageBox.Show("Swarm upload complete");
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show("Swarm upload failed: " + ex.Message);
+            }
+
+
+
         }
     }
 }

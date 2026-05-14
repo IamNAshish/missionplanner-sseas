@@ -74,6 +74,7 @@ namespace MissionPlanner.Controls
             e.DrawFocusRectangle();
         }
 
+        //ashish: this code updates the cmb_sysid with availabe vehicles
         public void UpdateSysIDS()
         {
             cmb_sysid.SelectedIndexChanged -= CMB_sysid_SelectedIndexChanged;
@@ -97,6 +98,8 @@ namespace MissionPlanner.Controls
                         continue;
 
                     var idx = cmb_sysid.Items.Add(temp);
+
+                    //MessageBox.Show("test 123: "+temp.ToString());
 
                     if (temp.port == MainV2.comPort && temp.sysid == MainV2.comPort.sysidcurrent && temp.compid == MainV2.comPort.compidcurrent)
                     {
