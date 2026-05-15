@@ -17,7 +17,9 @@ namespace MissionPlanner.Controls
         int _heading = 0;
         int _navbearing = 0;
 
-        private Image boat = Image.FromFile(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"boat_top.png")); // 13may26_task1_3
+        //private Image boat = Image.FromFile(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"boat_top.png")); // 13may26_task1_3
+        private Image boat = Properties.Resources.boat_top;
+
 
         [System.ComponentModel.Browsable(true)]
         public int Heading

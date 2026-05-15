@@ -313,6 +313,16 @@ namespace MissionPlanner.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap boat_top {
+            get {
+                object obj = ResourceManager.GetObject("boat_top", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap BR_APMPWRDEAN_2 {
             get {
                 object obj = ResourceManager.GetObject("BR-APMPWRDEAN-2", resourceCulture);
