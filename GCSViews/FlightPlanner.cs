@@ -998,14 +998,106 @@ namespace MissionPlanner.GCSViews
 
 
 
-
         /// <summary>
         /// Writes the mission from the datagrid and values to the EEPROM
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void BUT_write_Click(object sender, EventArgs e)
+        public async void BUT_write_Click(object sender, EventArgs e)
         {
+            //19may26_task1 start
+            if (checkBox_BackupVehicle.Checked)
+            {
+                try
+                {
+                    var vehicles = GetVehicles();
+
+                    if (vehicles.Count < 2)
+                    {
+                        CustomMessageBox.Show(
+                            "Need minimum 2 vehicles");
+                        return;
+                    }
+
+                    var fullPaths =
+                        comboBox_plans.Tag as string[];
+
+                    if (fullPaths == null ||fullPaths.Length == 0)
+                    {
+                        CustomMessageBox.Show("No plans loaded");
+                        return;
+                    }
+                    MessageBox.Show("vehicles.Count=" + vehicles.Count + "  fullPaths.Length=" + fullPaths.Length);
+
+                    // primary vehicle
+                    var primary = vehicles[0];
+                    // backup vehicle
+                    var backup = vehicles[2];
+                    if (vehicles[0].compid != 1) // i.e not a sufracebo
+                    {
+                        primary = vehicles[1]; //vehcle[0] will be telematry not surface boat
+                        backup = vehicles[3];
+                    }
+
+                    
+
+                    // mission file
+                    string file = fullPaths[0];
+
+                    // upload to primary
+                    MainV2.comPort = primary.port;
+
+                    MainV2.comPort.sysidcurrent =(byte)primary.sysid;
+
+                    MainV2.comPort.compidcurrent =(byte)primary.compid;
+
+                    comboBox_plans.SelectedIndex = 0;
+
+                    Application.DoEvents();
+
+                    BUT_write_Click(null, null);
+
+                    CustomMessageBox.Show("Mission started on primary vehicle");
+
+                    // monitor heartbeat
+                    while (true)
+                    {
+                        await Task.Delay(1000);
+
+                        double sec =(DateTime.Now -primary.port.MAV.cs.datetime).TotalSeconds;
+
+                        if (sec > 5)
+                        {
+                            CustomMessageBox.Show("Heartbeat lost. "+ "Switching to backup vehicle");
+                            break;
+                        }
+                    }
+
+                    // upload same mission to backup
+                    MainV2.comPort = backup.port;
+
+                    MainV2.comPort.sysidcurrent =(byte)backup.sysid;
+
+                    MainV2.comPort.compidcurrent =(byte)backup.compid;
+
+                    comboBox_plans.SelectedIndex = 0;
+
+                    Application.DoEvents();
+
+                    BUT_write_Click(null, null);
+
+                    CustomMessageBox.Show("Mission uploaded to backup vehicle");
+                }
+                catch (Exception ex)
+                {
+                    CustomMessageBox.Show("Backup run failed: "+ ex.Message);
+                }
+                return;
+
+            }
+            //19may26_task1 end
+
+
             if ((altmode) CMB_altmode.SelectedValue == altmode.Absolute)
             {
                 if ((int) DialogResult.No ==
