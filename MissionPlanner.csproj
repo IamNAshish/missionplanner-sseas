@@ -242,6 +242,7 @@
     </PackageReference>
     <PackageReference Include="SkiaSharp.Views" Version="2.80.2" />
     <PackageReference Include="SSH.NET" version="2020.0.2" targetFramework="net40" />
+    <PackageReference Include="Stimulsoft.Dashboards.Web" Version="2026.2.2" />
     <PackageReference Include="System.CodeDom">
       <Version>8.0.0</Version>
     </PackageReference>

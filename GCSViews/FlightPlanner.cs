@@ -1005,8 +1005,8 @@ namespace MissionPlanner.GCSViews
         /// <param name="e"></param>
         public async void BUT_write_Click(object sender, EventArgs e)
         {
-            //19may26_task1 start
-            if (checkBox_BackupVehicle.Checked)
+            //19may26_task1 start  //BackupVehicle
+            if (checkBox_BackupVehicle.Checked) 
             {
                 try
                 {
@@ -1066,7 +1066,7 @@ namespace MissionPlanner.GCSViews
 
                         double sec =(DateTime.Now -primary.port.MAV.cs.datetime).TotalSeconds;
 
-                        if (sec > 5)
+                        if (sec > 10)
                         {
                             CustomMessageBox.Show("Heartbeat lost. "+ "Switching to backup vehicle");
                             break;
@@ -1100,9 +1100,7 @@ namespace MissionPlanner.GCSViews
 
             if ((altmode) CMB_altmode.SelectedValue == altmode.Absolute)
             {
-                if ((int) DialogResult.No ==
-                    CustomMessageBox.Show("Absolute Alt is selected are you sure?", "Alt Mode",
-                        MessageBoxButtons.YesNo))
+                if ((int) DialogResult.No == CustomMessageBox.Show("Absolute Alt is selected are you sure?", "Alt Mode", MessageBoxButtons.YesNo))
                 {
                     CMB_altmode.SelectedValue = (int) altmode.Relative;
                 }
@@ -1146,15 +1144,11 @@ namespace MissionPlanner.GCSViews
 
                     ushort cmd = getCmdID(Commands.Rows[a].Cells[Command.Index].Value.ToString());
 
-                    if (cmd < (ushort) MAVLink.MAV_CMD.LAST &&
-                        double.Parse(Commands[Alt.Index, a].Value.ToString()) < double.Parse(TXT_altwarn.Text))
+                    if (cmd < (ushort) MAVLink.MAV_CMD.LAST && double.Parse(Commands[Alt.Index, a].Value.ToString()) < double.Parse(TXT_altwarn.Text))
                     {
-                        if (cmd != (ushort) MAVLink.MAV_CMD.TAKEOFF &&
-                            cmd != (ushort) MAVLink.MAV_CMD.LAND &&
-                            cmd != (ushort) MAVLink.MAV_CMD.RETURN_TO_LAUNCH)
+                        if (cmd != (ushort) MAVLink.MAV_CMD.TAKEOFF && cmd != (ushort) MAVLink.MAV_CMD.LAND && cmd != (ushort) MAVLink.MAV_CMD.RETURN_TO_LAUNCH)
                         {
-                            CustomMessageBox.Show("Low alt on WP#" + (a + 1) +
-                                                  "\nPlease reduce the alt warning, or increase the altitude");
+                            CustomMessageBox.Show("Low alt on WP#" + (a + 1) +"\nPlease reduce the alt warning, or increase the altitude");
                             return;
                         }
                     }
