@@ -1014,13 +1014,11 @@ namespace MissionPlanner.GCSViews
 
                     if (vehicles.Count < 2)
                     {
-                        CustomMessageBox.Show(
-                            "Need minimum 2 vehicles");
+                        CustomMessageBox.Show("Need minimum 2 vehicles");
                         return;
                     }
 
-                    var fullPaths =
-                        comboBox_plans.Tag as string[];
+                    var fullPaths = comboBox_plans.Tag as string[];
 
                     if (fullPaths == null ||fullPaths.Length == 0)
                     {
@@ -9873,8 +9871,7 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
                         port = port
                     };
 
-                    if (temp.compid ==
-                        (int)MAVLink.MAV_COMPONENT.MAV_COMP_ID_MISSIONPLANNER)
+                    if (temp.compid ==  (int)MAVLink.MAV_COMPONENT.MAV_COMP_ID_MISSIONPLANNER)
                         continue;
 
 

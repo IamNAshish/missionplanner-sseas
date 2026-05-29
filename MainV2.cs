@@ -194,7 +194,7 @@ namespace MissionPlanner
                     if (File.Exists($"{running_directory}light_icon_background.png"))
                         return Image.FromFile($"{running_directory}light_icon_background.png");
                     else
-                        return global::MissionPlanner.Properties.Resources.bgdark;
+                        return global::MissionPlanner.Properties.Resources.cheetah_skin; //26may26 bgdark;
                 }
             }
 
@@ -1206,9 +1206,51 @@ namespace MissionPlanner
             MainMenu.BackgroundImage = displayicons.bg;
 
             MenuFlightData.Image = displayicons.fd;
+            MenuFlightData.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
+            MenuFlightData.TextImageRelation = TextImageRelation.ImageBeforeText;
+            MenuFlightData.Text = "DATA";
+            MenuFlightData.AutoSize = false;
+            MenuFlightData.Width=200;
+            MenuFlightData.Size = new Size(200, 40);
+            MenuFlightData.Margin = Padding.Empty;
+            MenuFlightData.Padding = Padding.Empty;
+            MenuFlightData.TextAlign = ContentAlignment.MiddleCenter;
+            MenuFlightData.ImageAlign = ContentAlignment.MiddleLeft;
+
+
+
+
             MenuFlightPlanner.Image = displayicons.fp;
+            MenuFlightPlanner.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
+            MenuFlightPlanner.TextImageRelation = TextImageRelation.ImageBeforeText;
+            MenuFlightPlanner.Text = "PLANNER";
+            MenuFlightPlanner.AutoSize = false;
+            MenuFlightPlanner.Width = 200;
+            MenuFlightPlanner.Size = new Size(200, 40);
+            MenuFlightPlanner.Margin = Padding.Empty;
+            MenuFlightPlanner.Padding = Padding.Empty;
+            MenuFlightPlanner.TextAlign = ContentAlignment.MiddleCenter;
+            MenuFlightPlanner.ImageAlign = ContentAlignment.MiddleLeft;
+
             MenuInitConfig.Image = displayicons.initsetup;
+
             MenuSimulation.Image = displayicons.sim;
+            MenuSimulation.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
+            MenuSimulation.TextImageRelation = TextImageRelation.ImageBeforeText;
+            MenuSimulation.Text = "SIMULATION";
+            MenuSimulation.AutoSize = false;
+            MenuSimulation.Width = 200;
+            MenuSimulation.Margin = Padding.Empty;
+            MenuSimulation.Size = new Size(200, 40);
+            MenuSimulation.Padding = Padding.Empty;
+            MenuSimulation.TextAlign = ContentAlignment.MiddleCenter;
+            MenuSimulation.ImageAlign = ContentAlignment.MiddleLeft;
+
+
+            MainMenu.RenderMode = ToolStripRenderMode.System;
+            MainMenu.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+
+
             MenuConfigTune.Image = displayicons.config_tuning;
             MenuConnect.Image = displayicons.connect;
             MenuHelp.Image = displayicons.help;

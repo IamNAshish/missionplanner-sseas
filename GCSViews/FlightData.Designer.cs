@@ -1247,6 +1247,7 @@ namespace MissionPlanner.GCSViews
             resources.ApplyResources(this.tabGauges, "tabGauges");
             this.tabGauges.Name = "tabGauges";
             this.tabGauges.UseVisualStyleBackColor = true;
+            this.tabGauges.DoubleClick += new System.EventHandler(this.tabGauges_DoubleClick);
             this.tabGauges.Resize += new System.EventHandler(this.tabPage1_Resize);
             // 
             // Gvspeed
@@ -1402,14 +1403,13 @@ namespace MissionPlanner.GCSViews
             this.Gheading.DataBindings.Add(new System.Windows.Forms.Binding("Heading", this.bindingSourceGaugesTab, "yaw", true));
             this.Gheading.DataBindings.Add(new System.Windows.Forms.Binding("NavHeading", this.bindingSourceGaugesTab, "nav_bearing", true));
             this.Gheading.Heading = 0;
+            this.Gheading.HomeBearing = 0D;
+            this.Gheading.HomeLat = 0D;
+            this.Gheading.HomeLon = 0D;
             this.Gheading.Name = "Gheading";
             this.Gheading.NavHeading = 0;
-
-
-            //double hbearing = 135;//GetBearing(0, 0, 75, 83); //20may26_task1
-            //this.Gheading.HomeBearing = hbearing; //20may26_task1
-
-
+            this.Gheading.VehicleLat = 0D;
+            this.Gheading.VehicleLon = 0D;
             // 
             // Galt
             // 

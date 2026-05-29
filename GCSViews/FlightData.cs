@@ -13,6 +13,7 @@ using MissionPlanner.Log;
 using MissionPlanner.Maps;
 using MissionPlanner.Utilities;
 using MissionPlanner.Warnings;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,6 +33,8 @@ using ZedGraph;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
 using TableLayoutPanelCellPosition = System.Windows.Forms.TableLayoutPanelCellPosition;
 using UnauthorizedAccessException = System.UnauthorizedAccessException;
+using System.Drawing.Drawing2D; //29may26_task1
+
 
 // written by michael oborne
 
@@ -2740,13 +2743,32 @@ namespace MissionPlanner.GCSViews
 
         void dropout_FormClosed(object sender, FormClosedEventArgs e)
         {
-            (sender as Form).SaveStartupLocation();
-            //GetFormFromGuid(GetOrCreateGuid("fd_hud_guid")).Controls.Add(hud1);
-            ((sender as Form).Tag as Control).Controls.Add(hud1);
-            //SubMainLeft.Panel1.Controls.Add(hud1);
-            if (hud1.Parent == SubMainRight.Panel1)
-                SubMainRight.Panel1Collapsed = false;
-            huddropout = false;
+            if (huddropout)
+            {
+                (sender as Form).SaveStartupLocation();
+                //GetFormFromGuid(GetOrCreateGuid("fd_hud_guid")).Controls.Add(hud1);
+                ((sender as Form).Tag as Control).Controls.Add(hud1);
+                //SubMainLeft.Panel1.Controls.Add(hud1);
+                if (hud1.Parent == SubMainRight.Panel1)
+                    SubMainRight.Panel1Collapsed = false;
+                huddropout = false;
+            }
+        }
+
+        void dropout_FormClosed2(object sender, FormClosedEventArgs e)
+        {           
+
+            //for gauges     //29may26_task1    
+            if (tabGauge_popout)
+            {
+                Form form = (Form)sender;
+                TabControl originalTab = (TabControl)form.Tag;
+                TabControl tempTabs = (TabControl)form.Controls[0];
+                TabPage page = tempTabs.TabPages[0];
+                tempTabs.TabPages.Remove(page);
+                originalTab.TabPages.Add(page);
+                tabGauge_popout = false;
+            }
         }
 
         void dropout_Resize(object sender, EventArgs e)
@@ -7113,5 +7135,106 @@ namespace MissionPlanner.GCSViews
             }
         
         }
+
+        //29may26_task1 
+        private bool tabGauge_popout = false;
+        private void tabGauges_DoubleClick(object sender, EventArgs e)
+        {
+            if (tabGauge_popout)
+                return;
+            
+            if (tabGauges.Parent == SubMainRight.Panel1)
+                SubMainRight.Panel1Collapsed = false;
+
+            Form dropout = new Form();
+            dropout.Text = "";//dropout.Text = "Gauge Dropout";
+            dropout.Size = new Size(500, 500);//(tabGauges.Width, tabGauges.Height + 20);            
+            dropout.FormBorderStyle = FormBorderStyle.None;
+            dropout.ShowInTaskbar = false;
+            dropout.TopMost = true;
+            dropout.BackColor = Color.FromArgb(40, 40, 40);
+            dropout.Padding = new Padding(4);
+            dropout.Opacity = 0.70;
+            int radius = 20;
+            GraphicsPath path = new GraphicsPath();
+            path.AddArc(0, 0, radius, radius, 180, 90);
+            path.AddArc(dropout.Width - radius, 0, radius, radius, 270, 90);
+            path.AddArc(dropout.Width - radius, dropout.Height - radius, radius, radius, 0, 90);
+            path.AddArc(0, dropout.Height - radius, radius, radius, 90, 90);
+
+            path.CloseFigure();
+
+            dropout.Region = new Region(path);
+
+
+            ////////close button/////
+            Button btnClose = new Button();
+
+            btnClose.Text = "X";
+            btnClose.Size = new Size(30, 30);
+            btnClose.Location = new Point(dropout.Width - 35, 5);
+
+            btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
+            btnClose.Click += (s, ev) =>
+            {
+                dropout.Close();
+            };
+
+            dropout.Controls.Add(btnClose);
+            //////////////////////////
+
+
+
+
+            // Store original parent
+            dropout.Tag = tabGauges.Parent;
+
+            // Remove from old TabControl
+            TabControl oldTab = (TabControl)tabGauges.Parent;
+            oldTab.TabPages.Remove(tabGauges);
+
+            // Create temporary TabControl
+            TabControl tempTabs = new TabControl();
+            tempTabs.Dock = DockStyle.Fill;
+
+            // Add tab page to new TabControl
+            tempTabs.TabPages.Add(tabGauges);
+
+            // Add TabControl to form
+            dropout.Controls.Add(tempTabs);
+
+            dropout.Resize += dropout_Resize;
+            dropout.FormClosed += dropout_FormClosed2;
+
+            /////////code for making i dragable////////
+            Point dragStart = Point.Empty;
+
+            tempTabs.MouseDown += (s, ev) =>
+            {
+                if (ev.Button == MouseButtons.Left)
+                    dragStart = ev.Location;
+            };
+
+            tempTabs.MouseMove += (s, ev) =>
+            {
+                if (ev.Button == MouseButtons.Left)
+                {
+                    dropout.Left += ev.X - dragStart.X;
+                    dropout.Top += ev.Y - dragStart.Y;
+                }
+            };/////////
+
+
+
+
+            dropout.Show();
+
+            tabGauge_popout = true;
+
+        }
+
+
+
     }
 }
