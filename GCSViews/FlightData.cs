@@ -2904,6 +2904,8 @@ namespace MissionPlanner.GCSViews
                 try
                 {
                     modifyandSetSpeed.Value = (decimal) ((float) MainV2.comPort.MAV.param["WP_SPEED_MAX"] / 100.0);
+
+
                 }
                 catch
                 {
