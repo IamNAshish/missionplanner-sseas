@@ -1284,13 +1284,13 @@ namespace MissionPlanner.GCSViews
         ""};
             this.G_RPM.CapText = "";
             this.G_RPM.Center = new System.Drawing.Point(75, 75);
-            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "groundspeed", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0")); //doubtful for 
-            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "airspeed", true));
-            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "groundspeed", true));
+            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "groundspeed", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0")); //doubtful for 
+            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "airspeed", true));
+            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "groundspeed", true));
             //test 
             //MessageBox.Show(MainV2.comPort.MAV.cs.esc11_rpm.ToString());
-            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText",this.bindingSourceHud,"MAV_BATP", true,DataSourceUpdateMode.OnPropertyChanged,"","0"));
-            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceHud, "MAV_BATP", true));
+            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText",this.bindingSourceHud,"MAV_BATP", true,DataSourceUpdateMode.OnPropertyChanged,"","0"));
+            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceHud, "MAV_BATP", true));
             this.G_RPM.MaxValue = 10000F;
             this.G_RPM.MinValue = 0F;
             this.G_RPM.Name = "G_RPM";
@@ -1397,7 +1397,7 @@ namespace MissionPlanner.GCSViews
             this.toolTip1.SetToolTip(this.G_RPM, resources.GetString("G_RPM.ToolTip"));
             this.G_RPM.Value = 0F;
             this.G_RPM.Value0 = 0F;
-            this.G_RPM.Value0 = MainV2.comPort.MAV.cs.esc1_rpm / 1000.0f; //30may26_task
+            //this.G_RPM.Value0 = MainV2.comPort.MAV.cs.esc1_rpm / 1000.0f; //30may26_task
             this.G_RPM.Value1 = 0F;
             this.G_RPM.Value2 = 0F;
             this.G_RPM.Value3 = 0F;
@@ -2672,7 +2672,7 @@ namespace MissionPlanner.GCSViews
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("critAOA", this.bindingSourceHud, "crit_AOA", true));
 
             //30may26 mav message
-            this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("MAV_BATP", this.bindingSourceHud, "MAV_BATP", true));
+            //this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("MAV_BATP", this.bindingSourceHud, "MAV_BATP", true));
 
 
 

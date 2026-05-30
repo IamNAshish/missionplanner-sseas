@@ -320,7 +320,7 @@ namespace MissionPlanner
 
 
         //30may26 creating  new mav msg
-        public double MAV_BATP { get; set; }
+        //public double MAV_BATP { get; set; }
 
         public double lng { get; set; }
          
