@@ -317,7 +317,13 @@ namespace MissionPlanner
         [GroupText("Position")]
         [DisplayFieldName("lng.Field")]
         [DisplayText("Longitude (dd)")]
+
+
+        //30may26 creating  new mav msg
+        public double MAV_BATP { get; set; }
+
         public double lng { get; set; }
+         
 
         [GroupText("Position")]
         [DisplayFieldName("alt.Field")]
@@ -928,6 +934,8 @@ namespace MissionPlanner
         [GroupText("ESC")] public float esc16_curr { get; set; }
         [GroupText("ESC")] public float esc16_rpm { get; set; }
         [GroupText("ESC")] public float esc16_temp { get; set; }
+
+        
 
         [GroupText("RadioOut")]
         public float ch1percent
@@ -2449,6 +2457,8 @@ namespace MissionPlanner
                             failsafe = highlatency.failsafe > 0;
                             wpno = highlatency.wp_num;
                             wp_dist = highlatency.wp_distance;
+
+                            //MAV_BATP = highlatency.
                         }
 
                         break;

@@ -5422,69 +5422,107 @@ namespace MissionPlanner.GCSViews
         {
             int mywidth, myheight;
 
-            // localize it
             Control tabGauges = sender as Control;
 
-            float scale = tabGauges.Width / (float) tabGauges.Height;
+            float scale = tabGauges.Width / (float)tabGauges.Height;
 
             if (scale > 0.5 && scale < 1.9)
             {
-                // square
+                // 2 rows layout
+
                 Gvspeed.Visible = true;
 
                 if (tabGauges.Height < tabGauges.Width)
                     myheight = tabGauges.Height / 2;
                 else
-                    myheight = tabGauges.Width / 2;
+                    myheight = tabGauges.Width / 3;
 
                 myheight = Math.Max(myheight, 150);
 
+                // size all gauges
+                Gvspeed.Width = myheight;
                 Gvspeed.Height = myheight;
+
+                Gspeed.Width = myheight;
                 Gspeed.Height = myheight;
+
+                Galt.Width = myheight;
                 Galt.Height = myheight;
+
+                Gheading.Width = myheight;
                 Gheading.Height = myheight;
 
+                G_RPM.Width = myheight; // 30may26_task_rpm
+                G_RPM.Height = myheight;// 30may26_task_rpm
+
+                // top row
                 Gvspeed.Location = new Point(0, 0);
                 Gspeed.Location = new Point(Gvspeed.Right, 0);
+                Galt.Location = new Point(Gspeed.Right, 0);
 
-
-                Galt.Location = new Point(0, Gspeed.Bottom);
-                Gheading.Location = new Point(Galt.Right, Gspeed.Bottom);
+                // bottom row
+                Gheading.Location = new Point(0, Gvspeed.Bottom);
+                G_RPM.Location = new Point(Gheading.Right, Gvspeed.Bottom); // 30may26_task_rpm
 
                 return;
             }
 
-            if (tabGauges.Width < 500)
+            // wide layout
+            if (tabGauges.Width < 700)
             {
                 Gvspeed.Visible = false;
-                mywidth = tabGauges.Width / 3;
 
-                mywidth = Math.Max(mywidth, 150);
-
-                Gspeed.Height = mywidth;
-                Galt.Height = mywidth;
-                Gheading.Height = mywidth;
-
-                Gspeed.Location = new Point(0, 0);
-            }
-            else
-            {
-                Gvspeed.Visible = true;
                 mywidth = tabGauges.Width / 4;
 
                 mywidth = Math.Max(mywidth, 150);
 
-                Gvspeed.Height = mywidth;
+                Gspeed.Width = mywidth;
                 Gspeed.Height = mywidth;
+
+                Galt.Width = mywidth;
                 Galt.Height = mywidth;
+
+                Gheading.Width = mywidth;
                 Gheading.Height = mywidth;
+
+                G_RPM.Width = mywidth; // 30may26_task_rpm
+                G_RPM.Height = mywidth; // 30may26_task_rpm
+
+                Gspeed.Location = new Point(0, 0);
+                Galt.Location = new Point(Gspeed.Right, 0);
+                Gheading.Location = new Point(Galt.Right, 0);
+                G_RPM.Location = new Point(Gheading.Right, 0); // 30may26_task_rpm
+            }
+            else
+            {
+                Gvspeed.Visible = true;
+
+                mywidth = tabGauges.Width / 5;
+
+                mywidth = Math.Max(mywidth, 150);
+
+                Gvspeed.Width = mywidth;
+                Gvspeed.Height = mywidth;
+
+                Gspeed.Width = mywidth;
+                Gspeed.Height = mywidth;
+
+                Galt.Width = mywidth;
+                Galt.Height = mywidth;
+
+                Gheading.Width = mywidth;
+                Gheading.Height = mywidth;
+
+                G_RPM.Width = mywidth; // 30may26_task_rpm
+                G_RPM.Height = mywidth; // 30may26_task_rpm
 
                 Gvspeed.Location = new Point(0, 0);
                 Gspeed.Location = new Point(Gvspeed.Right, 0);
+                Galt.Location = new Point(Gspeed.Right, 0);
+                Gheading.Location = new Point(Galt.Right, 0);
+                G_RPM.Location = new Point(Gheading.Right, 0); // 30may26_task_rpm
             }
-
-            Galt.Location = new Point(Gspeed.Right, 0);
-            Gheading.Location = new Point(Galt.Right, 0);
+        
         }
 
         private void tabQuick_Resize(object sender, EventArgs e)
@@ -7242,7 +7280,15 @@ namespace MissionPlanner.GCSViews
 
         }
 
-
-
+        // 30may26_task_rpm
+        private void G_RPM_DoubleClick(object sender, EventArgs e)
+        {
+            string max = "10000";
+            if (DialogResult.OK == InputBox.Show("Enter Max RPM", "Enter Max RPM", ref max))
+            {
+                G_RPM.MaxValue = float.Parse(max);
+                Settings.Instance["MAV_RPM"] = Gspeed.MaxValue.ToString(); //doubt ["GrpmMAX"]
+            }
+        }
     }
 }
