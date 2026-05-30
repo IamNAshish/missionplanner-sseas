@@ -111,6 +111,7 @@ namespace MissionPlanner.GCSViews
             this.Gheading = new MissionPlanner.Controls.HSI();
             this.Galt = new AGaugeApp.AGauge();
             this.Gspeed = new AGaugeApp.AGauge();
+            this.bindingSourceHud = new System.Windows.Forms.BindingSource(this.components);
             this.tabTransponder = new System.Windows.Forms.TabPage();
             this.NACp_tb = new System.Windows.Forms.TextBox();
             this.NIC_tb = new System.Windows.Forms.TextBox();
@@ -224,7 +225,6 @@ namespace MissionPlanner.GCSViews
             this.tb_battery = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tb_Speed = new System.Windows.Forms.TextBox();
-            this.bindingSourceHud = new System.Windows.Forms.BindingSource(this.components);
             this.tb_Altitude = new System.Windows.Forms.TextBox();
             this.label_Altitude = new System.Windows.Forms.Label();
             this.lbl_Speed = new System.Windows.Forms.Label();
@@ -286,6 +286,7 @@ namespace MissionPlanner.GCSViews
             this.tabPagePreFlight.SuspendLayout();
             this.tabGauges.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceHud)).BeginInit();
             this.tabTransponder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Squawk_nud)).BeginInit();
             this.tabServo.SuspendLayout();
@@ -310,7 +311,6 @@ namespace MissionPlanner.GCSViews
             this.tabPage_Dynamics.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_roll)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceHud)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_yaw)).BeginInit();
             this.tabPage_hud1.SuspendLayout();
             this.contextMenuStripHud.SuspendLayout();
@@ -612,7 +612,7 @@ namespace MissionPlanner.GCSViews
             this.windDir1.BackColor = System.Drawing.Color.Transparent;
             this.windDir1.DataBindings.Add(new System.Windows.Forms.Binding("Direction", this.bindingSource1, "wind_dir", true, System.Windows.Forms.DataSourceUpdateMode.Never));
             this.windDir1.DataBindings.Add(new System.Windows.Forms.Binding("Speed", this.bindingSource1, "wind_vel", true, System.Windows.Forms.DataSourceUpdateMode.Never));
-            this.windDir1.Direction = 180D;
+            this.windDir1.Direction = 360D;
             resources.ApplyResources(this.windDir1, "windDir1");
             this.windDir1.Name = "windDir1";
             this.windDir1.Speed = 0D;
@@ -1344,6 +1344,7 @@ namespace MissionPlanner.GCSViews
             this.tabGauges.Controls.Add(this.Gspeed);
             resources.ApplyResources(this.tabGauges, "tabGauges");
             this.tabGauges.Name = "tabGauges";
+            this.tabGauges.AutoScroll = true;
             this.tabGauges.UseVisualStyleBackColor = true;
             this.tabGauges.DoubleClick += new System.EventHandler(this.tabGauges_DoubleClick);
             this.tabGauges.Resize += new System.EventHandler(this.tabPage1_Resize);
@@ -1534,17 +1535,17 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
             this.Galt.CapsText = new string[] {
-        "Alt",
+        "RPM",
         "",
         "",
         "",
         ""};
-            this.Galt.CapText = "Alt";
+            this.Galt.CapText = "RPM";
             this.Galt.Center = new System.Drawing.Point(75, 75);
             this.Galt.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "altd100", true));
             this.Galt.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "altd1000", true));
             this.Galt.DataBindings.Add(new System.Windows.Forms.Binding("Value2", this.bindingSourceGaugesTab, "targetaltd100", true));
-            this.Galt.MaxValue = 9.99F;
+            this.Galt.MaxValue = 10000; // 30may26 //9.99F;
             this.Galt.MinValue = 0F;
             this.Galt.Name = "Galt";
             this.Galt.Need_Idx = ((byte)(3));
@@ -1634,7 +1635,7 @@ namespace MissionPlanner.GCSViews
             this.Galt.ScaleLinesMajorColor = System.Drawing.Color.White;
             this.Galt.ScaleLinesMajorInnerRadius = 50;
             this.Galt.ScaleLinesMajorOuterRadius = 60;
-            this.Galt.ScaleLinesMajorStepValue = 1F;
+            this.Galt.ScaleLinesMajorStepValue = 1000F; // 30may26
             this.Galt.ScaleLinesMajorWidth = 2;
             this.Galt.ScaleLinesMinorColor = System.Drawing.Color.White;
             this.Galt.ScaleLinesMinorInnerRadius = 55;
@@ -1662,18 +1663,18 @@ namespace MissionPlanner.GCSViews
             this.Gspeed.BaseArcStart = 135;
             this.Gspeed.BaseArcSweep = 270;
             this.Gspeed.BaseArcWidth = 2;
-            this.Gspeed.Cap_Idx = ((byte)(0));
-            this.Gspeed.CapColor = System.Drawing.Color.White;
+            this.Gspeed.Cap_Idx = ((byte)(1));
+            this.Gspeed.CapColor = System.Drawing.Color.Lime;
             this.Gspeed.CapColors = new System.Drawing.Color[] {
         System.Drawing.Color.White,
-        System.Drawing.Color.White,
+        System.Drawing.Color.Lime,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
-            this.Gspeed.CapPosition = new System.Drawing.Point(58, 85);
+            this.Gspeed.CapPosition = new System.Drawing.Point(50, 45);
             this.Gspeed.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(58, 85),
-        new System.Drawing.Point(50, 110),
+        new System.Drawing.Point(50, 45),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
@@ -1683,12 +1684,9 @@ namespace MissionPlanner.GCSViews
         "",
         "",
         ""};
-            this.Gspeed.CapText = "Speed\n(knots)";
-
-            // 29may26_task2 : adding text speed on gauge
-            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("CapText",this.bindingSourceHud,"groundspeed",true,System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged,"","0.0 knots") );
-
+            this.Gspeed.CapText = "";
             this.Gspeed.Center = new System.Drawing.Point(75, 75);
+            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "groundspeed", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0 knots"));
             this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "airspeed", true));
             this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "groundspeed", true));
             this.Gspeed.MaxValue = 100F;
@@ -1801,6 +1799,10 @@ namespace MissionPlanner.GCSViews
             this.Gspeed.Value2 = 0F;
             this.Gspeed.Value3 = 0F;
             this.Gspeed.DoubleClick += new System.EventHandler(this.Gspeed_DoubleClick);
+            // 
+            // bindingSourceHud
+            // 
+            this.bindingSourceHud.DataSource = typeof(MissionPlanner.CurrentState);
             // 
             // tabTransponder
             // 
@@ -2709,10 +2711,6 @@ namespace MissionPlanner.GCSViews
             resources.ApplyResources(this.tb_Speed, "tb_Speed");
             this.tb_Speed.Name = "tb_Speed";
             // 
-            // bindingSourceHud
-            // 
-            this.bindingSourceHud.DataSource = typeof(MissionPlanner.CurrentState);
-            // 
             // tb_Altitude
             // 
             this.tb_Altitude.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceHud, "alt", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0 m"));
@@ -3068,6 +3066,7 @@ namespace MissionPlanner.GCSViews
             this.tabPagePreFlight.ResumeLayout(false);
             this.tabGauges.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceHud)).EndInit();
             this.tabTransponder.ResumeLayout(false);
             this.tabTransponder.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Squawk_nud)).EndInit();
@@ -3100,7 +3099,6 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_roll)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceHud)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_yaw)).EndInit();
             this.tabPage_hud1.ResumeLayout(false);
             this.contextMenuStripHud.ResumeLayout(false);

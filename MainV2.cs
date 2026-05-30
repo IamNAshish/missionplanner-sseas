@@ -1977,10 +1977,7 @@ namespace MissionPlanner
 
         private void MenuConnect_Click(object sender, EventArgs e)
         {
-            Connect();
-
-            // save config
-            SaveConfig();
+            connectionOptionsToolStripMenuItem_Click(sender, e);
         }
 
         private void Connect()

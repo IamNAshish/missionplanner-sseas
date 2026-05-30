@@ -5437,6 +5437,8 @@ namespace MissionPlanner.GCSViews
                 else
                     myheight = tabGauges.Width / 2;
 
+                myheight = Math.Max(myheight, 150);
+
                 Gvspeed.Height = myheight;
                 Gspeed.Height = myheight;
                 Galt.Height = myheight;
@@ -5457,6 +5459,8 @@ namespace MissionPlanner.GCSViews
                 Gvspeed.Visible = false;
                 mywidth = tabGauges.Width / 3;
 
+                mywidth = Math.Max(mywidth, 150);
+
                 Gspeed.Height = mywidth;
                 Galt.Height = mywidth;
                 Gheading.Height = mywidth;
@@ -5467,6 +5471,8 @@ namespace MissionPlanner.GCSViews
             {
                 Gvspeed.Visible = true;
                 mywidth = tabGauges.Width / 4;
+
+                mywidth = Math.Max(mywidth, 150);
 
                 Gvspeed.Height = mywidth;
                 Gspeed.Height = mywidth;
