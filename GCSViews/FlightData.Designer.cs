@@ -1,3 +1,9 @@
+using DotSpatial.Data;
+using MissionPlanner.Utilities;
+using Stimulsoft.Css;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace MissionPlanner.GCSViews
@@ -104,7 +110,7 @@ namespace MissionPlanner.GCSViews
             this.G_RPM = new AGaugeApp.AGauge();
             this.bindingSourceHud = new System.Windows.Forms.BindingSource(this.components);
             this.bindingSourceGaugesTab = new System.Windows.Forms.BindingSource(this.components);
-            this.Gvspeed = new AGaugeApp.AGauge();
+            this.G_batp = new AGaugeApp.AGauge();
             this.Gheading = new MissionPlanner.Controls.HSI();
             this.Galt = new AGaugeApp.AGauge();
             this.Gspeed = new AGaugeApp.AGauge();
@@ -1243,7 +1249,7 @@ namespace MissionPlanner.GCSViews
             // 
             resources.ApplyResources(this.tabGauges, "tabGauges");
             this.tabGauges.Controls.Add(this.G_RPM);
-            this.tabGauges.Controls.Add(this.Gvspeed);
+            this.tabGauges.Controls.Add(this.G_batp);
             this.tabGauges.Controls.Add(this.Gheading);
             this.tabGauges.Controls.Add(this.Galt);
             this.tabGauges.Controls.Add(this.Gspeed);
@@ -1276,17 +1282,20 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
-            this.G_RPM.CapsText = new string[] {
-        "RPM",
-        "",
-        "",
-        "",
-        ""};
+            this.G_RPM.CapsText = new string[] {"RPM","","","",""};
             this.G_RPM.CapText = "";
             this.G_RPM.Center = new System.Drawing.Point(75, 75);
             this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "groundspeed", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0")); //doubtful for 
             this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "airspeed", true));
             this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "groundspeed", true));
+
+            //for mav_batp
+            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield0", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0")); //doubtful for 
+            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield0", true));
+            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield0", true));
+
+
+
             //test 
             //MessageBox.Show(MainV2.comPort.MAV.cs.esc11_rpm.ToString());
             //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText",this.bindingSourceHud,"MAV_BATP", true,DataSourceUpdateMode.OnPropertyChanged,"","0"));
@@ -1314,21 +1323,9 @@ namespace MissionPlanner.GCSViews
         true,
         false,
         false};
-            this.G_RPM.NeedlesRadius = new int[] {
-        50,
-        50,
-        70,
-        70};
-            this.G_RPM.NeedlesType = new int[] {
-        0,
-        0,
-        0,
-        0};
-            this.G_RPM.NeedlesWidth = new int[] {
-        2,
-        1,
-        2,
-        2};
+            this.G_RPM.NeedlesRadius = new int[] {50,50,70,70};
+            this.G_RPM.NeedlesType = new int[] {0,0,0,0};
+            this.G_RPM.NeedlesWidth = new int[] {2,1,2,2};
             this.G_RPM.NeedleType = 0;
             this.G_RPM.NeedleWidth = 2;
             this.G_RPM.Range_Idx = ((byte)(2));
@@ -1337,42 +1334,12 @@ namespace MissionPlanner.GCSViews
             this.G_RPM.RangeEndValue = 50F;
             this.G_RPM.RangeInnerRadius = 1;
             this.G_RPM.RangeOuterRadius = 70;
-            this.G_RPM.RangesColor = new System.Drawing.Color[] {
-        System.Drawing.Color.LightGreen,
-        System.Drawing.Color.Red,
-        System.Drawing.Color.Orange,
-        System.Drawing.SystemColors.Control,
-        System.Drawing.SystemColors.Control};
-            this.G_RPM.RangesEnabled = new bool[] {
-        false,
-        false,
-        false,
-        false,
-        false};
-            this.G_RPM.RangesEndValue = new float[] {
-        35F,
-        60F,
-        50F,
-        0F,
-        0F};
-            this.G_RPM.RangesInnerRadius = new int[] {
-        1,
-        1,
-        1,
-        70,
-        70};
-            this.G_RPM.RangesOuterRadius = new int[] {
-        70,
-        70,
-        70,
-        80,
-        80};
-            this.G_RPM.RangesStartValue = new float[] {
-        0F,
-        50F,
-        35F,
-        0F,
-        0F};
+            this.G_RPM.RangesColor =new System.Drawing.Color[] {System.Drawing.Color.LightGreen,System.Drawing.Color.Red,System.Drawing.Color.Orange,System.Drawing.SystemColors.Control,System.Drawing.SystemColors.Control};
+            this.G_RPM.RangesEnabled = new bool[] {false,false,false,false,false};
+            this.G_RPM.RangesEndValue = new float[] {35F,60F,50F,0F,0F};
+            this.G_RPM.RangesInnerRadius = new int[] {1,1,1,70,70};
+            this.G_RPM.RangesOuterRadius = new int[] {70,70,70,80,80};
+            this.G_RPM.RangesStartValue = new float[] {0F,50F,35F,0F,0F};
             this.G_RPM.RangeStartValue = 35F;
             this.G_RPM.ScaleLinesInterColor = System.Drawing.Color.White;
             this.G_RPM.ScaleLinesInterInnerRadius = 52;
@@ -1410,148 +1377,241 @@ namespace MissionPlanner.GCSViews
             // bindingSourceGaugesTab
             // 
             this.bindingSourceGaugesTab.DataSource = typeof(MissionPlanner.CurrentState);
+
             // 
-            // Gvspeed
+            // G_batp // old Gvspeed
             // 
-            this.Gvspeed.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.Gvspeed, "Gvspeed");
-            this.Gvspeed.BaseArcColor = System.Drawing.Color.Transparent;
-            this.Gvspeed.BaseArcRadius = 60;
-            this.Gvspeed.BaseArcStart = 20;
-            this.Gvspeed.BaseArcSweep = 320;
-            this.Gvspeed.BaseArcWidth = 2;
-            this.Gvspeed.Cap_Idx = ((byte)(0));
-            this.Gvspeed.CapColor = System.Drawing.Color.White;
-            this.Gvspeed.CapColors = new System.Drawing.Color[] {
-        System.Drawing.Color.White,
-        System.Drawing.Color.Black,
-        System.Drawing.Color.Black,
-        System.Drawing.Color.Black,
-        System.Drawing.Color.Black};
-            this.Gvspeed.CapPosition = new System.Drawing.Point(65, 85);
-            this.Gvspeed.CapsPosition = new System.Drawing.Point[] {
-        new System.Drawing.Point(65, 85),
-        new System.Drawing.Point(30, 55),
-        new System.Drawing.Point(10, 10),
-        new System.Drawing.Point(10, 10),
-        new System.Drawing.Point(10, 10)};
-            this.Gvspeed.CapsText = new string[] {
-        "VSI",
-        "",
-        "",
-        "",
-        ""};
-            this.Gvspeed.CapText = "VSI";
-            this.Gvspeed.Center = new System.Drawing.Point(75, 75);
-            this.Gvspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "verticalspeed", true));
-            this.Gvspeed.MaxValue = 10F;
-            this.Gvspeed.MinValue = -10F;
-            this.Gvspeed.Name = "Gvspeed";
-            this.Gvspeed.Need_Idx = ((byte)(3));
-            this.Gvspeed.NeedleColor1 = AGaugeApp.AGauge.NeedleColorEnum.Gray;
-            this.Gvspeed.NeedleColor2 = System.Drawing.Color.White;
-            this.Gvspeed.NeedleEnabled = false;
-            this.Gvspeed.NeedleRadius = 80;
-            this.Gvspeed.NeedlesColor1 = new AGaugeApp.AGauge.NeedleColorEnum[] {
-        AGaugeApp.AGauge.NeedleColorEnum.Gray,
-        AGaugeApp.AGauge.NeedleColorEnum.Gray,
-        AGaugeApp.AGauge.NeedleColorEnum.Gray,
-        AGaugeApp.AGauge.NeedleColorEnum.Gray};
-            this.Gvspeed.NeedlesColor2 = new System.Drawing.Color[] {
-        System.Drawing.Color.White,
-        System.Drawing.Color.White,
-        System.Drawing.Color.White,
-        System.Drawing.Color.White};
-            this.Gvspeed.NeedlesEnabled = new bool[] {
-        true,
-        false,
-        false,
-        false};
-            this.Gvspeed.NeedlesRadius = new int[] {
-        50,
-        30,
-        50,
-        80};
-            this.Gvspeed.NeedlesType = new int[] {
-        0,
-        0,
-        0,
-        0};
-            this.Gvspeed.NeedlesWidth = new int[] {
-        2,
-        2,
-        2,
-        2};
-            this.Gvspeed.NeedleType = 0;
-            this.Gvspeed.NeedleWidth = 2;
-            this.Gvspeed.Range_Idx = ((byte)(0));
-            this.Gvspeed.RangeColor = System.Drawing.Color.LightGreen;
-            this.Gvspeed.RangeEnabled = false;
-            this.Gvspeed.RangeEndValue = 360F;
-            this.Gvspeed.RangeInnerRadius = 1;
-            this.Gvspeed.RangeOuterRadius = 60;
-            this.Gvspeed.RangesColor = new System.Drawing.Color[] {
-        System.Drawing.Color.LightGreen,
-        System.Drawing.Color.Red,
-        System.Drawing.Color.Orange,
-        System.Drawing.SystemColors.Control,
-        System.Drawing.SystemColors.Control};
-            this.Gvspeed.RangesEnabled = new bool[] {
-        false,
-        false,
-        false,
-        false,
-        false};
-            this.Gvspeed.RangesEndValue = new float[] {
-        360F,
-        200F,
-        150F,
-        0F,
-        0F};
-            this.Gvspeed.RangesInnerRadius = new int[] {
-        1,
-        1,
-        1,
-        70,
-        70};
-            this.Gvspeed.RangesOuterRadius = new int[] {
-        60,
-        60,
-        60,
-        80,
-        80};
-            this.Gvspeed.RangesStartValue = new float[] {
-        0F,
-        150F,
-        75F,
-        0F,
-        0F};
-            this.Gvspeed.RangeStartValue = 0F;
-            this.Gvspeed.ScaleLinesInterColor = System.Drawing.Color.White;
-            this.Gvspeed.ScaleLinesInterInnerRadius = 52;
-            this.Gvspeed.ScaleLinesInterOuterRadius = 60;
-            this.Gvspeed.ScaleLinesInterWidth = 1;
-            this.Gvspeed.ScaleLinesMajorColor = System.Drawing.Color.White;
-            this.Gvspeed.ScaleLinesMajorInnerRadius = 50;
-            this.Gvspeed.ScaleLinesMajorOuterRadius = 60;
-            this.Gvspeed.ScaleLinesMajorStepValue = 2F;
-            this.Gvspeed.ScaleLinesMajorWidth = 2;
-            this.Gvspeed.ScaleLinesMinorColor = System.Drawing.Color.White;
-            this.Gvspeed.ScaleLinesMinorInnerRadius = 55;
-            this.Gvspeed.ScaleLinesMinorNumOf = 9;
-            this.Gvspeed.ScaleLinesMinorOuterRadius = 60;
-            this.Gvspeed.ScaleLinesMinorWidth = 1;
-            this.Gvspeed.ScaleNumbersColor = System.Drawing.Color.White;
-            this.Gvspeed.ScaleNumbersFormat = "";
-            this.Gvspeed.ScaleNumbersRadius = 42;
-            this.Gvspeed.ScaleNumbersRotation = 0;
-            this.Gvspeed.ScaleNumbersStartScaleLine = 1;
-            this.Gvspeed.ScaleNumbersStepScaleLines = 1;
-            this.Gvspeed.Value = 0F;
-            this.Gvspeed.Value0 = 0F;
-            this.Gvspeed.Value1 = 0F;
-            this.Gvspeed.Value2 = 0F;
-            this.Gvspeed.Value3 = 0F;
+            this.G_batp.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.G_batp, "G_batp");
+            this.G_batp.BaseArcColor = System.Drawing.Color.Transparent;
+            this.G_batp.BaseArcRadius = 70;
+            this.G_batp.BaseArcStart = 20;
+            this.G_batp.BaseArcSweep = 320;
+            this.G_batp.BaseArcWidth = 2;
+            this.G_batp.Cap_Idx = ((byte)(1));
+            this.G_batp.CapColor = System.Drawing.Color.Lime;
+            this.G_batp.CapColors = new System.Drawing.Color[] { System.Drawing.Color.White, System.Drawing.Color.Red, System.Drawing.Color.Black, System.Drawing.Color.Black, System.Drawing.Color.Black };
+            //this.G_batp.CapPosition = new System.Drawing.Point(50, 45);
+            this.G_batp.CapsPosition = new System.Drawing.Point[] { new System.Drawing.Point(58, 85), new System.Drawing.Point(60, 45), new System.Drawing.Point(10, 10), new System.Drawing.Point(10, 10), new System.Drawing.Point(10, 10) };
+            this.G_batp.CapsText = new string[] { "BAT", "", "", "", "" };
+            this.G_batp.CapText = "";
+            this.G_batp.Center = new System.Drawing.Point(68, 75);// (75, 75);
+
+            
+            //test...
+            //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" +0 /*mav_batp_custom_number*/, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+            //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" +0 /*mav_batp_custom_number*/, true));
+            //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" +0 /*mav_batp_custom_number*/, true));
+            //test G_batp.CapText =System.DateTime.Now.Second.ToString();
+
+
+            this.G_batp.MaxValue = 100F;
+            this.G_batp.MinValue = 0F;
+            this.G_batp.Name = "G_batp";
+            this.G_batp.Need_Idx = ((byte)(3));
+            this.G_batp.NeedleColor1 = AGaugeApp.AGauge.NeedleColorEnum.Gray;
+            this.G_batp.NeedleColor2 = System.Drawing.Color.Brown;
+            this.G_batp.NeedleEnabled = false;
+            this.G_batp.NeedleRadius = 70;
+            this.G_batp.NeedlesColor1 = new AGaugeApp.AGauge.NeedleColorEnum[] { AGaugeApp.AGauge.NeedleColorEnum.Gray, AGaugeApp.AGauge.NeedleColorEnum.Red, AGaugeApp.AGauge.NeedleColorEnum.Blue, AGaugeApp.AGauge.NeedleColorEnum.Gray };
+            this.G_batp.NeedlesColor2 = new System.Drawing.Color[] { System.Drawing.Color.White, System.Drawing.Color.White, System.Drawing.Color.White, System.Drawing.Color.Brown };
+            this.G_batp.NeedlesEnabled = new bool[] { true, true, false, false };
+            this.G_batp.NeedlesRadius = new int[] { 50, 50, 70, 70 };
+            this.G_batp.NeedlesType = new int[] { 0, 0, 0, 0 };
+            this.G_batp.NeedlesWidth = new int[] { 2, 1, 2, 2 };
+            this.G_batp.NeedleType = 0;
+            this.G_batp.NeedleWidth = 2;
+            this.G_batp.Range_Idx = ((byte)(2));
+            this.G_batp.RangeColor = System.Drawing.Color.Orange;
+            this.G_batp.RangeEnabled = false;
+            this.G_batp.RangeEndValue = 50F;
+            this.G_batp.RangeInnerRadius = 1;
+            this.G_batp.RangeOuterRadius = 70;
+            this.G_batp.RangesColor = new System.Drawing.Color[] { System.Drawing.Color.LightGreen, System.Drawing.Color.Red, System.Drawing.Color.Orange, System.Drawing.SystemColors.Control, System.Drawing.SystemColors.Control };
+            this.G_batp.RangesEnabled = new bool[] { false, false, false, false, false };
+            this.G_batp.RangesEndValue = new float[] { 35F, 60F, 50F, 0F, 0F };
+            this.G_batp.RangesInnerRadius = new int[] { 1, 1, 1, 70, 70 };
+            this.G_batp.RangesOuterRadius = new int[] { 70, 70, 70, 80, 80 };
+            this.G_batp.RangesStartValue = new float[] { 0F, 50F, 35F, 0F, 0F };
+            this.G_batp.RangeStartValue = 35F;
+            this.G_batp.ScaleLinesInterColor = System.Drawing.Color.White;
+            this.G_batp.ScaleLinesInterInnerRadius = 52;
+            this.G_batp.ScaleLinesInterOuterRadius = 60;
+            this.G_batp.ScaleLinesInterWidth = 1;
+            this.G_batp.ScaleLinesMajorColor = System.Drawing.Color.White;
+            this.G_batp.ScaleLinesMajorInnerRadius = 50;
+            this.G_batp.ScaleLinesMajorOuterRadius = 60;
+            this.G_batp.ScaleLinesMajorStepValue = 10F;
+            this.G_batp.ScaleLinesMajorWidth = 2;
+            this.G_batp.ScaleLinesMinorColor = System.Drawing.Color.White;
+            this.G_batp.ScaleLinesMinorInnerRadius = 55;
+            this.G_batp.ScaleLinesMinorNumOf = 9;
+            this.G_batp.ScaleLinesMinorOuterRadius = 60;
+            this.G_batp.ScaleLinesMinorWidth = 1;
+            this.G_batp.ScaleNumbersColor = System.Drawing.Color.White;
+            this.G_batp.ScaleNumbersFormat = null;
+            this.G_batp.ScaleNumbersRadius = 42;
+            this.G_batp.ScaleNumbersRotation = 0;
+            this.G_batp.ScaleNumbersStartScaleLine = 1;
+            this.G_batp.ScaleNumbersStepScaleLines = 1;
+            this.toolTip1.SetToolTip(this.G_batp, resources.GetString("G_batp.ToolTip"));
+            this.G_batp.Value = 0F;
+            this.G_batp.Value0 = 0F;
+            this.G_batp.Value1 = 0F;
+            this.G_batp.Value2 = 0F;
+            this.G_batp.Value3 = 0F;
+            this.G_batp.DoubleClick += new System.EventHandler(this.G_batp_DoubleClick);
+
+            // 
+            // bindingSourceHud
+            // 
+            this.bindingSourceHud.DataSource = typeof(MissionPlanner.CurrentState);
+            // 
+            // bindingSourceGaugesTab
+            // 
+            this.bindingSourceGaugesTab.DataSource = typeof(MissionPlanner.CurrentState);
+
+
+
+            //old code of VSI vrrtical speed modeifed as G_batp
+            //    this.G_batp.BackColor = System.Drawing.Color.Transparent;
+            //    resources.ApplyResources(this.G_batp, "G_batp");
+            //    this.G_batp.BaseArcColor = System.Drawing.Color.Transparent;
+            //    this.G_batp.BaseArcRadius = 60;
+            //    this.G_batp.BaseArcStart = 20;
+            //    this.G_batp.BaseArcSweep = 360;
+            //    this.G_batp.BaseArcWidth = 2;
+            //    this.G_batp.Cap_Idx = ((byte)(0));
+            //    this.G_batp.CapColor = System.Drawing.Color.White;
+            //    this.G_batp.CapColors = new System.Drawing.Color[] {
+            //System.Drawing.Color.White,
+            //System.Drawing.Color.Black,
+            //System.Drawing.Color.Black,
+            //System.Drawing.Color.Black,
+            //System.Drawing.Color.Black};
+            //    this.G_batp.CapPosition = new System.Drawing.Point(65, 85);
+            //    this.G_batp.CapsPosition = new System.Drawing.Point[] {
+            //new System.Drawing.Point(65, 85),
+            //new System.Drawing.Point(30, 55),
+            //new System.Drawing.Point(10, 10),
+            //new System.Drawing.Point(10, 10),
+            //new System.Drawing.Point(10, 10)};
+            //    this.G_batp.CapsText = new string[] {"BAT","","","",""};
+            //    this.G_batp.CapText = "";
+            //    this.G_batp.Center = new System.Drawing.Point(75, 75);
+            //    //this.G_batp.CapText = "BAT";//"VSI";
+            //    this.G_batp.Center = new System.Drawing.Point(75, 75);
+            //    this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield0", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+            //    this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield0", true));
+            //    this.G_batp.MaxValue = 100F;
+            //    this.G_batp.MinValue = 0F;
+
+            //    this.G_batp.Name = "G_batp";
+            //    this.G_batp.Need_Idx = ((byte)(3));
+            //    this.G_batp.NeedleColor1 = AGaugeApp.AGauge.NeedleColorEnum.Gray;
+            //    this.G_batp.NeedleColor2 = System.Drawing.Color.White;
+            //    this.G_batp.NeedleEnabled = false;
+            //    this.G_batp.NeedleRadius = 80;
+            //    this.G_batp.NeedlesColor1 = new AGaugeApp.AGauge.NeedleColorEnum[] {
+            //AGaugeApp.AGauge.NeedleColorEnum.Gray,
+            //AGaugeApp.AGauge.NeedleColorEnum.Gray,
+            //AGaugeApp.AGauge.NeedleColorEnum.Gray,
+            //AGaugeApp.AGauge.NeedleColorEnum.Gray};
+            //    this.G_batp.NeedlesColor2 = new System.Drawing.Color[] {
+            //System.Drawing.Color.White,
+            //System.Drawing.Color.White,
+            //System.Drawing.Color.White,
+            //System.Drawing.Color.White};
+            //    this.G_batp.NeedlesEnabled = new bool[] {
+            //true,
+            //false,
+            //false,
+            //false};
+            //    this.G_batp.NeedlesRadius = new int[] {50,30,50,80};
+            //    this.G_batp.NeedlesType = new int[] {
+            //0,
+            //0,
+            //0,
+            //0};
+            //    this.G_batp.NeedlesWidth = new int[] {
+            //2,
+            //2,
+            //2,
+            //2};
+            //    this.G_batp.NeedleType = 0;
+            //    this.G_batp.NeedleWidth = 2;
+            //    this.G_batp.Range_Idx = ((byte)(0));
+            //    this.G_batp.RangeColor = System.Drawing.Color.LightGreen;
+            //    this.G_batp.RangeEnabled = false;
+            //    this.G_batp.RangeEndValue = 360F;
+            //    this.G_batp.RangeInnerRadius = 1;
+            //    this.G_batp.RangeOuterRadius = 60;
+            //    this.G_batp.RangesColor = new System.Drawing.Color[] {
+            //System.Drawing.Color.LightGreen,
+            //System.Drawing.Color.Red,
+            //System.Drawing.Color.Orange,
+            //System.Drawing.SystemColors.Control,
+            //System.Drawing.SystemColors.Control};
+            //    this.G_batp.RangesEnabled = new bool[] {
+            //false,
+            //false,
+            //false,
+            //false,
+            //false};
+            //    this.G_batp.RangesEndValue = new float[] {
+            //360F,
+            //200F,
+            //150F,
+            //0F,
+            //0F};
+            //    this.G_batp.RangesInnerRadius = new int[] {
+            //1,
+            //1,
+            //1,
+            //70,
+            //70};
+            //    this.G_batp.RangesOuterRadius = new int[] {
+            //60,
+            //60,
+            //60,
+            //80,
+            //80};
+            //    this.G_batp.RangesStartValue = new float[] {
+            //0F,
+            //150F,
+            //75F,
+            //0F,
+            //0F};
+            //    this.G_batp.RangeStartValue = 0F;
+            //    this.G_batp.ScaleLinesInterColor = System.Drawing.Color.White;
+            //    this.G_batp.ScaleLinesInterInnerRadius = 52;
+            //    this.G_batp.ScaleLinesInterOuterRadius = 60;
+            //    this.G_batp.ScaleLinesInterWidth = 1;
+            //    this.G_batp.ScaleLinesMajorColor = System.Drawing.Color.White;
+            //    this.G_batp.ScaleLinesMajorInnerRadius = 50;
+            //    this.G_batp.ScaleLinesMajorOuterRadius = 60;
+            //    this.G_batp.ScaleLinesMajorStepValue = 10F;
+            //    this.G_batp.ScaleLinesMajorWidth = 2;
+            //    this.G_batp.ScaleLinesMinorColor = System.Drawing.Color.White;
+            //    this.G_batp.ScaleLinesMinorInnerRadius = 55;
+            //    this.G_batp.ScaleLinesMinorNumOf = 9;
+            //    this.G_batp.ScaleLinesMinorOuterRadius = 60;
+            //    this.G_batp.ScaleLinesMinorWidth = 1;
+            //    this.G_batp.ScaleNumbersColor = System.Drawing.Color.White;
+            //    this.G_batp.ScaleNumbersFormat = "";
+            //    this.G_batp.ScaleNumbersRadius = 42;
+            //    this.G_batp.ScaleNumbersRotation = 0;
+            //    this.G_batp.ScaleNumbersStartScaleLine = 1;
+            //    this.G_batp.ScaleNumbersStepScaleLines = 1;
+            //    this.G_batp.Value = 0F;
+            //    this.G_batp.Value0 = 0F;
+            //    this.G_batp.Value1 = 0F;
+            //    this.G_batp.Value2 = 0F;
+            //    this.G_batp.Value3 = 0F;
+
+
+
+
             // 
             // Gheading
             // 
@@ -3388,7 +3448,7 @@ namespace MissionPlanner.GCSViews
         public TabPage tabPagePreFlight;
         private Controls.PreFlight.CheckListControl checkListControl1;
         public TabPage tabGauges;
-        private AGaugeApp.AGauge Gvspeed;
+        private AGaugeApp.AGauge G_batp; // 01june26_task1
         private Controls.HSI Gheading;
         private AGaugeApp.AGauge Galt;
         private AGaugeApp.AGauge Gspeed;

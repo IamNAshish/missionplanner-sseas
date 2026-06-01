@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Drawing2D; //29may26_task1
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -33,7 +34,6 @@ using ZedGraph;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
 using TableLayoutPanelCellPosition = System.Windows.Forms.TableLayoutPanelCellPosition;
 using UnauthorizedAccessException = System.UnauthorizedAccessException;
-using System.Drawing.Drawing2D; //29may26_task1
 
 
 // written by michael oborne
@@ -255,6 +255,48 @@ namespace MissionPlanner.GCSViews
         public FlightData()
         {
             log.Info("Ctor Start");
+
+            //test 01june26
+            //foreach (var field in test.GetProperties())
+            //{
+            //    // field.Name has the field's name.
+            //    object fieldValue = field.GetValue(thisBoxed, null); // Get value
+            //    if (fieldValue == null)
+            //        continue;                                
+
+            //    if (field.Name.Contains("customfield"))
+            //    {
+
+
+            //        if (CurrentState.custom_field_names.ContainsKey(field.Name))
+            //        {
+            //            string name = CurrentState.custom_field_names[field.Name];
+            //            max_length = Math.Max(max_length, TextRenderer.MeasureText(name, selectform.Font).Width);
+            //            fields.Add((field.Name, name));
+
+            //            ///test 
+            //            if (name == "MAV_BATP")
+            //            {
+            //                MessageBox.Show(n.ToString());
+            //                //MessageBox.Show(field.GetValue().ToString());
+            //                //mav_batp_custom_number = n;
+
+            //                //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+            //                //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));
+            //                //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));
+            //                //G_batp.CapText =System.DateTime.Now.Second.ToString();
+
+            //            }
+            //            n += 1;
+            //            //test end
+            //        }
+            //    }
+                
+            //}
+
+
+
+
 
             InitializeComponent();
 
@@ -4750,8 +4792,13 @@ namespace MissionPlanner.GCSViews
             }
         }
 
+        //public int mav_batp_custom_number=0;
+        
+
         private void quickView_DoubleClick(object sender, EventArgs e)
         {
+            int n = 0;//test
+
             if (MainV2.DisplayConfiguration.lockQuickView)
                 return;
 
@@ -4779,6 +4826,7 @@ namespace MissionPlanner.GCSViews
             int max_length = 0;
             List<(string name, string desc)> fields = new List<(string, string)>();
 
+            
             foreach (var field in test.GetProperties())
             {
                 // field.Name has the field's name.
@@ -4798,11 +4846,29 @@ namespace MissionPlanner.GCSViews
 
                 if (field.Name.Contains("customfield"))
                 {
+                    
+                    
                     if (CurrentState.custom_field_names.ContainsKey(field.Name))
                     {
                         string name = CurrentState.custom_field_names[field.Name];
                         max_length = Math.Max(max_length, TextRenderer.MeasureText(name, selectform.Font).Width);
                         fields.Add((field.Name, name));
+
+                        ///test 
+                        //if (name == "MAV_BATP")
+                        //{
+                            //MessageBox.Show(n.ToString());
+                            //MessageBox.Show(field.GetValue().ToString());
+                            //mav_batp_custom_number = n;
+
+                            //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                            //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));
+                            //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));
+                            //G_batp.CapText =System.DateTime.Now.Second.ToString();
+
+                        //}
+                        //n += 1;
+                        //test end
                     }
                 }
                 else
@@ -5430,7 +5496,7 @@ namespace MissionPlanner.GCSViews
             {
                 // 2 rows layout
 
-                Gvspeed.Visible = true;
+                G_batp.Visible = true;
 
                 if (tabGauges.Height < tabGauges.Width)
                     myheight = tabGauges.Height / 2;
@@ -5440,8 +5506,8 @@ namespace MissionPlanner.GCSViews
                 myheight = Math.Max(myheight, 150);
 
                 // size all gauges
-                Gvspeed.Width = myheight;
-                Gvspeed.Height = myheight;
+                G_batp.Width = myheight;
+                G_batp.Height = myheight;
 
                 Gspeed.Width = myheight;
                 Gspeed.Height = myheight;
@@ -5456,13 +5522,13 @@ namespace MissionPlanner.GCSViews
                 G_RPM.Height = myheight;// 30may26_task_rpm
 
                 // top row
-                Gvspeed.Location = new Point(0, 0);
-                Gspeed.Location = new Point(Gvspeed.Right, 0);
+                G_batp.Location = new Point(0, 0);
+                Gspeed.Location = new Point(G_batp.Right, 0);
                 Galt.Location = new Point(Gspeed.Right, 0);
 
                 // bottom row
-                Gheading.Location = new Point(0, Gvspeed.Bottom);
-                G_RPM.Location = new Point(Gheading.Right, Gvspeed.Bottom); // 30may26_task_rpm
+                Gheading.Location = new Point(0, G_batp.Bottom);
+                G_RPM.Location = new Point(Gheading.Right, G_batp.Bottom); // 30may26_task_rpm
 
                 return;
             }
@@ -5470,7 +5536,7 @@ namespace MissionPlanner.GCSViews
             // wide layout
             if (tabGauges.Width < 700)
             {
-                Gvspeed.Visible = false;
+                G_batp.Visible = false;
 
                 mywidth = tabGauges.Width / 4;
 
@@ -5495,14 +5561,14 @@ namespace MissionPlanner.GCSViews
             }
             else
             {
-                Gvspeed.Visible = true;
+                G_batp.Visible = true;
 
                 mywidth = tabGauges.Width / 5;
 
                 mywidth = Math.Max(mywidth, 150);
 
-                Gvspeed.Width = mywidth;
-                Gvspeed.Height = mywidth;
+                G_batp.Width = mywidth;
+                G_batp.Height = mywidth;
 
                 Gspeed.Width = mywidth;
                 Gspeed.Height = mywidth;
@@ -5516,8 +5582,8 @@ namespace MissionPlanner.GCSViews
                 G_RPM.Width = mywidth; // 30may26_task_rpm
                 G_RPM.Height = mywidth; // 30may26_task_rpm
 
-                Gvspeed.Location = new Point(0, 0);
-                Gspeed.Location = new Point(Gvspeed.Right, 0);
+                G_batp.Location = new Point(0, 0);
+                Gspeed.Location = new Point(G_batp.Right, 0);
                 Galt.Location = new Point(Gspeed.Right, 0);
                 Gheading.Location = new Point(Galt.Right, 0);
                 G_RPM.Location = new Point(Gheading.Right, 0); // 30may26_task_rpm
@@ -7290,5 +7356,66 @@ namespace MissionPlanner.GCSViews
                 Settings.Instance["MAV_RPM"] = Gspeed.MaxValue.ToString(); //doubt ["GrpmMAX"]
             }
         }
+        private void G_batp_DoubleClick(object sender, EventArgs e)
+        {
+            ///test 01june26
+            int mav_batp_custom_number = 0;
+            object thisBoxed = MainV2.comPort.MAV.cs;
+            Type test = thisBoxed.GetType();
+            //int max_length = 0;
+            List<(string name, string desc)> fields = new List<(string, string)>();
+            int n = 0;
+            foreach (var field in test.GetProperties())
+            {
+                // field.Name has the field's name.
+                object fieldValue = field.GetValue(thisBoxed, null); // Get value
+                if (fieldValue == null)
+                    continue;
+
+                if (!fieldValue.IsNumber())
+                {
+                    if (fieldValue is bool)
+                    {
+                        fieldValue = ((bool)fieldValue) == true ? 1 : 0;
+                    }
+                    else
+                        continue;
+                }
+
+                if (field.Name.Contains("customfield"))
+                {
+
+
+                    if (CurrentState.custom_field_names.ContainsKey(field.Name))
+                    {
+                        string name = CurrentState.custom_field_names[field.Name];
+                        //max_length = Math.Max(max_length, TextRenderer.MeasureText(name, selectform.Font).Width);
+                        fields.Add((field.Name, name));
+
+                        ///test 
+                        if (name == "MAV_BATP")
+                        {
+                            MessageBox.Show(n.ToString());
+                            //MessageBox.Show(field.GetValue().ToString());
+                            mav_batp_custom_number = n;
+
+                            this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                            this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));
+                            this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));
+                            //G_batp.CapText =System.DateTime.Now.Second.ToString();
+
+                        }
+                        n += 1;
+                        //test end
+                    }
+                }
+                
+            }
+            //test end 01june26
+            MessageBox.Show("mav_batp_custom_number:" + mav_batp_custom_number.ToString());
+        }
+
+
+
     }
 }
