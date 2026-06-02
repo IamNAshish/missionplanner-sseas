@@ -277,10 +277,10 @@ namespace MissionPlanner.GCSViews
             //label_batp_onGauge.Font = new Font("Segoe UI", 12, FontStyle.Bold);
             //label_batp_onGauge.TextAlign = ContentAlignment.MiddleCenter;
             //Controls.Add(label_batp_onGauge);
-            
-            G_batp.Resize += G_batp_Resize;
-            G_batp_Resize(null, null);
-         
+
+             G_batp.Resize += G_batp_Resize;
+             G_batp_Resize(null, null);
+
 
 
 
@@ -5488,7 +5488,7 @@ namespace MissionPlanner.GCSViews
             {
                 // 2 rows layout
 
-                G_batp.Visible = true;
+                 G_batp.Visible = true;
 
                 if (tabGauges.Height < tabGauges.Width)
                     myheight = tabGauges.Height / 2;
@@ -5499,9 +5499,9 @@ namespace MissionPlanner.GCSViews
 
 
                 // size all gauges
-                G_batp.Width = myheight;
-                G_batp.Height = myheight;
-                
+                 G_batp.Width = myheight;
+                 G_batp.Height = myheight;
+
                 //this.tb_BatValue.Location = new System.Drawing.Point((G_batp.Location.X + G_batp.Width / 2), (G_batp.Location.Y + G_batp.Height / 2));
 
 
@@ -5518,13 +5518,13 @@ namespace MissionPlanner.GCSViews
                 G_RPM.Height = myheight;// 30may26_task_rpm
 
                 // top row
-                G_batp.Location = new Point(0, 0);
-                Gspeed.Location = new Point(G_batp.Right, 0);
+                 G_batp.Location = new Point(0, 0);
+                 Gspeed.Location = new Point(G_batp.Right, 0);
                 Galt.Location = new Point(Gspeed.Right, 0);
 
                 // bottom row
-                Gheading.Location = new Point(0, G_batp.Bottom);
-                G_RPM.Location = new Point(Gheading.Right, G_batp.Bottom); // 30may26_task_rpm
+                 Gheading.Location = new Point(0, G_batp.Bottom);
+                 G_RPM.Location = new Point(Gheading.Right, G_batp.Bottom); // 30may26_task_rpm
 
                 return;
             }
@@ -5532,7 +5532,7 @@ namespace MissionPlanner.GCSViews
             // wide layout
             if (tabGauges.Width < 700)
             {
-                G_batp.Visible = false;
+                 G_batp.Visible = false;
 
                 mywidth = tabGauges.Width / 4;
 
@@ -5557,14 +5557,14 @@ namespace MissionPlanner.GCSViews
             }
             else
             {
-                G_batp.Visible = true;
+                 G_batp.Visible = true;
 
                 mywidth = tabGauges.Width / 5;
 
                 mywidth = Math.Max(mywidth, 150);
 
-                G_batp.Width = mywidth;
-                G_batp.Height = mywidth;
+                 G_batp.Width = mywidth;
+                 G_batp.Height = mywidth;
 
                 Gspeed.Width = mywidth;
                 Gspeed.Height = mywidth;
@@ -5578,8 +5578,8 @@ namespace MissionPlanner.GCSViews
                 G_RPM.Width = mywidth; // 30may26_task_rpm
                 G_RPM.Height = mywidth; // 30may26_task_rpm
 
-                G_batp.Location = new Point(0, 0);
-                Gspeed.Location = new Point(G_batp.Right, 0);
+                 G_batp.Location = new Point(0, 0);
+                 Gspeed.Location = new Point(G_batp.Right, 0);
                 Galt.Location = new Point(Gspeed.Right, 0);
                 Gheading.Location = new Point(Galt.Right, 0);
                 G_RPM.Location = new Point(Gheading.Right, 0); // 30may26_task_rpm
@@ -7357,9 +7357,10 @@ namespace MissionPlanner.GCSViews
             if (DialogResult.OK == InputBox.Show("Enter Max RPM", "Enter Max RPM", ref max))
             {
                 G_RPM.MaxValue = float.Parse(max);
-                Settings.Instance["MAV_RPM"] = Gspeed.MaxValue.ToString(); //doubt ["GrpmMAX"]
+                Settings.Instance["GrpmMAX"] = Gspeed.MaxValue.ToString(); //doubt ["GrpmMAX"]
             }
             
+
         }
 
         int kk = 0;
@@ -7367,6 +7368,8 @@ namespace MissionPlanner.GCSViews
         {
             ///test 01june26
             int mav_batp_custom_number = 0;
+            int mav_Gspeed_custom_number = 0;
+            int mav_Grpm_custom_number = 0;
             object thisBoxed = MainV2.comPort.MAV.cs;
             Type test = thisBoxed.GetType();
             //int max_length = 0;
@@ -7411,13 +7414,28 @@ namespace MissionPlanner.GCSViews
                             ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
                             ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
                             /////////G_batp.CapText = System.DateTime.Now.Second.ToString();
-                            
-                            //this.tb_BatValue.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
                             this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
                             this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
 
 
                         }
+                        else if(name=="MAV_CSL") //gspeed
+                        {
+                            MessageBox.Show("mav_Gspeed_custom_number:" + n.ToString());
+                            mav_Gspeed_custom_number = n;
+                            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Gspeed_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
+                            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
+                        }
+                        else if(name=="MAV_CSR")//Grpm
+                        {
+                            MessageBox.Show("mav_Grpm_custom_number:" + n.ToString());
+                            mav_Grpm_custom_number = n;
+                            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Grpm_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
+                            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
+                        }
+
                         n += 1;
                         //test end
                     }
