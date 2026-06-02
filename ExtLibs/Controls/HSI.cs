@@ -153,7 +153,8 @@ namespace MissionPlanner.Controls
                         }
                         else if ((a%30) == 0) // number labeled
                         {
-                            g.DrawString((a/10).ToString("0").PadLeft(2), new System.Drawing.Font(FontFamily.GenericSansSerif, font),
+                            //g.DrawString((a). //02june_task4
+                            g.DrawString((a).ToString("0").PadLeft(2), new System.Drawing.Font(FontFamily.GenericSansSerif, font),
                                 Brushes.White, new PointF(-font, -_radiusoutside));
 
                             g.DrawLine(Pens.White, 0, _radiusinside, 0, _radiusinside + 11);

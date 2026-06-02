@@ -3284,6 +3284,11 @@ namespace MissionPlanner.GCSViews
             {
                 Gspeed.MaxValue = float.Parse(max);
                 Settings.Instance["GspeedMAX"] = Gspeed.MaxValue.ToString();
+                Gspeed.ScaleLinesMajorStepValue = 10; //default val
+                if (Gspeed.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
+                {
+                    Gspeed.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
+                }
             }
         }
 
@@ -4627,6 +4632,7 @@ namespace MissionPlanner.GCSViews
             }
 
             coords1.AltUnit = CurrentState.AltUnit;
+                        
         }
 
         private void modifyandSetAlt_Click(object sender, EventArgs e)
@@ -7358,16 +7364,22 @@ namespace MissionPlanner.GCSViews
             {
                 G_RPM.MaxValue = float.Parse(max);
                 Settings.Instance["GrpmMAX"] = Gspeed.MaxValue.ToString(); //doubt ["GrpmMAX"]
+                G_RPM.ScaleLinesMajorStepValue = 1000F;//default min gap
+                if (G_RPM.ScaleLinesMajorStepValue < 0.1f*float.Parse(max))
+                {
+                    G_RPM.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
+                }
             }
             
 
         }
 
         int kk = 0;
-        private void G_batp_DoubleClick(object sender, EventArgs e)
+        int mav_batp_custom_number = 0;
+        private void G_batp_DoubleClick(object sender, EventArgs e) //not only ref to double click check ref before del
         {
             ///test 01june26
-            int mav_batp_custom_number = 0;
+            //int mav_batp_custom_number = 0;
             int mav_Gspeed_custom_number = 0;
             int mav_Grpm_custom_number = 0;
             object thisBoxed = MainV2.comPort.MAV.cs;
@@ -7410,12 +7422,9 @@ namespace MissionPlanner.GCSViews
                             mav_batp_custom_number = n;
 
                             //testing
-                            this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
-                            ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
-                            ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
-                            /////////G_batp.CapText = System.DateTime.Now.Second.ToString();
-                            this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
-                            this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
+                            ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                            ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
+                            ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
 
 
                         }
@@ -7447,6 +7456,47 @@ namespace MissionPlanner.GCSViews
         }
 
 
+        private void timer_gauge_Tick(object sender, EventArgs e)
+        {//02june26_task2 change captext color based on value
+            float batp = 0;
+            switch (mav_batp_custom_number) 
+            {
+                case 0:
+                    batp = MainV2.comPort.MAV.cs.customfield0;break;
+                case 1:
+                    batp = MainV2.comPort.MAV.cs.customfield1; break;
+                case 2:
+                    batp = MainV2.comPort.MAV.cs.customfield2; break;
+                case 3:
+                    batp = MainV2.comPort.MAV.cs.customfield3; break;
+                case 4:
+                    batp = MainV2.comPort.MAV.cs.customfield4; break;
+                case 5:
+                    batp = MainV2.comPort.MAV.cs.customfield5; break;
+                case 6:
+                    batp = MainV2.comPort.MAV.cs.customfield6; break;
+                case 7:
+                    batp = MainV2.comPort.MAV.cs.customfield7; break;
+                case 8:
+                    batp = MainV2.comPort.MAV.cs.customfield8; break;
+            }
+            batp = 0;
+            if (batp < 25)
+            {
+                G_batp.CapColors[1] = Color.Red;
+                this.G_batp.NeedleColor2 = System.Drawing.Color.Green;
+            }
+            else if (batp > 25 && batp < 85)
+            {
+                G_batp.CapColors[1] = Color.Yellow;
+            }
+            else if (batp > 85)
+            {
+                G_batp.CapColors[1] = Color.Lime;
+            }
 
+            G_batp.Invalidate();
+            
+        }
     }
 }

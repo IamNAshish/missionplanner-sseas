@@ -60,6 +60,15 @@ namespace MissionPlanner
             this.CTX_mainmenu.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
+
+            //02june26_task5
+            //this.lblLogo.Text = "Saif Seas";
+            //this.lblLogo.Font = new System.Drawing.Font("Brush Script MT", 18F, FontStyle.Bold);
+            //this.lblLogo.ForeColor = System.Drawing.Color.White;
+            //this.lblLogo.BackColor = System.Drawing.Color.Transparent;
+            //this.lblLogo.AutoSize = true;
+
+
             // 
             // MainMenu
             // 
@@ -281,6 +290,7 @@ namespace MissionPlanner
         private System.Windows.Forms.ToolStripMenuItem connectionListToolStripMenuItem;
         public System.Windows.Forms.ToolStripButton MenuHelp;
         public System.Windows.Forms.ToolStripButton MenuArduPilot;
+        //public System.Windows.Forms.Label lblLogo;//02june26_task5
         public Controls.Status status1;
     }
 }
