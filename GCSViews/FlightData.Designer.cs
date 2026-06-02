@@ -46,6 +46,7 @@ namespace MissionPlanner.GCSViews
             this.label1 = new System.Windows.Forms.Label();
             this.but_disablejoystick = new MissionPlanner.Controls.MyButton();
             this.Zoomlevel = new System.Windows.Forms.NumericUpDown();
+            this.distanceBar1 = new MissionPlanner.Controls.DistanceBar();
             this.TRK_zoom = new MissionPlanner.Controls.MyTrackBar();
             this.windDir1 = new MissionPlanner.Controls.WindDir();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
@@ -81,10 +82,13 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.BUT_SendMSG = new MissionPlanner.Controls.MyButton();
             this.BUT_abortland = new MissionPlanner.Controls.MyButton();
+            this.modifyandSetLoiterRad = new MissionPlanner.Controls.ModifyandSet();
             this.BUT_clear_track = new MissionPlanner.Controls.MyButton();
             this.CMB_action = new System.Windows.Forms.ComboBox();
             this.BUTactiondo = new MissionPlanner.Controls.MyButton();
             this.BUT_resumemis = new MissionPlanner.Controls.MyButton();
+            this.modifyandSetAlt = new MissionPlanner.Controls.ModifyandSet();
+            this.modifyandSetSpeed = new MissionPlanner.Controls.ModifyandSet();
             this.CMB_setwp = new System.Windows.Forms.ComboBox();
             this.BUT_ARM = new MissionPlanner.Controls.MyButton();
             this.BUT_mountmode = new MissionPlanner.Controls.MyButton();
@@ -106,14 +110,15 @@ namespace MissionPlanner.GCSViews
             this.myButton2 = new MissionPlanner.Controls.MyButton();
             this.myButton3 = new MissionPlanner.Controls.MyButton();
             this.tabPagePreFlight = new System.Windows.Forms.TabPage();
+            this.checkListControl1 = new MissionPlanner.Controls.PreFlight.CheckListControl();
             this.tabGauges = new System.Windows.Forms.TabPage();
             this.G_RPM = new AGaugeApp.AGauge();
             this.bindingSourceHud = new System.Windows.Forms.BindingSource(this.components);
             this.bindingSourceGaugesTab = new System.Windows.Forms.BindingSource(this.components);
-            this.G_batp = new AGaugeApp.AGauge();
             this.Gheading = new MissionPlanner.Controls.HSI();
             this.Galt = new AGaugeApp.AGauge();
             this.Gspeed = new AGaugeApp.AGauge();
+            this.G_batp = new AGaugeApp.AGauge();
             this.tabTransponder = new System.Windows.Forms.TabPage();
             this.NACp_tb = new System.Windows.Forms.TextBox();
             this.NIC_tb = new System.Windows.Forms.TextBox();
@@ -133,8 +138,43 @@ namespace MissionPlanner.GCSViews
             this.tabStatus = new System.Windows.Forms.TabPage();
             this.tabServo = new System.Windows.Forms.TabPage();
             this.flowLayoutPanelServos = new System.Windows.Forms.FlowLayoutPanel();
+            this.servoOptions1 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions2 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions3 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions4 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions5 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions6 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions7 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions8 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions9 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions10 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions11 = new MissionPlanner.Controls.ServoOptions();
+            this.servoOptions12 = new MissionPlanner.Controls.ServoOptions();
+            this.relayOptions1 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions2 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions3 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions4 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions5 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions6 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions7 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions8 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions9 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions10 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions11 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions12 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions13 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions14 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions15 = new MissionPlanner.Controls.RelayOptions();
+            this.relayOptions16 = new MissionPlanner.Controls.RelayOptions();
             this.tabAuxFunction = new System.Windows.Forms.TabPage();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.auxOptions1 = new MissionPlanner.Controls.AuxOptions();
+            this.auxOptions2 = new MissionPlanner.Controls.AuxOptions();
+            this.auxOptions3 = new MissionPlanner.Controls.AuxOptions();
+            this.auxOptions4 = new MissionPlanner.Controls.AuxOptions();
+            this.auxOptions5 = new MissionPlanner.Controls.AuxOptions();
+            this.auxOptions6 = new MissionPlanner.Controls.AuxOptions();
+            this.auxOptions7 = new MissionPlanner.Controls.AuxOptions();
             this.tabScripts = new System.Windows.Forms.TabPage();
             this.checkBoxRedirectOutput = new System.Windows.Forms.CheckBox();
             this.BUT_edit_selected = new MissionPlanner.Controls.MyButton();
@@ -223,46 +263,6 @@ namespace MissionPlanner.GCSViews
             this.scriptChecker = new System.Windows.Forms.Timer(this.components);
             this.Messagetabtimer = new System.Windows.Forms.Timer(this.components);
             this.bindingSourceStatusTab = new System.Windows.Forms.BindingSource(this.components);
-            this.distanceBar1 = new MissionPlanner.Controls.DistanceBar();
-            this.modifyandSetLoiterRad = new MissionPlanner.Controls.ModifyandSet();
-            this.modifyandSetAlt = new MissionPlanner.Controls.ModifyandSet();
-            this.modifyandSetSpeed = new MissionPlanner.Controls.ModifyandSet();
-            this.checkListControl1 = new MissionPlanner.Controls.PreFlight.CheckListControl();
-            this.servoOptions1 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions2 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions3 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions4 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions5 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions6 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions7 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions8 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions9 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions10 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions11 = new MissionPlanner.Controls.ServoOptions();
-            this.servoOptions12 = new MissionPlanner.Controls.ServoOptions();
-            this.relayOptions1 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions2 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions3 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions4 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions5 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions6 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions7 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions8 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions9 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions10 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions11 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions12 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions13 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions14 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions15 = new MissionPlanner.Controls.RelayOptions();
-            this.relayOptions16 = new MissionPlanner.Controls.RelayOptions();
-            this.auxOptions1 = new MissionPlanner.Controls.AuxOptions();
-            this.auxOptions2 = new MissionPlanner.Controls.AuxOptions();
-            this.auxOptions3 = new MissionPlanner.Controls.AuxOptions();
-            this.auxOptions4 = new MissionPlanner.Controls.AuxOptions();
-            this.auxOptions5 = new MissionPlanner.Controls.AuxOptions();
-            this.auxOptions6 = new MissionPlanner.Controls.AuxOptions();
-            this.auxOptions7 = new MissionPlanner.Controls.AuxOptions();
             ((System.ComponentModel.ISupportInitialize)(this.MainH)).BeginInit();
             this.MainH.Panel1.SuspendLayout();
             this.MainH.Panel2.SuspendLayout();
@@ -592,6 +592,14 @@ namespace MissionPlanner.GCSViews
             0,
             0});
             this.Zoomlevel.ValueChanged += new System.EventHandler(this.Zoomlevel_ValueChanged);
+            // 
+            // distanceBar1
+            // 
+            resources.ApplyResources(this.distanceBar1, "distanceBar1");
+            this.distanceBar1.BackColor = System.Drawing.Color.Transparent;
+            this.distanceBar1.Name = "distanceBar1";
+            this.distanceBar1.totaldist = 100F;
+            this.distanceBar1.traveleddist = 0F;
             // 
             // TRK_zoom
             // 
@@ -978,6 +986,34 @@ namespace MissionPlanner.GCSViews
             this.BUT_abortland.UseVisualStyleBackColor = true;
             this.BUT_abortland.Click += new System.EventHandler(this.BUT_abortland_Click);
             // 
+            // modifyandSetLoiterRad
+            // 
+            resources.ApplyResources(this.modifyandSetLoiterRad, "modifyandSetLoiterRad");
+            this.modifyandSetLoiterRad.ButtonText = "Set Loiter Rad";
+            this.modifyandSetLoiterRad.DecimalPlaces = 0;
+            this.modifyandSetLoiterRad.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.modifyandSetLoiterRad.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.modifyandSetLoiterRad.Minimum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            -2147483648});
+            this.modifyandSetLoiterRad.Name = "modifyandSetLoiterRad";
+            this.modifyandSetLoiterRad.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.modifyandSetLoiterRad.Click += new System.EventHandler(this.modifyandSetLoiterRad_Click);
+            // 
             // BUT_clear_track
             // 
             this.BUT_clear_track.ColorMouseDown = System.Drawing.Color.Empty;
@@ -1020,6 +1056,63 @@ namespace MissionPlanner.GCSViews
             this.BUT_resumemis.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
             this.BUT_resumemis.UseVisualStyleBackColor = true;
             this.BUT_resumemis.Click += new System.EventHandler(this.BUT_resumemis_Click);
+            // 
+            // modifyandSetAlt
+            // 
+            resources.ApplyResources(this.modifyandSetAlt, "modifyandSetAlt");
+            this.modifyandSetAlt.ButtonText = "Change Alt";
+            this.modifyandSetAlt.DecimalPlaces = 1;
+            this.modifyandSetAlt.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.modifyandSetAlt.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.modifyandSetAlt.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.modifyandSetAlt.Name = "modifyandSetAlt";
+            this.modifyandSetAlt.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.modifyandSetAlt.Click += new System.EventHandler(this.modifyandSetAlt_Click);
+            // 
+            // modifyandSetSpeed
+            // 
+            resources.ApplyResources(this.modifyandSetSpeed, "modifyandSetSpeed");
+            this.modifyandSetSpeed.ButtonText = "Change Speed";
+            this.modifyandSetSpeed.DecimalPlaces = 1;
+            this.modifyandSetSpeed.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.modifyandSetSpeed.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.modifyandSetSpeed.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.modifyandSetSpeed.Name = "modifyandSetSpeed";
+            this.modifyandSetSpeed.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.modifyandSetSpeed.Click += new System.EventHandler(this.modifyandSetSpeed_Click);
+            this.modifyandSetSpeed.ParentChanged += new System.EventHandler(this.modifyandSetSpeed_ParentChanged);
             // 
             // CMB_setwp
             // 
@@ -1245,14 +1338,19 @@ namespace MissionPlanner.GCSViews
             this.tabPagePreFlight.Name = "tabPagePreFlight";
             this.tabPagePreFlight.UseVisualStyleBackColor = true;
             // 
+            // checkListControl1
+            // 
+            resources.ApplyResources(this.checkListControl1, "checkListControl1");
+            this.checkListControl1.Name = "checkListControl1";
+            // 
             // tabGauges
             // 
             resources.ApplyResources(this.tabGauges, "tabGauges");
             this.tabGauges.Controls.Add(this.G_RPM);
-            this.tabGauges.Controls.Add(this.G_batp);
             this.tabGauges.Controls.Add(this.Gheading);
             this.tabGauges.Controls.Add(this.Galt);
             this.tabGauges.Controls.Add(this.Gspeed);
+            this.tabGauges.Controls.Add(this.G_batp);
             this.tabGauges.Name = "tabGauges";
             this.tabGauges.UseVisualStyleBackColor = true;
             this.tabGauges.DoubleClick += new System.EventHandler(this.tabGauges_DoubleClick);
@@ -1275,31 +1373,24 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Black,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
-            this.G_RPM.CapPosition = new System.Drawing.Point(50, 45);
+            this.G_RPM.CapPosition = new System.Drawing.Point(70, 45);
             this.G_RPM.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(58, 85),
         new System.Drawing.Point(70, 45),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
-            this.G_RPM.CapsText = new string[] {"RPM","","","",""};
+            this.G_RPM.CapsText = new string[] {
+        "RPM",
+        "",
+        "",
+        "",
+        ""};
             this.G_RPM.CapText = "";
             this.G_RPM.Center = new System.Drawing.Point(75, 75);
-            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "groundspeed", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0")); //doubtful for 
+            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "groundspeed", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
             this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "airspeed", true));
             this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "groundspeed", true));
-
-            //for mav_batp
-            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield0", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0")); //doubtful for 
-            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield0", true));
-            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield0", true));
-
-
-
-            //test 
-            //MessageBox.Show(MainV2.comPort.MAV.cs.esc11_rpm.ToString());
-            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText",this.bindingSourceHud,"MAV_BATP", true,DataSourceUpdateMode.OnPropertyChanged,"","0"));
-            //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceHud, "MAV_BATP", true));
             this.G_RPM.MaxValue = 10000F;
             this.G_RPM.MinValue = 0F;
             this.G_RPM.Name = "G_RPM";
@@ -1323,9 +1414,21 @@ namespace MissionPlanner.GCSViews
         true,
         false,
         false};
-            this.G_RPM.NeedlesRadius = new int[] {50,50,70,70};
-            this.G_RPM.NeedlesType = new int[] {0,0,0,0};
-            this.G_RPM.NeedlesWidth = new int[] {2,1,2,2};
+            this.G_RPM.NeedlesRadius = new int[] {
+        50,
+        50,
+        70,
+        70};
+            this.G_RPM.NeedlesType = new int[] {
+        0,
+        0,
+        0,
+        0};
+            this.G_RPM.NeedlesWidth = new int[] {
+        2,
+        1,
+        2,
+        2};
             this.G_RPM.NeedleType = 0;
             this.G_RPM.NeedleWidth = 2;
             this.G_RPM.Range_Idx = ((byte)(2));
@@ -1334,12 +1437,42 @@ namespace MissionPlanner.GCSViews
             this.G_RPM.RangeEndValue = 50F;
             this.G_RPM.RangeInnerRadius = 1;
             this.G_RPM.RangeOuterRadius = 70;
-            this.G_RPM.RangesColor =new System.Drawing.Color[] {System.Drawing.Color.LightGreen,System.Drawing.Color.Red,System.Drawing.Color.Orange,System.Drawing.SystemColors.Control,System.Drawing.SystemColors.Control};
-            this.G_RPM.RangesEnabled = new bool[] {false,false,false,false,false};
-            this.G_RPM.RangesEndValue = new float[] {35F,60F,50F,0F,0F};
-            this.G_RPM.RangesInnerRadius = new int[] {1,1,1,70,70};
-            this.G_RPM.RangesOuterRadius = new int[] {70,70,70,80,80};
-            this.G_RPM.RangesStartValue = new float[] {0F,50F,35F,0F,0F};
+            this.G_RPM.RangesColor = new System.Drawing.Color[] {
+        System.Drawing.Color.LightGreen,
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Orange,
+        System.Drawing.SystemColors.Control,
+        System.Drawing.SystemColors.Control};
+            this.G_RPM.RangesEnabled = new bool[] {
+        false,
+        false,
+        false,
+        false,
+        false};
+            this.G_RPM.RangesEndValue = new float[] {
+        35F,
+        60F,
+        50F,
+        0F,
+        0F};
+            this.G_RPM.RangesInnerRadius = new int[] {
+        1,
+        1,
+        1,
+        70,
+        70};
+            this.G_RPM.RangesOuterRadius = new int[] {
+        70,
+        70,
+        70,
+        80,
+        80};
+            this.G_RPM.RangesStartValue = new float[] {
+        0F,
+        50F,
+        35F,
+        0F,
+        0F};
             this.G_RPM.RangeStartValue = 35F;
             this.G_RPM.ScaleLinesInterColor = System.Drawing.Color.White;
             this.G_RPM.ScaleLinesInterInnerRadius = 52;
@@ -1356,7 +1489,7 @@ namespace MissionPlanner.GCSViews
             this.G_RPM.ScaleLinesMinorOuterRadius = 60;
             this.G_RPM.ScaleLinesMinorWidth = 1;
             this.G_RPM.ScaleNumbersColor = System.Drawing.Color.White;
-            this.G_RPM.ScaleNumbersFormat = "0.#k";
+            this.G_RPM.ScaleNumbersFormat = "{0:0000.#}k";//#"0.#k";
             this.G_RPM.ScaleNumbersRadius = 42;
             this.G_RPM.ScaleNumbersRotation = 0;
             this.G_RPM.ScaleNumbersStartScaleLine = 1;
@@ -1364,7 +1497,6 @@ namespace MissionPlanner.GCSViews
             this.toolTip1.SetToolTip(this.G_RPM, resources.GetString("G_RPM.ToolTip"));
             this.G_RPM.Value = 0F;
             this.G_RPM.Value0 = 0F;
-            //this.G_RPM.Value0 = MainV2.comPort.MAV.cs.esc1_rpm / 1000.0f; //30may26_task
             this.G_RPM.Value1 = 0F;
             this.G_RPM.Value2 = 0F;
             this.G_RPM.Value3 = 0F;
@@ -1377,241 +1509,6 @@ namespace MissionPlanner.GCSViews
             // bindingSourceGaugesTab
             // 
             this.bindingSourceGaugesTab.DataSource = typeof(MissionPlanner.CurrentState);
-
-            // 
-            // G_batp // old Gvspeed
-            // 
-            this.G_batp.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.G_batp, "G_batp");
-            this.G_batp.BaseArcColor = System.Drawing.Color.Transparent;
-            this.G_batp.BaseArcRadius = 70;
-            this.G_batp.BaseArcStart = 20;
-            this.G_batp.BaseArcSweep = 320;
-            this.G_batp.BaseArcWidth = 2;
-            this.G_batp.Cap_Idx = ((byte)(1));
-            this.G_batp.CapColor = System.Drawing.Color.Lime;
-            this.G_batp.CapColors = new System.Drawing.Color[] { System.Drawing.Color.White, System.Drawing.Color.Red, System.Drawing.Color.Black, System.Drawing.Color.Black, System.Drawing.Color.Black };
-            //this.G_batp.CapPosition = new System.Drawing.Point(50, 45);
-            this.G_batp.CapsPosition = new System.Drawing.Point[] { new System.Drawing.Point(58, 85), new System.Drawing.Point(60, 45), new System.Drawing.Point(10, 10), new System.Drawing.Point(10, 10), new System.Drawing.Point(10, 10) };
-            this.G_batp.CapsText = new string[] { "BAT", "", "", "", "" };
-            this.G_batp.CapText = "";
-            this.G_batp.Center = new System.Drawing.Point(68, 75);// (75, 75);
-
-            
-            //test...
-            //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" +0 /*mav_batp_custom_number*/, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
-            //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" +0 /*mav_batp_custom_number*/, true));
-            //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" +0 /*mav_batp_custom_number*/, true));
-            //test G_batp.CapText =System.DateTime.Now.Second.ToString();
-
-
-            this.G_batp.MaxValue = 100F;
-            this.G_batp.MinValue = 0F;
-            this.G_batp.Name = "G_batp";
-            this.G_batp.Need_Idx = ((byte)(3));
-            this.G_batp.NeedleColor1 = AGaugeApp.AGauge.NeedleColorEnum.Gray;
-            this.G_batp.NeedleColor2 = System.Drawing.Color.Brown;
-            this.G_batp.NeedleEnabled = false;
-            this.G_batp.NeedleRadius = 70;
-            this.G_batp.NeedlesColor1 = new AGaugeApp.AGauge.NeedleColorEnum[] { AGaugeApp.AGauge.NeedleColorEnum.Gray, AGaugeApp.AGauge.NeedleColorEnum.Red, AGaugeApp.AGauge.NeedleColorEnum.Blue, AGaugeApp.AGauge.NeedleColorEnum.Gray };
-            this.G_batp.NeedlesColor2 = new System.Drawing.Color[] { System.Drawing.Color.White, System.Drawing.Color.White, System.Drawing.Color.White, System.Drawing.Color.Brown };
-            this.G_batp.NeedlesEnabled = new bool[] { true, true, false, false };
-            this.G_batp.NeedlesRadius = new int[] { 50, 50, 70, 70 };
-            this.G_batp.NeedlesType = new int[] { 0, 0, 0, 0 };
-            this.G_batp.NeedlesWidth = new int[] { 2, 1, 2, 2 };
-            this.G_batp.NeedleType = 0;
-            this.G_batp.NeedleWidth = 2;
-            this.G_batp.Range_Idx = ((byte)(2));
-            this.G_batp.RangeColor = System.Drawing.Color.Orange;
-            this.G_batp.RangeEnabled = false;
-            this.G_batp.RangeEndValue = 50F;
-            this.G_batp.RangeInnerRadius = 1;
-            this.G_batp.RangeOuterRadius = 70;
-            this.G_batp.RangesColor = new System.Drawing.Color[] { System.Drawing.Color.LightGreen, System.Drawing.Color.Red, System.Drawing.Color.Orange, System.Drawing.SystemColors.Control, System.Drawing.SystemColors.Control };
-            this.G_batp.RangesEnabled = new bool[] { false, false, false, false, false };
-            this.G_batp.RangesEndValue = new float[] { 35F, 60F, 50F, 0F, 0F };
-            this.G_batp.RangesInnerRadius = new int[] { 1, 1, 1, 70, 70 };
-            this.G_batp.RangesOuterRadius = new int[] { 70, 70, 70, 80, 80 };
-            this.G_batp.RangesStartValue = new float[] { 0F, 50F, 35F, 0F, 0F };
-            this.G_batp.RangeStartValue = 35F;
-            this.G_batp.ScaleLinesInterColor = System.Drawing.Color.White;
-            this.G_batp.ScaleLinesInterInnerRadius = 52;
-            this.G_batp.ScaleLinesInterOuterRadius = 60;
-            this.G_batp.ScaleLinesInterWidth = 1;
-            this.G_batp.ScaleLinesMajorColor = System.Drawing.Color.White;
-            this.G_batp.ScaleLinesMajorInnerRadius = 50;
-            this.G_batp.ScaleLinesMajorOuterRadius = 60;
-            this.G_batp.ScaleLinesMajorStepValue = 10F;
-            this.G_batp.ScaleLinesMajorWidth = 2;
-            this.G_batp.ScaleLinesMinorColor = System.Drawing.Color.White;
-            this.G_batp.ScaleLinesMinorInnerRadius = 55;
-            this.G_batp.ScaleLinesMinorNumOf = 9;
-            this.G_batp.ScaleLinesMinorOuterRadius = 60;
-            this.G_batp.ScaleLinesMinorWidth = 1;
-            this.G_batp.ScaleNumbersColor = System.Drawing.Color.White;
-            this.G_batp.ScaleNumbersFormat = null;
-            this.G_batp.ScaleNumbersRadius = 42;
-            this.G_batp.ScaleNumbersRotation = 0;
-            this.G_batp.ScaleNumbersStartScaleLine = 1;
-            this.G_batp.ScaleNumbersStepScaleLines = 1;
-            this.toolTip1.SetToolTip(this.G_batp, resources.GetString("G_batp.ToolTip"));
-            this.G_batp.Value = 0F;
-            this.G_batp.Value0 = 0F;
-            this.G_batp.Value1 = 0F;
-            this.G_batp.Value2 = 0F;
-            this.G_batp.Value3 = 0F;
-            this.G_batp.DoubleClick += new System.EventHandler(this.G_batp_DoubleClick);
-
-            // 
-            // bindingSourceHud
-            // 
-            this.bindingSourceHud.DataSource = typeof(MissionPlanner.CurrentState);
-            // 
-            // bindingSourceGaugesTab
-            // 
-            this.bindingSourceGaugesTab.DataSource = typeof(MissionPlanner.CurrentState);
-
-
-
-            //old code of VSI vrrtical speed modeifed as G_batp
-            //    this.G_batp.BackColor = System.Drawing.Color.Transparent;
-            //    resources.ApplyResources(this.G_batp, "G_batp");
-            //    this.G_batp.BaseArcColor = System.Drawing.Color.Transparent;
-            //    this.G_batp.BaseArcRadius = 60;
-            //    this.G_batp.BaseArcStart = 20;
-            //    this.G_batp.BaseArcSweep = 360;
-            //    this.G_batp.BaseArcWidth = 2;
-            //    this.G_batp.Cap_Idx = ((byte)(0));
-            //    this.G_batp.CapColor = System.Drawing.Color.White;
-            //    this.G_batp.CapColors = new System.Drawing.Color[] {
-            //System.Drawing.Color.White,
-            //System.Drawing.Color.Black,
-            //System.Drawing.Color.Black,
-            //System.Drawing.Color.Black,
-            //System.Drawing.Color.Black};
-            //    this.G_batp.CapPosition = new System.Drawing.Point(65, 85);
-            //    this.G_batp.CapsPosition = new System.Drawing.Point[] {
-            //new System.Drawing.Point(65, 85),
-            //new System.Drawing.Point(30, 55),
-            //new System.Drawing.Point(10, 10),
-            //new System.Drawing.Point(10, 10),
-            //new System.Drawing.Point(10, 10)};
-            //    this.G_batp.CapsText = new string[] {"BAT","","","",""};
-            //    this.G_batp.CapText = "";
-            //    this.G_batp.Center = new System.Drawing.Point(75, 75);
-            //    //this.G_batp.CapText = "BAT";//"VSI";
-            //    this.G_batp.Center = new System.Drawing.Point(75, 75);
-            //    this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield0", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
-            //    this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield0", true));
-            //    this.G_batp.MaxValue = 100F;
-            //    this.G_batp.MinValue = 0F;
-
-            //    this.G_batp.Name = "G_batp";
-            //    this.G_batp.Need_Idx = ((byte)(3));
-            //    this.G_batp.NeedleColor1 = AGaugeApp.AGauge.NeedleColorEnum.Gray;
-            //    this.G_batp.NeedleColor2 = System.Drawing.Color.White;
-            //    this.G_batp.NeedleEnabled = false;
-            //    this.G_batp.NeedleRadius = 80;
-            //    this.G_batp.NeedlesColor1 = new AGaugeApp.AGauge.NeedleColorEnum[] {
-            //AGaugeApp.AGauge.NeedleColorEnum.Gray,
-            //AGaugeApp.AGauge.NeedleColorEnum.Gray,
-            //AGaugeApp.AGauge.NeedleColorEnum.Gray,
-            //AGaugeApp.AGauge.NeedleColorEnum.Gray};
-            //    this.G_batp.NeedlesColor2 = new System.Drawing.Color[] {
-            //System.Drawing.Color.White,
-            //System.Drawing.Color.White,
-            //System.Drawing.Color.White,
-            //System.Drawing.Color.White};
-            //    this.G_batp.NeedlesEnabled = new bool[] {
-            //true,
-            //false,
-            //false,
-            //false};
-            //    this.G_batp.NeedlesRadius = new int[] {50,30,50,80};
-            //    this.G_batp.NeedlesType = new int[] {
-            //0,
-            //0,
-            //0,
-            //0};
-            //    this.G_batp.NeedlesWidth = new int[] {
-            //2,
-            //2,
-            //2,
-            //2};
-            //    this.G_batp.NeedleType = 0;
-            //    this.G_batp.NeedleWidth = 2;
-            //    this.G_batp.Range_Idx = ((byte)(0));
-            //    this.G_batp.RangeColor = System.Drawing.Color.LightGreen;
-            //    this.G_batp.RangeEnabled = false;
-            //    this.G_batp.RangeEndValue = 360F;
-            //    this.G_batp.RangeInnerRadius = 1;
-            //    this.G_batp.RangeOuterRadius = 60;
-            //    this.G_batp.RangesColor = new System.Drawing.Color[] {
-            //System.Drawing.Color.LightGreen,
-            //System.Drawing.Color.Red,
-            //System.Drawing.Color.Orange,
-            //System.Drawing.SystemColors.Control,
-            //System.Drawing.SystemColors.Control};
-            //    this.G_batp.RangesEnabled = new bool[] {
-            //false,
-            //false,
-            //false,
-            //false,
-            //false};
-            //    this.G_batp.RangesEndValue = new float[] {
-            //360F,
-            //200F,
-            //150F,
-            //0F,
-            //0F};
-            //    this.G_batp.RangesInnerRadius = new int[] {
-            //1,
-            //1,
-            //1,
-            //70,
-            //70};
-            //    this.G_batp.RangesOuterRadius = new int[] {
-            //60,
-            //60,
-            //60,
-            //80,
-            //80};
-            //    this.G_batp.RangesStartValue = new float[] {
-            //0F,
-            //150F,
-            //75F,
-            //0F,
-            //0F};
-            //    this.G_batp.RangeStartValue = 0F;
-            //    this.G_batp.ScaleLinesInterColor = System.Drawing.Color.White;
-            //    this.G_batp.ScaleLinesInterInnerRadius = 52;
-            //    this.G_batp.ScaleLinesInterOuterRadius = 60;
-            //    this.G_batp.ScaleLinesInterWidth = 1;
-            //    this.G_batp.ScaleLinesMajorColor = System.Drawing.Color.White;
-            //    this.G_batp.ScaleLinesMajorInnerRadius = 50;
-            //    this.G_batp.ScaleLinesMajorOuterRadius = 60;
-            //    this.G_batp.ScaleLinesMajorStepValue = 10F;
-            //    this.G_batp.ScaleLinesMajorWidth = 2;
-            //    this.G_batp.ScaleLinesMinorColor = System.Drawing.Color.White;
-            //    this.G_batp.ScaleLinesMinorInnerRadius = 55;
-            //    this.G_batp.ScaleLinesMinorNumOf = 9;
-            //    this.G_batp.ScaleLinesMinorOuterRadius = 60;
-            //    this.G_batp.ScaleLinesMinorWidth = 1;
-            //    this.G_batp.ScaleNumbersColor = System.Drawing.Color.White;
-            //    this.G_batp.ScaleNumbersFormat = "";
-            //    this.G_batp.ScaleNumbersRadius = 42;
-            //    this.G_batp.ScaleNumbersRotation = 0;
-            //    this.G_batp.ScaleNumbersStartScaleLine = 1;
-            //    this.G_batp.ScaleNumbersStepScaleLines = 1;
-            //    this.G_batp.Value = 0F;
-            //    this.G_batp.Value0 = 0F;
-            //    this.G_batp.Value1 = 0F;
-            //    this.G_batp.Value2 = 0F;
-            //    this.G_batp.Value3 = 0F;
-
-
-
-
             // 
             // Gheading
             // 
@@ -1789,7 +1686,7 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Black,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
-            this.Gspeed.CapPosition = new System.Drawing.Point(50, 45);
+            this.Gspeed.CapPosition = new System.Drawing.Point(70, 45);
             this.Gspeed.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(58, 85),
         new System.Drawing.Point(70, 45),
@@ -1917,6 +1814,148 @@ namespace MissionPlanner.GCSViews
             this.Gspeed.Value2 = 0F;
             this.Gspeed.Value3 = 0F;
             this.Gspeed.DoubleClick += new System.EventHandler(this.Gspeed_DoubleClick);
+            // 
+            // G_batp
+            // 
+            this.G_batp.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.G_batp, "G_batp");
+            this.G_batp.BaseArcColor = System.Drawing.Color.Transparent;
+            this.G_batp.BaseArcRadius = 70;
+            this.G_batp.BaseArcStart = 20;
+            this.G_batp.BaseArcSweep = 320;
+            this.G_batp.BaseArcWidth = 2;
+            this.G_batp.Cap_Idx = ((byte)(1));
+            this.G_batp.CapColor = System.Drawing.Color.Red;
+            this.G_batp.CapColors = new System.Drawing.Color[] {
+        System.Drawing.Color.White,
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Black,
+        System.Drawing.Color.Black,
+        System.Drawing.Color.Black};
+            this.G_batp.CapPosition = new System.Drawing.Point(60, 45);
+            this.G_batp.CapsPosition = new System.Drawing.Point[] {
+        new System.Drawing.Point(58, 85),
+        new System.Drawing.Point(60, 45),
+        new System.Drawing.Point(10, 10),
+        new System.Drawing.Point(10, 10),
+        new System.Drawing.Point(10, 10)};
+            this.G_batp.CapsText = new string[] {
+        "BAT",
+        "",
+        "",
+        "",
+        ""};
+            this.G_batp.CapText = "";
+            this.G_batp.Center = new System.Drawing.Point(68, 75);
+            this.G_batp.MaxValue = 100F;
+            this.G_batp.MinValue = 0F;
+            this.G_batp.Name = "G_batp";
+            this.G_batp.Need_Idx = ((byte)(3));
+            this.G_batp.NeedleColor1 = AGaugeApp.AGauge.NeedleColorEnum.Gray;
+            this.G_batp.NeedleColor2 = System.Drawing.Color.Brown;
+            this.G_batp.NeedleEnabled = false;
+            this.G_batp.NeedleRadius = 70;
+            this.G_batp.NeedlesColor1 = new AGaugeApp.AGauge.NeedleColorEnum[] {
+        AGaugeApp.AGauge.NeedleColorEnum.Gray,
+        AGaugeApp.AGauge.NeedleColorEnum.Red,
+        AGaugeApp.AGauge.NeedleColorEnum.Blue,
+        AGaugeApp.AGauge.NeedleColorEnum.Gray};
+            this.G_batp.NeedlesColor2 = new System.Drawing.Color[] {
+        System.Drawing.Color.White,
+        System.Drawing.Color.White,
+        System.Drawing.Color.White,
+        System.Drawing.Color.Brown};
+            this.G_batp.NeedlesEnabled = new bool[] {
+        true,
+        true,
+        false,
+        false};
+            this.G_batp.NeedlesRadius = new int[] {
+        50,
+        50,
+        70,
+        70};
+            this.G_batp.NeedlesType = new int[] {
+        0,
+        0,
+        0,
+        0};
+            this.G_batp.NeedlesWidth = new int[] {
+        2,
+        1,
+        2,
+        2};
+            this.G_batp.NeedleType = 0;
+            this.G_batp.NeedleWidth = 2;
+            this.G_batp.Range_Idx = ((byte)(2));
+            this.G_batp.RangeColor = System.Drawing.Color.Orange;
+            this.G_batp.RangeEnabled = false;
+            this.G_batp.RangeEndValue = 50F;
+            this.G_batp.RangeInnerRadius = 1;
+            this.G_batp.RangeOuterRadius = 70;
+            this.G_batp.RangesColor = new System.Drawing.Color[] {
+        System.Drawing.Color.LightGreen,
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Orange,
+        System.Drawing.SystemColors.Control,
+        System.Drawing.SystemColors.Control};
+            this.G_batp.RangesEnabled = new bool[] {
+        false,
+        false,
+        false,
+        false,
+        false};
+            this.G_batp.RangesEndValue = new float[] {
+        35F,
+        60F,
+        50F,
+        0F,
+        0F};
+            this.G_batp.RangesInnerRadius = new int[] {
+        1,
+        1,
+        1,
+        70,
+        70};
+            this.G_batp.RangesOuterRadius = new int[] {
+        70,
+        70,
+        70,
+        80,
+        80};
+            this.G_batp.RangesStartValue = new float[] {
+        0F,
+        50F,
+        35F,
+        0F,
+        0F};
+            this.G_batp.RangeStartValue = 35F;
+            this.G_batp.ScaleLinesInterColor = System.Drawing.Color.White;
+            this.G_batp.ScaleLinesInterInnerRadius = 52;
+            this.G_batp.ScaleLinesInterOuterRadius = 60;
+            this.G_batp.ScaleLinesInterWidth = 1;
+            this.G_batp.ScaleLinesMajorColor = System.Drawing.Color.White;
+            this.G_batp.ScaleLinesMajorInnerRadius = 50;
+            this.G_batp.ScaleLinesMajorOuterRadius = 60;
+            this.G_batp.ScaleLinesMajorStepValue = 10F;
+            this.G_batp.ScaleLinesMajorWidth = 2;
+            this.G_batp.ScaleLinesMinorColor = System.Drawing.Color.White;
+            this.G_batp.ScaleLinesMinorInnerRadius = 55;
+            this.G_batp.ScaleLinesMinorNumOf = 9;
+            this.G_batp.ScaleLinesMinorOuterRadius = 60;
+            this.G_batp.ScaleLinesMinorWidth = 1;
+            this.G_batp.ScaleNumbersColor = System.Drawing.Color.White;
+            this.G_batp.ScaleNumbersFormat = null;
+            this.G_batp.ScaleNumbersRadius = 42;
+            this.G_batp.ScaleNumbersRotation = 0;
+            this.G_batp.ScaleNumbersStartScaleLine = 1;
+            this.G_batp.ScaleNumbersStepScaleLines = 1;
+            this.G_batp.Value = 0F;
+            this.G_batp.Value0 = 0F;
+            this.G_batp.Value1 = 0F;
+            this.G_batp.Value2 = 0F;
+            this.G_batp.Value3 = 0F;
+            this.G_batp.DoubleClick += new System.EventHandler(this.G_batp_DoubleClick);
             // 
             // tabTransponder
             // 
@@ -2090,6 +2129,174 @@ namespace MissionPlanner.GCSViews
             this.flowLayoutPanelServos.Controls.Add(this.relayOptions16);
             this.flowLayoutPanelServos.Name = "flowLayoutPanelServos";
             // 
+            // servoOptions1
+            // 
+            resources.ApplyResources(this.servoOptions1, "servoOptions1");
+            this.servoOptions1.Name = "servoOptions1";
+            this.servoOptions1.thisservo = 5;
+            // 
+            // servoOptions2
+            // 
+            resources.ApplyResources(this.servoOptions2, "servoOptions2");
+            this.servoOptions2.Name = "servoOptions2";
+            this.servoOptions2.thisservo = 6;
+            // 
+            // servoOptions3
+            // 
+            resources.ApplyResources(this.servoOptions3, "servoOptions3");
+            this.servoOptions3.Name = "servoOptions3";
+            this.servoOptions3.thisservo = 7;
+            // 
+            // servoOptions4
+            // 
+            resources.ApplyResources(this.servoOptions4, "servoOptions4");
+            this.servoOptions4.Name = "servoOptions4";
+            this.servoOptions4.thisservo = 8;
+            // 
+            // servoOptions5
+            // 
+            resources.ApplyResources(this.servoOptions5, "servoOptions5");
+            this.servoOptions5.Name = "servoOptions5";
+            this.servoOptions5.thisservo = 9;
+            // 
+            // servoOptions6
+            // 
+            resources.ApplyResources(this.servoOptions6, "servoOptions6");
+            this.servoOptions6.Name = "servoOptions6";
+            this.servoOptions6.thisservo = 10;
+            // 
+            // servoOptions7
+            // 
+            resources.ApplyResources(this.servoOptions7, "servoOptions7");
+            this.servoOptions7.Name = "servoOptions7";
+            this.servoOptions7.thisservo = 11;
+            // 
+            // servoOptions8
+            // 
+            resources.ApplyResources(this.servoOptions8, "servoOptions8");
+            this.servoOptions8.Name = "servoOptions8";
+            this.servoOptions8.thisservo = 12;
+            // 
+            // servoOptions9
+            // 
+            resources.ApplyResources(this.servoOptions9, "servoOptions9");
+            this.servoOptions9.Name = "servoOptions9";
+            this.servoOptions9.thisservo = 13;
+            // 
+            // servoOptions10
+            // 
+            resources.ApplyResources(this.servoOptions10, "servoOptions10");
+            this.servoOptions10.Name = "servoOptions10";
+            this.servoOptions10.thisservo = 14;
+            // 
+            // servoOptions11
+            // 
+            resources.ApplyResources(this.servoOptions11, "servoOptions11");
+            this.servoOptions11.Name = "servoOptions11";
+            this.servoOptions11.thisservo = 15;
+            // 
+            // servoOptions12
+            // 
+            resources.ApplyResources(this.servoOptions12, "servoOptions12");
+            this.servoOptions12.Name = "servoOptions12";
+            this.servoOptions12.thisservo = 16;
+            // 
+            // relayOptions1
+            // 
+            resources.ApplyResources(this.relayOptions1, "relayOptions1");
+            this.relayOptions1.Name = "relayOptions1";
+            this.relayOptions1.thisrelay = 0;
+            // 
+            // relayOptions2
+            // 
+            resources.ApplyResources(this.relayOptions2, "relayOptions2");
+            this.relayOptions2.Name = "relayOptions2";
+            this.relayOptions2.thisrelay = 1;
+            // 
+            // relayOptions3
+            // 
+            resources.ApplyResources(this.relayOptions3, "relayOptions3");
+            this.relayOptions3.Name = "relayOptions3";
+            this.relayOptions3.thisrelay = 2;
+            // 
+            // relayOptions4
+            // 
+            resources.ApplyResources(this.relayOptions4, "relayOptions4");
+            this.relayOptions4.Name = "relayOptions4";
+            this.relayOptions4.thisrelay = 3;
+            // 
+            // relayOptions5
+            // 
+            resources.ApplyResources(this.relayOptions5, "relayOptions5");
+            this.relayOptions5.Name = "relayOptions5";
+            this.relayOptions5.thisrelay = 4;
+            // 
+            // relayOptions6
+            // 
+            resources.ApplyResources(this.relayOptions6, "relayOptions6");
+            this.relayOptions6.Name = "relayOptions6";
+            this.relayOptions6.thisrelay = 5;
+            // 
+            // relayOptions7
+            // 
+            resources.ApplyResources(this.relayOptions7, "relayOptions7");
+            this.relayOptions7.Name = "relayOptions7";
+            this.relayOptions7.thisrelay = 6;
+            // 
+            // relayOptions8
+            // 
+            resources.ApplyResources(this.relayOptions8, "relayOptions8");
+            this.relayOptions8.Name = "relayOptions8";
+            this.relayOptions8.thisrelay = 7;
+            // 
+            // relayOptions9
+            // 
+            resources.ApplyResources(this.relayOptions9, "relayOptions9");
+            this.relayOptions9.Name = "relayOptions9";
+            this.relayOptions9.thisrelay = 8;
+            // 
+            // relayOptions10
+            // 
+            resources.ApplyResources(this.relayOptions10, "relayOptions10");
+            this.relayOptions10.Name = "relayOptions10";
+            this.relayOptions10.thisrelay = 9;
+            // 
+            // relayOptions11
+            // 
+            resources.ApplyResources(this.relayOptions11, "relayOptions11");
+            this.relayOptions11.Name = "relayOptions11";
+            this.relayOptions11.thisrelay = 10;
+            // 
+            // relayOptions12
+            // 
+            resources.ApplyResources(this.relayOptions12, "relayOptions12");
+            this.relayOptions12.Name = "relayOptions12";
+            this.relayOptions12.thisrelay = 11;
+            // 
+            // relayOptions13
+            // 
+            resources.ApplyResources(this.relayOptions13, "relayOptions13");
+            this.relayOptions13.Name = "relayOptions13";
+            this.relayOptions13.thisrelay = 12;
+            // 
+            // relayOptions14
+            // 
+            resources.ApplyResources(this.relayOptions14, "relayOptions14");
+            this.relayOptions14.Name = "relayOptions14";
+            this.relayOptions14.thisrelay = 13;
+            // 
+            // relayOptions15
+            // 
+            resources.ApplyResources(this.relayOptions15, "relayOptions15");
+            this.relayOptions15.Name = "relayOptions15";
+            this.relayOptions15.thisrelay = 14;
+            // 
+            // relayOptions16
+            // 
+            resources.ApplyResources(this.relayOptions16, "relayOptions16");
+            this.relayOptions16.Name = "relayOptions16";
+            this.relayOptions16.thisrelay = 15;
+            // 
             // tabAuxFunction
             // 
             this.tabAuxFunction.Controls.Add(this.flowLayoutPanel1);
@@ -2108,6 +2315,41 @@ namespace MissionPlanner.GCSViews
             this.flowLayoutPanel1.Controls.Add(this.auxOptions7);
             resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            // 
+            // auxOptions1
+            // 
+            resources.ApplyResources(this.auxOptions1, "auxOptions1");
+            this.auxOptions1.Name = "auxOptions1";
+            // 
+            // auxOptions2
+            // 
+            resources.ApplyResources(this.auxOptions2, "auxOptions2");
+            this.auxOptions2.Name = "auxOptions2";
+            // 
+            // auxOptions3
+            // 
+            resources.ApplyResources(this.auxOptions3, "auxOptions3");
+            this.auxOptions3.Name = "auxOptions3";
+            // 
+            // auxOptions4
+            // 
+            resources.ApplyResources(this.auxOptions4, "auxOptions4");
+            this.auxOptions4.Name = "auxOptions4";
+            // 
+            // auxOptions5
+            // 
+            resources.ApplyResources(this.auxOptions5, "auxOptions5");
+            this.auxOptions5.Name = "auxOptions5";
+            // 
+            // auxOptions6
+            // 
+            resources.ApplyResources(this.auxOptions6, "auxOptions6");
+            this.auxOptions6.Name = "auxOptions6";
+            // 
+            // auxOptions7
+            // 
+            resources.ApplyResources(this.auxOptions7, "auxOptions7");
+            this.auxOptions7.Name = "auxOptions7";
             // 
             // tabScripts
             // 
@@ -2730,12 +2972,6 @@ namespace MissionPlanner.GCSViews
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("AOA", this.bindingSourceHud, "AOA", true));
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("SSA", this.bindingSourceHud, "SSA", true));
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("critAOA", this.bindingSourceHud, "crit_AOA", true));
-
-            //30may26 mav message
-            //this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("MAV_BATP", this.bindingSourceHud, "MAV_BATP", true));
-
-
-
             this.hud1.datetime = new System.DateTime(((long)(0)));
             this.hud1.displayAOASSA = false;
             this.hud1.displayCellVoltage = false;
@@ -2937,307 +3173,6 @@ namespace MissionPlanner.GCSViews
             // bindingSourceStatusTab
             // 
             this.bindingSourceStatusTab.DataSource = typeof(MissionPlanner.CurrentState);
-            // 
-            // distanceBar1
-            // 
-            resources.ApplyResources(this.distanceBar1, "distanceBar1");
-            this.distanceBar1.BackColor = System.Drawing.Color.Transparent;
-            this.distanceBar1.Name = "distanceBar1";
-            this.distanceBar1.totaldist = 100F;
-            this.distanceBar1.traveleddist = 0F;
-            // 
-            // modifyandSetLoiterRad
-            // 
-            resources.ApplyResources(this.modifyandSetLoiterRad, "modifyandSetLoiterRad");
-            this.modifyandSetLoiterRad.ButtonText = "Set Loiter Rad";
-            this.modifyandSetLoiterRad.DecimalPlaces = 0;
-            this.modifyandSetLoiterRad.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.modifyandSetLoiterRad.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.modifyandSetLoiterRad.Minimum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            -2147483648});
-            this.modifyandSetLoiterRad.Name = "modifyandSetLoiterRad";
-            this.modifyandSetLoiterRad.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.modifyandSetLoiterRad.Click += new System.EventHandler(this.modifyandSetLoiterRad_Click);
-            // 
-            // modifyandSetAlt
-            // 
-            resources.ApplyResources(this.modifyandSetAlt, "modifyandSetAlt");
-            this.modifyandSetAlt.ButtonText = "Change Alt";
-            this.modifyandSetAlt.DecimalPlaces = 1;
-            this.modifyandSetAlt.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.modifyandSetAlt.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.modifyandSetAlt.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.modifyandSetAlt.Name = "modifyandSetAlt";
-            this.modifyandSetAlt.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.modifyandSetAlt.Click += new System.EventHandler(this.modifyandSetAlt_Click);
-            // 
-            // modifyandSetSpeed
-            // 
-            resources.ApplyResources(this.modifyandSetSpeed, "modifyandSetSpeed");
-            this.modifyandSetSpeed.ButtonText = "Change Speed";
-            this.modifyandSetSpeed.DecimalPlaces = 1;
-            this.modifyandSetSpeed.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.modifyandSetSpeed.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.modifyandSetSpeed.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.modifyandSetSpeed.Name = "modifyandSetSpeed";
-            this.modifyandSetSpeed.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.modifyandSetSpeed.Click += new System.EventHandler(this.modifyandSetSpeed_Click);
-            this.modifyandSetSpeed.ParentChanged += new System.EventHandler(this.modifyandSetSpeed_ParentChanged);
-            // 
-            // checkListControl1
-            // 
-            resources.ApplyResources(this.checkListControl1, "checkListControl1");
-            this.checkListControl1.Name = "checkListControl1";
-            // 
-            // servoOptions1
-            // 
-            resources.ApplyResources(this.servoOptions1, "servoOptions1");
-            this.servoOptions1.Name = "servoOptions1";
-            this.servoOptions1.thisservo = 5;
-            // 
-            // servoOptions2
-            // 
-            resources.ApplyResources(this.servoOptions2, "servoOptions2");
-            this.servoOptions2.Name = "servoOptions2";
-            this.servoOptions2.thisservo = 6;
-            // 
-            // servoOptions3
-            // 
-            resources.ApplyResources(this.servoOptions3, "servoOptions3");
-            this.servoOptions3.Name = "servoOptions3";
-            this.servoOptions3.thisservo = 7;
-            // 
-            // servoOptions4
-            // 
-            resources.ApplyResources(this.servoOptions4, "servoOptions4");
-            this.servoOptions4.Name = "servoOptions4";
-            this.servoOptions4.thisservo = 8;
-            // 
-            // servoOptions5
-            // 
-            resources.ApplyResources(this.servoOptions5, "servoOptions5");
-            this.servoOptions5.Name = "servoOptions5";
-            this.servoOptions5.thisservo = 9;
-            // 
-            // servoOptions6
-            // 
-            resources.ApplyResources(this.servoOptions6, "servoOptions6");
-            this.servoOptions6.Name = "servoOptions6";
-            this.servoOptions6.thisservo = 10;
-            // 
-            // servoOptions7
-            // 
-            resources.ApplyResources(this.servoOptions7, "servoOptions7");
-            this.servoOptions7.Name = "servoOptions7";
-            this.servoOptions7.thisservo = 11;
-            // 
-            // servoOptions8
-            // 
-            resources.ApplyResources(this.servoOptions8, "servoOptions8");
-            this.servoOptions8.Name = "servoOptions8";
-            this.servoOptions8.thisservo = 12;
-            // 
-            // servoOptions9
-            // 
-            resources.ApplyResources(this.servoOptions9, "servoOptions9");
-            this.servoOptions9.Name = "servoOptions9";
-            this.servoOptions9.thisservo = 13;
-            // 
-            // servoOptions10
-            // 
-            resources.ApplyResources(this.servoOptions10, "servoOptions10");
-            this.servoOptions10.Name = "servoOptions10";
-            this.servoOptions10.thisservo = 14;
-            // 
-            // servoOptions11
-            // 
-            resources.ApplyResources(this.servoOptions11, "servoOptions11");
-            this.servoOptions11.Name = "servoOptions11";
-            this.servoOptions11.thisservo = 15;
-            // 
-            // servoOptions12
-            // 
-            resources.ApplyResources(this.servoOptions12, "servoOptions12");
-            this.servoOptions12.Name = "servoOptions12";
-            this.servoOptions12.thisservo = 16;
-            // 
-            // relayOptions1
-            // 
-            resources.ApplyResources(this.relayOptions1, "relayOptions1");
-            this.relayOptions1.Name = "relayOptions1";
-            this.relayOptions1.thisrelay = 0;
-            // 
-            // relayOptions2
-            // 
-            resources.ApplyResources(this.relayOptions2, "relayOptions2");
-            this.relayOptions2.Name = "relayOptions2";
-            this.relayOptions2.thisrelay = 1;
-            // 
-            // relayOptions3
-            // 
-            resources.ApplyResources(this.relayOptions3, "relayOptions3");
-            this.relayOptions3.Name = "relayOptions3";
-            this.relayOptions3.thisrelay = 2;
-            // 
-            // relayOptions4
-            // 
-            resources.ApplyResources(this.relayOptions4, "relayOptions4");
-            this.relayOptions4.Name = "relayOptions4";
-            this.relayOptions4.thisrelay = 3;
-            // 
-            // relayOptions5
-            // 
-            resources.ApplyResources(this.relayOptions5, "relayOptions5");
-            this.relayOptions5.Name = "relayOptions5";
-            this.relayOptions5.thisrelay = 4;
-            // 
-            // relayOptions6
-            // 
-            resources.ApplyResources(this.relayOptions6, "relayOptions6");
-            this.relayOptions6.Name = "relayOptions6";
-            this.relayOptions6.thisrelay = 5;
-            // 
-            // relayOptions7
-            // 
-            resources.ApplyResources(this.relayOptions7, "relayOptions7");
-            this.relayOptions7.Name = "relayOptions7";
-            this.relayOptions7.thisrelay = 6;
-            // 
-            // relayOptions8
-            // 
-            resources.ApplyResources(this.relayOptions8, "relayOptions8");
-            this.relayOptions8.Name = "relayOptions8";
-            this.relayOptions8.thisrelay = 7;
-            // 
-            // relayOptions9
-            // 
-            resources.ApplyResources(this.relayOptions9, "relayOptions9");
-            this.relayOptions9.Name = "relayOptions9";
-            this.relayOptions9.thisrelay = 8;
-            // 
-            // relayOptions10
-            // 
-            resources.ApplyResources(this.relayOptions10, "relayOptions10");
-            this.relayOptions10.Name = "relayOptions10";
-            this.relayOptions10.thisrelay = 9;
-            // 
-            // relayOptions11
-            // 
-            resources.ApplyResources(this.relayOptions11, "relayOptions11");
-            this.relayOptions11.Name = "relayOptions11";
-            this.relayOptions11.thisrelay = 10;
-            // 
-            // relayOptions12
-            // 
-            resources.ApplyResources(this.relayOptions12, "relayOptions12");
-            this.relayOptions12.Name = "relayOptions12";
-            this.relayOptions12.thisrelay = 11;
-            // 
-            // relayOptions13
-            // 
-            resources.ApplyResources(this.relayOptions13, "relayOptions13");
-            this.relayOptions13.Name = "relayOptions13";
-            this.relayOptions13.thisrelay = 12;
-            // 
-            // relayOptions14
-            // 
-            resources.ApplyResources(this.relayOptions14, "relayOptions14");
-            this.relayOptions14.Name = "relayOptions14";
-            this.relayOptions14.thisrelay = 13;
-            // 
-            // relayOptions15
-            // 
-            resources.ApplyResources(this.relayOptions15, "relayOptions15");
-            this.relayOptions15.Name = "relayOptions15";
-            this.relayOptions15.thisrelay = 14;
-            // 
-            // relayOptions16
-            // 
-            resources.ApplyResources(this.relayOptions16, "relayOptions16");
-            this.relayOptions16.Name = "relayOptions16";
-            this.relayOptions16.thisrelay = 15;
-            // 
-            // auxOptions1
-            // 
-            resources.ApplyResources(this.auxOptions1, "auxOptions1");
-            this.auxOptions1.Name = "auxOptions1";
-            // 
-            // auxOptions2
-            // 
-            resources.ApplyResources(this.auxOptions2, "auxOptions2");
-            this.auxOptions2.Name = "auxOptions2";
-            // 
-            // auxOptions3
-            // 
-            resources.ApplyResources(this.auxOptions3, "auxOptions3");
-            this.auxOptions3.Name = "auxOptions3";
-            // 
-            // auxOptions4
-            // 
-            resources.ApplyResources(this.auxOptions4, "auxOptions4");
-            this.auxOptions4.Name = "auxOptions4";
-            // 
-            // auxOptions5
-            // 
-            resources.ApplyResources(this.auxOptions5, "auxOptions5");
-            this.auxOptions5.Name = "auxOptions5";
-            // 
-            // auxOptions6
-            // 
-            resources.ApplyResources(this.auxOptions6, "auxOptions6");
-            this.auxOptions6.Name = "auxOptions6";
-            // 
-            // auxOptions7
-            // 
-            resources.ApplyResources(this.auxOptions7, "auxOptions7");
-            this.auxOptions7.Name = "auxOptions7";
             // 
             // FlightData
             // 
@@ -3574,5 +3509,6 @@ namespace MissionPlanner.GCSViews
         private Controls.HUD hud1;
         public Panel panel_persistent;
         private AGaugeApp.AGauge G_RPM;
+        //private Label label_batp_onGauge;
     }
 }

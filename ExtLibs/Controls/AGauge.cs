@@ -345,6 +345,8 @@ namespace AGaugeApp
                     CapsText = m_CapText;
                     drawGaugeBackground = true;
                     Refresh();
+                    Invalidate();//added from chatgpt
+
                 }
             }
         }
@@ -1776,8 +1778,24 @@ System.ComponentModel.Description("Enables or disables the range selected by Nee
 
                         if (counter1 >= ScaleNumbersStartScaleLine - 1)
                         {
-                            ggr.DrawString(valueText, Font, new SolidBrush(m_ScaleNumbersColor), -boundingBox.Width/2,
-                                -fontBoundY1 - (fontBoundY2 - fontBoundY1 + 1)/2, StringFormat.GenericTypographic);
+                            //test 02june26_task1
+                            double v = m_MinValue + countValue;
+                            string label;
+
+                            if (v >= 1000000) { label = (v / 1000000.0).ToString("0.#") + "M"; }
+                            else if (v >= 1000) { label = (v / 1000.0).ToString("0.#") + "k"; }
+                            else { label = v.ToString("0"); }
+
+                            //label = v >= 1000 ? (v / 1000.0).ToString("0") + "k": v.ToString("0");
+
+                            SizeF labelSize = ggr.MeasureString(label,Font,-1,StringFormat.GenericTypographic);
+
+                            ggr.DrawString(label,Font,new SolidBrush(m_ScaleNumbersColor),-labelSize.Width / 2,-fontBoundY1 - (fontBoundY2 - fontBoundY1 + 1) / 2, StringFormat.GenericTypographic);
+                            //test end
+
+                            //orginal code before test test 02june26_task1 
+                            //ggr.DrawString(valueText, Font, new SolidBrush(m_ScaleNumbersColor), -boundingBox.Width/2,
+                            //    -fontBoundY1 - (fontBoundY2 - fontBoundY1 + 1)/2, StringFormat.GenericTypographic);
                         }
 
                         countValue += m_ScaleLinesMajorStepValue;
@@ -1807,6 +1825,7 @@ System.ComponentModel.Description("Enables or disables the range selected by Nee
                     }
                 }
             } // end bg
+
 
             pe.Graphics.DrawImageUnscaled(gaugeBitmap, 0, 0);
             pe.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
