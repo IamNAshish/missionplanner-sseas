@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace MissionPlanner
@@ -52,7 +52,7 @@ namespace MissionPlanner
             this.MenuHelp = new System.Windows.Forms.ToolStripButton();
             this.toolStripConnectionControl = new MissionPlanner.Controls.ToolStripConnectionControl();
             this.MenuConnect = new System.Windows.Forms.ToolStripButton();
-            this.MenuArduPilot = new System.Windows.Forms.ToolStripButton();
+            this.lblLogo = new System.Windows.Forms.ToolStripLabel();
             this.menu = new MissionPlanner.Controls.MyButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.status1 = new MissionPlanner.Controls.Status();
@@ -87,7 +87,7 @@ namespace MissionPlanner
             this.MenuHelp,
             this.toolStripConnectionControl,
             this.MenuConnect,
-            this.MenuArduPilot});
+            this.lblLogo});
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.ShowItemToolTips = true;
             this.MainMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MainMenu_ItemClicked);
@@ -215,17 +215,15 @@ namespace MissionPlanner
             this.MenuConnect.Name = "MenuConnect";
             this.MenuConnect.Click += new System.EventHandler(this.MenuConnect_Click);
             // 
-            // MenuArduPilot
+            // lblLogo
             // 
-            this.MenuArduPilot.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            resources.ApplyResources(this.MenuArduPilot, "MenuArduPilot");
-            this.MenuArduPilot.BackColor = System.Drawing.Color.Transparent;
-            this.MenuArduPilot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.MenuArduPilot.ForeColor = System.Drawing.Color.White;
-            this.MenuArduPilot.Image = global::MissionPlanner.Properties.Resources._0d92fed790a3a70170e61a86db103f399a595c70;
-            this.MenuArduPilot.Margin = new System.Windows.Forms.Padding(0);
-            this.MenuArduPilot.Name = "MenuArduPilot";
-            this.MenuArduPilot.Click += new System.EventHandler(this.MenuArduPilot_Click);
+            this.lblLogo.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.lblLogo.BackColor = System.Drawing.Color.Transparent;
+            this.lblLogo.ForeColor = System.Drawing.Color.White;
+            this.lblLogo.Font = new System.Drawing.Font("Brush Script MT", 18F, System.Drawing.FontStyle.Bold);
+            this.lblLogo.Margin = new System.Windows.Forms.Padding(0);
+            this.lblLogo.Name = "lblLogo";
+            this.lblLogo.Text = "SaifSeas";
             // 
             // menu
             // 
@@ -289,8 +287,7 @@ namespace MissionPlanner
         private System.Windows.Forms.ToolStripMenuItem connectionOptionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem connectionListToolStripMenuItem;
         public System.Windows.Forms.ToolStripButton MenuHelp;
-        public System.Windows.Forms.ToolStripButton MenuArduPilot;
-        //public System.Windows.Forms.Label lblLogo;//02june26_task5
+        public System.Windows.Forms.ToolStripLabel lblLogo;
         public Controls.Status status1;
     }
 }
