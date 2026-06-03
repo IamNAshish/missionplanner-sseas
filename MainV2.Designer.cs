@@ -216,14 +216,15 @@ namespace MissionPlanner
             this.MenuConnect.Click += new System.EventHandler(this.MenuConnect_Click);
             // 
             // lblLogo
-            // 
+            // // 02june26_task5
             this.lblLogo.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.lblLogo.BackColor = System.Drawing.Color.Transparent;
             this.lblLogo.ForeColor = System.Drawing.Color.White;
-            this.lblLogo.Font = new System.Drawing.Font("Brush Script MT", 18F, System.Drawing.FontStyle.Bold);
+            this.lblLogo.Font = new System.Drawing.Font("Brush Script MT", 30F, System.Drawing.FontStyle.Bold);
             this.lblLogo.Margin = new System.Windows.Forms.Padding(0);
             this.lblLogo.Name = "lblLogo";
             this.lblLogo.Text = "SaifSeas";
+            
             // 
             // menu
             // 

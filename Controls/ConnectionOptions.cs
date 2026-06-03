@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 using MissionPlanner.Comms;
+using MissionPlanner.GCSViews;
 using MissionPlanner.Utilities;
 
 namespace MissionPlanner.Controls
@@ -43,10 +44,16 @@ namespace MissionPlanner.Controls
                 mav.getParamList();
 
                 MainV2._connectionControl.UpdateSysIDS();
+
+                             
+
+                // Close the form after successful connection
+                this.Close(); //03june26_task1b
             }
             catch (Exception)
             {
             }
+            
         }
     }
 }

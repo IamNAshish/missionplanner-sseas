@@ -3282,13 +3282,26 @@ namespace MissionPlanner.GCSViews
             string max = "60";
             if (DialogResult.OK == InputBox.Show("Enter Max Speed", "Enter Max Speed", ref max))
             {
-                Gspeed.MaxValue = float.Parse(max);
-                Settings.Instance["GspeedMAX"] = Gspeed.MaxValue.ToString();
-                Gspeed.ScaleLinesMajorStepValue = 10; //default val
-                if (Gspeed.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
-                {
-                    Gspeed.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
-                }
+                float maxVal = float.Parse(max);
+                Gspeed.MaxValue = maxVal;//float.Parse(max);
+                Settings.Instance["GspeedMAX"] = maxVal.ToString();//Gspeed.MaxValue.ToString();
+                //Gspeed.ScaleLinesMajorStepValue = 10; //default val
+                //if (Gspeed.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
+                //{
+                //    Gspeed.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
+                //}
+                
+                Gspeed.ScaleLinesMajorStepValue = Math.Max(10f, 0.1f * maxVal);
+                
+                // 03june26_task3
+                this.Gspeed.RangesEndValue = new float[] 
+                {(0.6f)* maxVal,
+                 (0.9f)* maxVal,
+                 1*maxVal,0f,0f};
+                
+                this.Gspeed.RangesStartValue = new float[] 
+                {0f,0.6f* maxVal,0.9f* maxVal,
+                 0f,0f};
             }
         }
 
@@ -5477,7 +5490,7 @@ namespace MissionPlanner.GCSViews
             }
             if (tabControlactions.SelectedTab == tabGauges)
             {
-                G_batp_DoubleClick(null, null);//test
+                assignCustomFields();//(null, null);//test
             }
             
         }
@@ -5532,6 +5545,24 @@ namespace MissionPlanner.GCSViews
                  Gheading.Location = new Point(0, G_batp.Bottom);
                  G_RPM.Location = new Point(Gheading.Right, G_batp.Bottom); // 30may26_task_rpm
 
+
+                //new gauges  // 03june26_task2
+                G_engineTemp.Location = Galt.Location;  //alt gauge[0,0]
+                G_engineTemp.Height = myheight / 2;
+                G_engineTemp.Width = myheight / 2;
+
+                G_silencerTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y); ////alt gauge[0,1]
+                G_silencerTemp.Height = myheight/2;
+                G_silencerTemp.Width= myheight/2;
+
+                G_waterflow.Location = new Point(Galt.Location.X, Galt.Location.Y + G_engineTemp.Height); ////alt gauge[1,0]
+                G_waterflow.Height = myheight/2;
+                G_waterflow.Width = myheight/2;
+
+                G_waterflowTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y + G_engineTemp.Height); //alt gauge[1,1]
+                G_waterflowTemp.Height = myheight/2;
+                G_waterflowTemp.Width = myheight/2;
+                
                 return;
             }
 
@@ -5597,6 +5628,24 @@ namespace MissionPlanner.GCSViews
             //tb_BatValue.BringToFront();
             //this.tb_BatValue.Location = new System.Drawing.Point((G_batp.Location.X + G_batp.Width/2 ) , (G_batp.Location.Y + G_batp.Height / 2 ));
             //this.tb_BatValue.Location = new System.Drawing.Point((G_batp.Width - tb_BatValue.Width) / 2, (G_batp.Height / 2 - 15 )- 30);
+
+
+            //new gauges // 03june26_task2
+            G_engineTemp.Location = Galt.Location;  //alt gauge[0,0]
+            G_engineTemp.Height = G_batp.Height / 2;
+            G_engineTemp.Width = G_batp.Width / 2;
+
+            G_silencerTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y); ////alt gauge[0,1]
+            G_silencerTemp.Height = G_engineTemp.Height;
+            G_silencerTemp.Width = G_engineTemp.Width;
+
+            G_waterflow.Location = new Point(Galt.Location.X, Galt.Location.Y + G_engineTemp.Height); ////alt gauge[1,0]
+            G_waterflow.Height = G_engineTemp.Height;
+            G_waterflow.Width = G_engineTemp.Width;
+
+            G_waterflowTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y + G_engineTemp.Height); //alt gauge[1,1]
+            G_waterflowTemp.Height = G_engineTemp.Height;
+            G_waterflowTemp.Width = G_engineTemp.Width;
 
 
         }
@@ -7376,7 +7425,8 @@ namespace MissionPlanner.GCSViews
 
         int kk = 0;
         int mav_batp_custom_number = 0;
-        private void G_batp_DoubleClick(object sender, EventArgs e) //not only ref to double click check ref before del
+        int G_batp_captext = 0;
+        private void assignCustomFields()//(object sender, EventArgs e) //not only ref to double click check ref before del
         {
             ///test 01june26
             //int mav_batp_custom_number = 0;
@@ -7387,7 +7437,7 @@ namespace MissionPlanner.GCSViews
             //int max_length = 0;
             List<(string name, string desc)> fields = new List<(string, string)>();
             int n = 0;
-            foreach (var field in test.GetProperties())
+            foreach (var field in test.GetProperties()) //so this will not exe before connection
             {
                 // field.Name has the field's name.
                 object fieldValue = field.GetValue(thisBoxed, null); // Get value
@@ -7414,35 +7464,41 @@ namespace MissionPlanner.GCSViews
                         //max_length = Math.Max(max_length, TextRenderer.MeasureText(name, selectform.Font).Width);
                         fields.Add((field.Name, name));
 
-                        ///test 
-                        if (name == "MAV_BATP")
+                        ///test
+                        try
                         {
-                            MessageBox.Show(n.ToString());
-                            //MessageBox.Show(field.GetValue().ToString());
-                            mav_batp_custom_number = n;
+                            if (name == "MAV_BATP")
+                            {
+                                //MessageBox.Show(n.ToString());
+                                mav_batp_custom_number = n;
+                                this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                                this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
+                                this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
 
-                            //testing
-                            ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
-                            ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
-                            ////this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
+                                //lets see if this gives error
+                                //var temp = new Binding("Text", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true);
+                                //G_batp_captext = Convert.ToInt16(temp);
 
-
+                            }
+                            else if (name == "MAV_CSL") //gspeed
+                            {
+                                //MessageBox.Show("mav_Gspeed_custom_number:" + n.ToString());
+                                mav_Gspeed_custom_number = n;
+                                this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Gspeed_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                                this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
+                                this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
+                            }
+                            else if (name == "MAV_CSR")//Grpm
+                            {
+                                //MessageBox.Show("mav_Grpm_custom_number:" + n.ToString());
+                                mav_Grpm_custom_number = n;
+                                this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Grpm_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
+                                this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
+                            }
                         }
-                        else if(name=="MAV_CSL") //gspeed
-                        {
-                            MessageBox.Show("mav_Gspeed_custom_number:" + n.ToString());
-                            mav_Gspeed_custom_number = n;
-                            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Gspeed_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
-                            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
-                            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
-                        }
-                        else if(name=="MAV_CSR")//Grpm
-                        {
-                            MessageBox.Show("mav_Grpm_custom_number:" + n.ToString());
-                            mav_Grpm_custom_number = n;
-                            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Grpm_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
-                            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
-                            this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
+                        catch { 
+                            //MessageBox.Show("mali bind add chesara?"); 
                         }
 
                         n += 1;
@@ -7452,13 +7508,15 @@ namespace MissionPlanner.GCSViews
                 
             }
             //test end 01june26
-            MessageBox.Show("mav_batp_custom_number:" + mav_batp_custom_number.ToString());
+            
         }
 
 
         private void timer_gauge_Tick(object sender, EventArgs e)
         {//02june26_task2 change captext color based on value
+
             float batp = 0;
+           
             switch (mav_batp_custom_number) 
             {
                 case 0:
@@ -7480,19 +7538,23 @@ namespace MissionPlanner.GCSViews
                 case 8:
                     batp = MainV2.comPort.MAV.cs.customfield8; break;
             }
-            batp = 0;
-            if (batp < 25)
+            //batp = G_batp_captext; //simpler if worked 
+
+            if (batp < 30)
             {
                 G_batp.CapColors[1] = Color.Red;
-                this.G_batp.NeedleColor2 = System.Drawing.Color.Green;
+                this.G_batp.NeedleColor2 = System.Drawing.Color.Red;
             }
-            else if (batp > 25 && batp < 85)
+            else if (batp > 30 && batp < 70)
             {
+                
                 G_batp.CapColors[1] = Color.Yellow;
+                this.G_batp.NeedleColor2 = System.Drawing.Color.White;
             }
-            else if (batp > 85)
+            else if (batp > 70)
             {
                 G_batp.CapColors[1] = Color.Lime;
+                this.G_batp.NeedleColor2 = System.Drawing.Color.White;
             }
 
             G_batp.Invalidate();

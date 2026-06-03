@@ -1972,7 +1972,15 @@ namespace MissionPlanner
 
         private void MenuConnect_Click(object sender, EventArgs e)
         {
-            connectionOptionsToolStripMenuItem_Click(sender, e);
+            if (comPort.BaseStream.IsOpen) //03june26_task1a 
+            {
+                doDisconnect(comPort);
+            }
+            else
+            {
+                connectionOptionsToolStripMenuItem_Click(sender, e);
+                //assignCustomFields(null,null); somehow have to call this here
+            }
         }
 
         private void Connect()
