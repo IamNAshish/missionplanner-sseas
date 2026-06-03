@@ -549,6 +549,13 @@ namespace MissionPlanner.GCSViews
 
             tabControlactions.Multiline = Settings.Instance.GetBoolean("tabControlactions_Multiline", false);
 
+            // Register double-click handlers programmatically
+            this.G_waterflowTemp.DoubleClick += G_waterflowTemp_DoubleClick;
+            this.G_waterflow.DoubleClick += G_waterflow_DoubleClick;
+            this.G_silencerTemp.DoubleClick += G_silencerTemp_DoubleClick;
+            this.G_engineTemp.DoubleClick += G_engineTemp_DoubleClick;
+            this.Gheading.DoubleClick += Gheading_DoubleClick;
+            this.G_batp.DoubleClick += G_batp_DoubleClick;
         }
 
 
@@ -3277,32 +3284,10 @@ namespace MissionPlanner.GCSViews
             Settings.config["groundColorToolStripMenuItem"] = groundColorToolStripMenuItem.Checked.ToString();
         }
 
-        private void Gspeed_DoubleClick(object sender, EventArgs e)
+        private void Gspeed_DoubleClick(object sender, EventArgs e) // 04june26_task1
         {
-            string max = "60";
-            if (DialogResult.OK == InputBox.Show("Enter Max Speed", "Enter Max Speed", ref max))
-            {
-                float maxVal = float.Parse(max);
-                Gspeed.MaxValue = maxVal;//float.Parse(max);
-                Settings.Instance["GspeedMAX"] = maxVal.ToString();//Gspeed.MaxValue.ToString();
-                //Gspeed.ScaleLinesMajorStepValue = 10; //default val
-                //if (Gspeed.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
-                //{
-                //    Gspeed.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
-                //}
-                
-                Gspeed.ScaleLinesMajorStepValue = Math.Max(10f, 0.1f * maxVal);
-                
-                // 03june26_task3
-                this.Gspeed.RangesEndValue = new float[] 
-                {(0.6f)* maxVal,
-                 (0.9f)* maxVal,
-                 1*maxVal,0f,0f};
-                
-                this.Gspeed.RangesStartValue = new float[] 
-                {0f,0.6f* maxVal,0.9f* maxVal,
-                 0f,0f};
-            }
+            PopoutGaugeCloned(g_speed_popout, val => g_speed_popout = val, Gspeed, "Speed", new Size(250, 250));
+            
         }
 
         private void GStreamerStopToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7284,11 +7269,9 @@ namespace MissionPlanner.GCSViews
             form.Show(this);
         }
 
-
         //testing
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            
             float heading = 0;
 
             if (float.TryParse(textBox1.Text, out heading))
@@ -7296,19 +7279,24 @@ namespace MissionPlanner.GCSViews
                 var old = pictureBox_yaw.Image;
                 var old2 = pictureBox_roll.Image;
 
-                pictureBox_yaw.Image =
-                    RotateImage(originalVehicleImage_top, heading);
-                pictureBox_roll.Image =
-                    RotateImage(originalVehicleImage_rearView, heading);
+                pictureBox_yaw.Image = RotateImage(originalVehicleImage_top, heading);
+                pictureBox_roll.Image = RotateImage(originalVehicleImage_rearView, heading);
 
                 old?.Dispose();
                 old2?.Dispose();
             }
-        
         }
 
         //29may26_task1 
         private bool tabGauge_popout = false;
+        private bool g_rpm_popout = false;
+        private bool g_waterflowtemp_popout = false;
+        private bool g_waterflow_popout = false;
+        private bool g_silencertemp_popout = false;
+        private bool g_enginetemp_popout = false;
+        private bool g_heading_popout = false;
+        private bool g_speed_popout = false;
+        private bool g_batp_popout = false; //04june26_task1 
         private void tabGauges_DoubleClick(object sender, EventArgs e)
         {
             if (tabGauge_popout)
@@ -7403,24 +7391,384 @@ namespace MissionPlanner.GCSViews
 
             tabGauge_popout = true;
 
-        }
-
-        // 30may26_task_rpm
+        }        // 30may26_task_rpm
         private void G_RPM_DoubleClick(object sender, EventArgs e)
         {
-            string max = "10000";
-            if (DialogResult.OK == InputBox.Show("Enter Max RPM", "Enter Max RPM", ref max))
+            PopoutGaugeCloned(g_rpm_popout, val => g_rpm_popout = val, G_RPM, "RPM", new Size(250, 250));
+        }
+
+        private void G_waterflowTemp_DoubleClick(object sender, EventArgs e)
+        {
+            PopoutGaugeCloned(g_waterflowtemp_popout, val => g_waterflowtemp_popout = val, G_waterflowTemp, "Water Flow Temp", new Size(250, 250));
+        }
+
+        private void G_waterflow_DoubleClick(object sender, EventArgs e)
+        {
+            PopoutGaugeCloned(g_waterflow_popout, val => g_waterflow_popout = val, G_waterflow, "Water Flow", new Size(250, 250));
+        }
+
+        private void G_silencerTemp_DoubleClick(object sender, EventArgs e)
+        {
+            PopoutGaugeCloned(g_silencertemp_popout, val => g_silencertemp_popout = val, G_silencerTemp, "Silencer Temp", new Size(250, 250));
+        }
+
+        private void G_engineTemp_DoubleClick(object sender, EventArgs e) // 04june26_task1
+        {
+            PopoutGaugeCloned(g_enginetemp_popout, val => g_enginetemp_popout = val, G_engineTemp, "Engine Temp", new Size(250, 250));
+        }
+
+        private void Gheading_DoubleClick(object sender, EventArgs e) // 04june26_task1
+        {
+            PopoutGaugeCloned(g_heading_popout, val => g_heading_popout = val, Gheading, "Heading", new Size(250, 250));
+        }
+
+        private void G_batp_DoubleClick(object sender, EventArgs e) // 04june26_task1
+        {
+            PopoutGaugeCloned(g_batp_popout, val => g_batp_popout = val, G_batp, "Battery", new Size(250, 250));
+        }
+
+        private void PopoutGauge(bool currentState, Action<bool> setState, Control gauge, string title, Size size)
+        {
+            if (currentState)
+                return;
+
+            Form dropout = new ResizableForm();
+            dropout.Text = title;
+            dropout.Size = size;
+            dropout.FormBorderStyle = FormBorderStyle.None;
+            dropout.ShowInTaskbar = false;
+            dropout.TopMost = true;
+            dropout.BackColor = Color.FromArgb(40, 40, 40);
+            dropout.Padding = new Padding(4);
+            dropout.Opacity = 0.70;
+
+            Action updateRegion = () =>
             {
-                G_RPM.MaxValue = float.Parse(max);
-                Settings.Instance["GrpmMAX"] = Gspeed.MaxValue.ToString(); //doubt ["GrpmMAX"]
-                G_RPM.ScaleLinesMajorStepValue = 1000F;//default min gap
-                if (G_RPM.ScaleLinesMajorStepValue < 0.1f*float.Parse(max))
+                int radius = 20;
+                using (GraphicsPath path = new GraphicsPath())
                 {
-                    G_RPM.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
+                    path.AddArc(0, 0, radius, radius, 180, 90);
+                    path.AddArc(dropout.Width - radius, 0, radius, radius, 270, 90);
+                    path.AddArc(dropout.Width - radius, dropout.Height - radius, radius, radius, 0, 90);
+                    path.AddArc(0, dropout.Height - radius, radius, radius, 90, 90);
+                    path.CloseFigure();
+                    dropout.Region = new Region(path);
+                }
+            };
+            updateRegion();
+            dropout.Resize += (s, ev) => updateRegion();
+
+            Button btnClose = new Button();
+            btnClose.Text = "X";
+            btnClose.Size = new Size(25, 25);
+            btnClose.Location = new Point(dropout.Width - 30, 5);
+            btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClose.Click += (s, ev) => dropout.Close();
+            dropout.Controls.Add(btnClose);
+            btnClose.BringToFront();
+
+            Control oldParent = gauge.Parent;
+            if (oldParent != null)
+            {
+                oldParent.Controls.Remove(gauge);
+            }
+
+            gauge.Dock = DockStyle.Fill;
+            dropout.Controls.Add(gauge);
+            gauge.SendToBack();
+
+            Point dragStart = Point.Empty;
+            MouseEventHandler mdHandler = (s, ev) =>
+            {
+                if (ev.Button == MouseButtons.Left)
+                    dragStart = ev.Location;
+            };
+            MouseEventHandler mmHandler = (s, ev) =>
+            {
+                if (ev.Button == MouseButtons.Left)
+                {
+                    int borderSize = 10;
+                    if (ev.X > borderSize && ev.X < gauge.Width - borderSize &&
+                        ev.Y > borderSize && ev.Y < gauge.Height - borderSize)
+                    {
+                        dropout.Left += ev.X - dragStart.X;
+                        dropout.Top += ev.Y - dragStart.Y;
+                    }
+                }
+            };
+
+            gauge.MouseDown += mdHandler;
+            gauge.MouseMove += mmHandler;
+
+            setState(true);
+
+            dropout.FormClosed += (s, ev) =>
+            {
+                gauge.MouseDown -= mdHandler;
+                gauge.MouseMove -= mmHandler;
+
+                dropout.Controls.Remove(gauge);
+                gauge.Dock = DockStyle.None;
+
+                if (oldParent != null)
+                {
+                    oldParent.Controls.Add(gauge);
+                    tabPage1_Resize(oldParent, EventArgs.Empty);
+                }
+                setState(false);
+            };
+
+            dropout.Show();
+        }
+
+        private void PopoutGaugeCloned(bool currentState, Action<bool> setState, Control gauge, string title, Size size)
+        {
+            if (currentState)
+                return;
+
+            Form dropout = new ResizableForm();
+            dropout.Text = title;
+            dropout.Size = size;
+            dropout.FormBorderStyle = FormBorderStyle.None;
+            dropout.ShowInTaskbar = false;
+            dropout.TopMost = true;
+            dropout.BackColor = Color.FromArgb(40, 40, 40);
+            dropout.Padding = new Padding(4);
+            dropout.Opacity = 0.70;
+
+            Action updateRegion = () =>
+            {
+                int radius = 20;
+                using (GraphicsPath path = new GraphicsPath())
+                {
+                    path.AddArc(0, 0, radius, radius, 180, 90);
+                    path.AddArc(dropout.Width - radius, 0, radius, radius, 270, 90);
+                    path.AddArc(dropout.Width - radius, dropout.Height - radius, radius, radius, 0, 90);
+                    path.AddArc(0, dropout.Height - radius, radius, radius, 90, 90);
+                    path.CloseFigure();
+                    dropout.Region = new Region(path);
+                }
+            };
+            updateRegion();
+            dropout.Resize += (s, ev) => updateRegion();
+
+            Button btnClose = new Button();
+            btnClose.Text = "X";
+            btnClose.Size = new Size(25, 25);
+            btnClose.Location = new Point(dropout.Width - 30, 5);
+            btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClose.Click += (s, ev) => dropout.Close();
+            dropout.Controls.Add(btnClose);
+            btnClose.BringToFront();
+
+            Control clonedGauge = CloneControl(gauge);
+            if (clonedGauge == null)
+            {
+                dropout.Dispose();
+                return;
+            }
+
+            clonedGauge.Dock = DockStyle.Fill;
+            dropout.Controls.Add(clonedGauge);
+            clonedGauge.SendToBack();
+
+            Point dragStart = Point.Empty;
+            MouseEventHandler mdHandler = (s, ev) =>
+            {
+                if (ev.Button == MouseButtons.Left)
+                    dragStart = ev.Location;
+            };
+            MouseEventHandler mmHandler = (s, ev) =>
+            {
+                if (ev.Button == MouseButtons.Left)
+                {
+                    int borderSize = 10;
+                    if (ev.X > borderSize && ev.X < clonedGauge.Width - borderSize &&
+                        ev.Y > borderSize && ev.Y < clonedGauge.Height - borderSize)
+                    {
+                        dropout.Left += ev.X - dragStart.X;
+                        dropout.Top += ev.Y - dragStart.Y;
+                    }
+                }
+            };
+
+            clonedGauge.MouseDown += mdHandler;
+            clonedGauge.MouseMove += mmHandler;
+
+            setState(true);
+
+            dropout.FormClosed += (s, ev) =>
+            {
+                clonedGauge.MouseDown -= mdHandler;
+                clonedGauge.MouseMove -= mmHandler;
+
+                clonedGauge.DataBindings.Clear();
+                dropout.Controls.Remove(clonedGauge);
+                clonedGauge.Dispose();
+
+                setState(false);
+            };
+
+            dropout.Show();
+        }
+
+        private Control CloneControl(Control source)
+        {
+            if (source is AGaugeApp.AGauge)
+            {
+                return CloneAGauge((AGaugeApp.AGauge)source);
+            }
+            else if (source is MissionPlanner.Controls.HSI)
+            {
+                return CloneHSI((MissionPlanner.Controls.HSI)source);
+            }
+            return null;
+        }
+
+        private MissionPlanner.Controls.HSI CloneHSI(MissionPlanner.Controls.HSI source)
+        {
+            MissionPlanner.Controls.HSI clone = new MissionPlanner.Controls.HSI();
+            clone.BackColor = source.BackColor;
+            clone.Heading = source.Heading;
+            clone.HomeBearing = source.HomeBearing;
+            clone.HomeLat = source.HomeLat;
+            clone.HomeLon = source.HomeLon;
+            clone.NavHeading = source.NavHeading;
+            clone.VehicleLat = source.VehicleLat;
+            clone.VehicleLon = source.VehicleLon;
+
+            foreach (Binding b in source.DataBindings)
+            {
+                clone.DataBindings.Add(new Binding(b.PropertyName, b.DataSource, b.BindingMemberInfo.BindingMember, b.FormattingEnabled, b.DataSourceUpdateMode, b.NullValue, b.FormatString, b.FormatInfo));
+            }
+
+            return clone;
+        }
+
+        private AGaugeApp.AGauge CloneAGauge(AGaugeApp.AGauge source)
+        {
+            AGaugeApp.AGauge clone = new AGaugeApp.AGauge();
+            clone.BackColor = source.BackColor;
+            clone.BaseArcColor = source.BaseArcColor;
+            clone.BaseArcRadius = source.BaseArcRadius;
+            clone.BaseArcStart = source.BaseArcStart;
+            clone.BaseArcSweep = source.BaseArcSweep;
+            clone.BaseArcWidth = source.BaseArcWidth;
+            clone.Cap_Idx = source.Cap_Idx;
+            clone.CapColor = source.CapColor;
+            clone.CapColors = (Color[])source.CapColors.Clone();
+            clone.CapPosition = source.CapPosition;
+            clone.CapsPosition = (Point[])source.CapsPosition.Clone();
+            clone.CapsText = (string[])source.CapsText.Clone();
+            clone.CapText = source.CapText;
+            clone.Center = source.Center;
+            clone.MaxValue = source.MaxValue;
+            clone.MinValue = source.MinValue;
+            clone.Need_Idx = source.Need_Idx;
+            clone.NeedleColor1 = source.NeedleColor1;
+            clone.NeedleColor2 = source.NeedleColor2;
+            clone.NeedleEnabled = source.NeedleEnabled;
+            clone.NeedleRadius = source.NeedleRadius;
+            clone.NeedlesColor1 = (AGaugeApp.AGauge.NeedleColorEnum[])source.NeedlesColor1.Clone();
+            clone.NeedlesColor2 = (Color[])source.NeedlesColor2.Clone();
+            clone.NeedlesEnabled = (bool[])source.NeedlesEnabled.Clone();
+            clone.NeedlesRadius = (int[])source.NeedlesRadius.Clone();
+            clone.NeedlesType = (int[])source.NeedlesType.Clone();
+            clone.NeedlesWidth = (int[])source.NeedlesWidth.Clone();
+            clone.NeedleType = source.NeedleType;
+            clone.NeedleWidth = source.NeedleWidth;
+            clone.Range_Idx = source.Range_Idx;
+            clone.RangeColor = source.RangeColor;
+            clone.RangeEnabled = source.RangeEnabled;
+            clone.RangeEndValue = source.RangeEndValue;
+            clone.RangeInnerRadius = source.RangeInnerRadius;
+            clone.RangeOuterRadius = source.RangeOuterRadius;
+            clone.RangesColor = (Color[])source.RangesColor.Clone();
+            clone.RangesEnabled = (bool[])source.RangesEnabled.Clone();
+            clone.RangesEndValue = (float[])source.RangesEndValue.Clone();
+            clone.RangesInnerRadius = (int[])source.RangesInnerRadius.Clone();
+            clone.RangesOuterRadius = (int[])source.RangesOuterRadius.Clone();
+            clone.RangesStartValue = (float[])source.RangesStartValue.Clone();
+            clone.RangeStartValue = source.RangeStartValue;
+            clone.ScaleLinesInterColor = source.ScaleLinesInterColor;
+            clone.ScaleLinesInterInnerRadius = source.ScaleLinesInterInnerRadius;
+            clone.ScaleLinesInterOuterRadius = source.ScaleLinesInterOuterRadius;
+            clone.ScaleLinesInterWidth = source.ScaleLinesInterWidth;
+            clone.ScaleLinesMajorColor = source.ScaleLinesMajorColor;
+            clone.ScaleLinesMajorInnerRadius = source.ScaleLinesMajorInnerRadius;
+            clone.ScaleLinesMajorOuterRadius = source.ScaleLinesMajorOuterRadius;
+            clone.ScaleLinesMajorStepValue = source.ScaleLinesMajorStepValue;
+            clone.ScaleLinesMajorWidth = source.ScaleLinesMajorWidth;
+            clone.ScaleLinesMinorColor = source.ScaleLinesMinorColor;
+            clone.ScaleLinesMinorInnerRadius = source.ScaleLinesMinorInnerRadius;
+            clone.ScaleLinesMinorNumOf = source.ScaleLinesMinorNumOf;
+            clone.ScaleLinesMinorOuterRadius = source.ScaleLinesMinorOuterRadius;
+            clone.ScaleLinesMinorWidth = source.ScaleLinesMinorWidth;
+            clone.ScaleNumbersColor = source.ScaleNumbersColor;
+            clone.ScaleNumbersFormat = source.ScaleNumbersFormat;
+            clone.ScaleNumbersRadius = source.ScaleNumbersRadius;
+            clone.ScaleNumbersRotation = source.ScaleNumbersRotation;
+            clone.ScaleNumbersStartScaleLine = source.ScaleNumbersStartScaleLine;
+            clone.ScaleNumbersStepScaleLines = source.ScaleNumbersStepScaleLines;
+            clone.Value = source.Value;
+            clone.Value0 = source.Value0;
+            clone.Value1 = source.Value1;
+            clone.Value2 = source.Value2;
+            clone.Value3 = source.Value3;
+
+            foreach (Binding b in source.DataBindings)
+            {
+                clone.DataBindings.Add(new Binding(b.PropertyName, b.DataSource, b.BindingMemberInfo.BindingMember, b.FormattingEnabled, b.DataSourceUpdateMode, b.NullValue, b.FormatString, b.FormatInfo));
+            }
+
+            return clone;
+        }
+
+        // Class for the popped out borderless but resizable Form
+        public class ResizableForm : Form
+        {
+            // RESIZE_FEATURE_START
+            // You can remove or comment out this WndProc override to disable the resize feature
+            private const int WM_NCHITTEST = 0x84;
+            private const int HTCLIENT = 0x1;
+            private const int HTLEFT = 10;
+            private const int HTRIGHT = 11;
+            private const int HTTOP = 12;
+            private const int HTTOPLEFT = 13;
+            private const int HTTOPRIGHT = 14;
+            private const int HTBOTTOM = 15;
+            private const int HTBOTTOMLEFT = 16;
+            private const int HTBOTTOMRIGHT = 17;
+
+            protected override void WndProc(ref Message m)
+            {
+                base.WndProc(ref m);
+                if (m.Msg == WM_NCHITTEST)
+                {
+                    int val = m.Result.ToInt32();
+                    if (val == HTCLIENT)
+                    {
+                        Point screenPoint = new Point(m.LParam.ToInt32());
+                        Point clientPoint = this.PointToClient(screenPoint);
+                        int borderSize = 10; // Width of hot area to resize
+
+                        bool isLeft = clientPoint.X <= borderSize;
+                        bool isRight = clientPoint.X >= this.Width - borderSize;
+                        bool isTop = clientPoint.Y <= borderSize;
+                        bool isBottom = clientPoint.Y >= this.Height - borderSize;
+
+                        if (isTop && isLeft) m.Result = (IntPtr)HTTOPLEFT;
+                        else if (isTop && isRight) m.Result = (IntPtr)HTTOPRIGHT;
+                        else if (isBottom && isLeft) m.Result = (IntPtr)HTBOTTOMLEFT;
+                        else if (isBottom && isRight) m.Result = (IntPtr)HTBOTTOMRIGHT;
+                        else if (isLeft) m.Result = (IntPtr)HTLEFT;
+                        else if (isRight) m.Result = (IntPtr)HTRIGHT;
+                        else if (isTop) m.Result = (IntPtr)HTTOP;
+                        else if (isBottom) m.Result = (IntPtr)HTBOTTOM;
+                    }
                 }
             }
-            
-
+            // RESIZE_FEATURE_END
         }
 
         int kk = 0;
@@ -7559,6 +7907,56 @@ namespace MissionPlanner.GCSViews
 
             G_batp.Invalidate();
             
+        }
+
+        private void Gspeed_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (g_speed_popout)
+                return;
+
+            string max = "60";
+            if (DialogResult.OK == InputBox.Show("Enter Max Speed", "Enter Max Speed", ref max))
+            {
+                float maxVal = float.Parse(max);
+                Gspeed.MaxValue = maxVal;//float.Parse(max);
+                Settings.Instance["GspeedMAX"] = maxVal.ToString();
+                //Gspeed.MaxValue.ToString();
+                //Gspeed.ScaleLinesMajorStepValue = 10; //default val
+                //if (Gspeed.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
+                //{
+                //    Gspeed.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
+                //}
+
+                Gspeed.ScaleLinesMajorStepValue = Math.Max(10f, 0.1f * maxVal);
+
+                // 03june26_task3 this will not work as color enable is set to false in flightsata.cs
+                this.Gspeed.RangesEndValue = new float[]
+                {(0.6f)* maxVal,
+                 (0.9f)* maxVal,
+                 1*maxVal,0f,0f};
+
+                this.Gspeed.RangesStartValue = new float[]
+                {0f,0.6f* maxVal,0.9f* maxVal,
+                 0f,0f};
+            }
+        }
+
+        private void G_RPM_MouseDown(object sender, MouseEventArgs e) 
+        {
+            if (g_rpm_popout)
+                return;
+
+            string max = "10000";
+            if (DialogResult.OK == InputBox.Show("Enter Max RPM", "Enter Max RPM", ref max))
+            {
+                G_RPM.MaxValue = float.Parse(max);
+                Settings.Instance["GrpmMAX"] = Gspeed.MaxValue.ToString(); //doubt ["GrpmMAX"]
+                G_RPM.ScaleLinesMajorStepValue = 1000F;//default min gap
+                if (G_RPM.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
+                {
+                    G_RPM.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
+                }
+            }
         }
     }
 }

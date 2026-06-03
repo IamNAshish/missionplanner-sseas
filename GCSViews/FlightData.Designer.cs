@@ -624,7 +624,7 @@ namespace MissionPlanner.GCSViews
             this.windDir1.BackColor = System.Drawing.Color.Transparent;
             this.windDir1.DataBindings.Add(new System.Windows.Forms.Binding("Direction", this.bindingSource1, "wind_dir", true, System.Windows.Forms.DataSourceUpdateMode.Never));
             this.windDir1.DataBindings.Add(new System.Windows.Forms.Binding("Speed", this.bindingSource1, "wind_vel", true, System.Windows.Forms.DataSourceUpdateMode.Never));
-            this.windDir1.Direction = 180D;
+            this.windDir1.Direction = 360D;
             resources.ApplyResources(this.windDir1, "windDir1");
             this.windDir1.Name = "windDir1";
             this.windDir1.Speed = 0D;
@@ -1950,7 +1950,7 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Black,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
-            this.G_RPM.CapPosition = new System.Drawing.Point(70, 45);
+            this.G_RPM.CapPosition = new System.Drawing.Point(60, 45);
             this.G_RPM.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(60, 85),
         new System.Drawing.Point(60, 45),
@@ -2074,7 +2074,9 @@ namespace MissionPlanner.GCSViews
             this.G_RPM.Value1 = 0F;
             this.G_RPM.Value2 = 0F;
             this.G_RPM.Value3 = 0F;
-            this.G_RPM.DoubleClick += new System.EventHandler(this.G_RPM_DoubleClick);
+            this.G_RPM.DoubleClick += new System.EventHandler(this.G_RPM_DoubleClick); // 04june26_task1
+            //this.G_RPM.MouseDown += new System.Windows.Forms.MouseEventHandler(this.G_RPM_MouseDown); 
+
             // 
             // Gheading
             // 
@@ -2312,22 +2314,21 @@ namespace MissionPlanner.GCSViews
             this.Gspeed.NeedleType = 0;
             this.Gspeed.NeedleWidth = 2;
             this.Gspeed.Range_Idx = ((byte)(2));
-            this.Gspeed.RangeColor = System.Drawing.Color.Orange;
+            this.Gspeed.RangeColor = System.Drawing.Color.Red;
             this.Gspeed.RangeEnabled = false;
-            this.Gspeed.RangeEndValue = 50F;
-            this.Gspeed.RangeInnerRadius = 1;
-            this.Gspeed.RangeOuterRadius = 70;
+            this.Gspeed.RangeEndValue = 60F;
+            this.Gspeed.RangeInnerRadius = 55;
+            this.Gspeed.RangeOuterRadius = 60;
             this.Gspeed.RangesColor = new System.Drawing.Color[] {
         System.Drawing.Color.LightGreen,
         System.Drawing.Color.Orange,
         System.Drawing.Color.Red,
         System.Drawing.SystemColors.Control,
         System.Drawing.SystemColors.Control};
-            // 03june26_task3 start
             this.Gspeed.RangesEnabled = new bool[] {
-        false,//true
-        false,//true
-        false,//true
+        false,
+        false,
+        false,
         false,
         false};
             this.Gspeed.RangesEndValue = new float[] {
@@ -2354,8 +2355,7 @@ namespace MissionPlanner.GCSViews
         55F,
         0F,
         0F};
-        // 03june26_task3 end
-            //this.Gspeed.RangeStartValue = 35F;
+            this.Gspeed.RangeStartValue = 55F;
             this.Gspeed.ScaleLinesInterColor = System.Drawing.Color.White;
             this.Gspeed.ScaleLinesInterInnerRadius = 52;
             this.Gspeed.ScaleLinesInterOuterRadius = 60;
@@ -2383,6 +2383,7 @@ namespace MissionPlanner.GCSViews
             this.Gspeed.Value2 = 0F;
             this.Gspeed.Value3 = 0F;
             this.Gspeed.DoubleClick += new System.EventHandler(this.Gspeed_DoubleClick);
+            //this.Gspeed.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gspeed_MouseDown);
             // 
             // G_batp
             // 
@@ -2457,18 +2458,17 @@ namespace MissionPlanner.GCSViews
             this.G_batp.NeedleType = 0;
             this.G_batp.NeedleWidth = 2;
             this.G_batp.Range_Idx = ((byte)(2));
-            this.G_batp.RangeColor = System.Drawing.Color.Orange;
-            this.G_batp.RangeEnabled = false;
-            this.G_batp.RangeEndValue = 50F;
-            this.G_batp.RangeInnerRadius = 1;
-            this.G_batp.RangeOuterRadius = 70;
+            this.G_batp.RangeColor = System.Drawing.Color.Lime;
+            this.G_batp.RangeEnabled = true;
+            this.G_batp.RangeEndValue = 100F;
+            this.G_batp.RangeInnerRadius = 55;
+            this.G_batp.RangeOuterRadius = 60;
             this.G_batp.RangesColor = new System.Drawing.Color[] {
         System.Drawing.Color.Red,
         System.Drawing.Color.Orange,
         System.Drawing.Color.Lime,
         System.Drawing.SystemColors.Control,
         System.Drawing.SystemColors.Control};
-            // 03june26_task3 start
             this.G_batp.RangesEnabled = new bool[] {
         true,
         true,
@@ -2498,9 +2498,8 @@ namespace MissionPlanner.GCSViews
         30F,
         70F,
         0F,
-        0F}; // 03june26_task3 end
-
-            //this.G_batp.RangeStartValue = 35F;
+        0F};
+            this.G_batp.RangeStartValue = 70F;
             this.G_batp.ScaleLinesInterColor = System.Drawing.Color.White;
             this.G_batp.ScaleLinesInterInnerRadius = 52;
             this.G_batp.ScaleLinesInterOuterRadius = 60;
