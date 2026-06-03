@@ -556,6 +556,7 @@ namespace MissionPlanner.GCSViews
             this.G_engineTemp.DoubleClick += G_engineTemp_DoubleClick;
             this.Gheading.DoubleClick += Gheading_DoubleClick;
             this.G_batp.DoubleClick += G_batp_DoubleClick;
+            this.Galt.DoubleClick += Galt_DoubleClick;
         }
 
 
@@ -7296,101 +7297,297 @@ namespace MissionPlanner.GCSViews
         private bool g_enginetemp_popout = false;
         private bool g_heading_popout = false;
         private bool g_speed_popout = false;
-        private bool g_batp_popout = false; //04june26_task1 
+        private bool g_batp_popout = false; //04june26_task1
+        private bool g_alt_popout = false; 
+        private class GaugeSelectionItem
+        {
+            public string Name { get; set; }
+            public Control Gauge { get; set; }
+            public Action PopoutAction { get; set; }
+            public override string ToString() => Name;
+        }
+
+        private void Galt_DoubleClick(object sender, EventArgs e)
+        {
+            PopoutGauge(g_alt_popout, val => g_alt_popout = val, Galt, "Altitude", new Size(250, 250));
+        }
+
         private void tabGauges_DoubleClick(object sender, EventArgs e)
         {
-            if (tabGauge_popout)
-                return;
-            
             if (tabGauges.Parent == SubMainRight.Panel1)
                 SubMainRight.Panel1Collapsed = false;
 
-            Form dropout = new Form();
-            dropout.Text = "";//dropout.Text = "Gauge Dropout";
-            dropout.Size = new Size(500, 500);//(tabGauges.Width, tabGauges.Height + 20);            
+            List<GaugeSelectionItem> items = new List<GaugeSelectionItem> 
+            {
+                new GaugeSelectionItem { Name = "Battery", Gauge = G_batp, PopoutAction = () => G_batp_DoubleClick(null, null) },
+                new GaugeSelectionItem { Name = "Speed", Gauge = Gspeed, PopoutAction = () => Gspeed_DoubleClick(null, null) },
+                new GaugeSelectionItem { Name = "Altitude", Gauge = Galt, PopoutAction = () => Galt_DoubleClick(null, null) },
+                new GaugeSelectionItem { Name = "Heading", Gauge = Gheading, PopoutAction = () => Gheading_DoubleClick(null, null) },
+                new GaugeSelectionItem { Name = "RPM", Gauge = G_RPM, PopoutAction = () => G_RPM_DoubleClick(null, null) },
+                new GaugeSelectionItem { Name = "Engine Temp", Gauge = G_engineTemp, PopoutAction = () => G_engineTemp_DoubleClick(null, null) },
+                new GaugeSelectionItem { Name = "Silencer Temp", Gauge = G_silencerTemp, PopoutAction = () => G_silencerTemp_DoubleClick(null, null) },
+                new GaugeSelectionItem { Name = "Water Flow", Gauge = G_waterflow, PopoutAction = () => G_waterflow_DoubleClick(null, null) },
+                new GaugeSelectionItem { Name = "Water Flow Temp", Gauge = G_waterflowTemp, PopoutAction = () => G_waterflowTemp_DoubleClick(null, null) }
+            };
+
+            Form prompt = new Form();
+            prompt.Text = "Select Gauges to Pop Out";
+            prompt.Size = new Size(300, 420);
+            prompt.FormBorderStyle = FormBorderStyle.FixedDialog;
+            prompt.MaximizeBox = false;
+            prompt.MinimizeBox = false;
+            prompt.StartPosition = FormStartPosition.CenterParent;
+            prompt.BackColor = Color.FromArgb(40, 40, 40);
+            prompt.ForeColor = Color.White;
+
+            CheckedListBox chkList = new CheckedListBox();
+            chkList.Dock = DockStyle.Fill;
+            chkList.BackColor = Color.FromArgb(50, 50, 50);
+            chkList.ForeColor = Color.White;
+            chkList.BorderStyle = BorderStyle.None;
+
+            foreach (var item in items)
+            {
+                bool isPoppedOut = false;
+                if (item.Gauge == G_batp) isPoppedOut = g_batp_popout;
+                else if (item.Gauge == Gspeed) isPoppedOut = g_speed_popout;
+                else if (item.Gauge == Galt) isPoppedOut = g_alt_popout;
+                else if (item.Gauge == Gheading) isPoppedOut = g_heading_popout;
+                else if (item.Gauge == G_RPM) isPoppedOut = g_rpm_popout;
+                else if (item.Gauge == G_engineTemp) isPoppedOut = g_enginetemp_popout;
+                else if (item.Gauge == G_silencerTemp) isPoppedOut = g_silencertemp_popout;
+                else if (item.Gauge == G_waterflow) isPoppedOut = g_waterflow_popout;
+                else if (item.Gauge == G_waterflowTemp) isPoppedOut = g_waterflowtemp_popout;
+
+                if (isPoppedOut)
+                {
+                    chkList.Items.Add(item.Name + " (Already Popped Out)", false);
+                }
+                else
+                {
+                    chkList.Items.Add(item, true);
+                }
+            }
+
+            Panel bottomPanel = new Panel();
+            bottomPanel.Dock = DockStyle.Bottom;
+            bottomPanel.Height = 85;
+
+            CheckBox chkCombine = new CheckBox();
+            chkCombine.Text = "Combine";
+            chkCombine.Location = new Point(40, 5);
+            chkCombine.Size = new Size(200, 20);
+            chkCombine.ForeColor = Color.White;
+
+            Button btnOk = new Button();
+            btnOk.Text = "Pop Out";
+            btnOk.DialogResult = DialogResult.OK;
+            btnOk.Size = new Size(100, 30);
+            btnOk.Location = new Point(40, 35);
+            btnOk.FlatStyle = FlatStyle.Flat;
+            btnOk.FlatAppearance.BorderColor = Color.Gray;
+
+            Button btnCancel = new Button();
+            btnCancel.Text = "Cancel";
+            btnCancel.DialogResult = DialogResult.Cancel;
+            btnCancel.Size = new Size(100, 30);
+            btnCancel.Location = new Point(160, 35);
+            btnCancel.FlatStyle = FlatStyle.Flat;
+            btnCancel.FlatAppearance.BorderColor = Color.Gray;
+
+            bottomPanel.Controls.Add(chkCombine);
+            bottomPanel.Controls.Add(btnOk);
+            bottomPanel.Controls.Add(btnCancel);
+
+            prompt.Controls.Add(chkList);
+            prompt.Controls.Add(bottomPanel);
+            prompt.AcceptButton = btnOk;
+            prompt.CancelButton = btnCancel;
+
+            if (prompt.ShowDialog() == DialogResult.OK)
+            {
+                List<GaugeSelectionItem> selectedItems = new List<GaugeSelectionItem>();
+                foreach (var checkedItem in chkList.CheckedItems)
+                {
+                    if (checkedItem is GaugeSelectionItem item)
+                    {
+                        selectedItems.Add(item);
+                    }
+                }
+
+                if (selectedItems.Count > 0)
+                {
+                    if (chkCombine.Checked)
+                    {
+                        PopoutGaugesCombined(selectedItems);
+                    }
+                    else
+                    {
+                        foreach (var item in selectedItems)
+                        {
+                            item.PopoutAction();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void PopoutGaugesCombined(List<GaugeSelectionItem> selectedItems)
+        {
+            Form dropout = new ResizableForm();
+            dropout.Text = "Combined Gauges";
             dropout.FormBorderStyle = FormBorderStyle.None;
             dropout.ShowInTaskbar = false;
             dropout.TopMost = true;
             dropout.BackColor = Color.FromArgb(40, 40, 40);
             dropout.Padding = new Padding(4);
             dropout.Opacity = 0.70;
-            int radius = 20;
-            GraphicsPath path = new GraphicsPath();
-            path.AddArc(0, 0, radius, radius, 180, 90);
-            path.AddArc(dropout.Width - radius, 0, radius, radius, 270, 90);
-            path.AddArc(dropout.Width - radius, dropout.Height - radius, radius, radius, 0, 90);
-            path.AddArc(0, dropout.Height - radius, radius, radius, 90, 90);
 
-            path.CloseFigure();
+            Panel topPanel = new Panel();
+            topPanel.Dock = DockStyle.Top;
+            topPanel.Height = 30;
+            topPanel.BackColor = Color.FromArgb(50, 50, 50);
 
-            dropout.Region = new Region(path);
+            System.Windows.Forms.Label lblTitle = new System.Windows.Forms.Label();
+            lblTitle.Text = "Combined Gauges";
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            lblTitle.Location = new Point(10, 5);
+            lblTitle.AutoSize = true;
+            topPanel.Controls.Add(lblTitle);
 
-
-            ////////close button/////
             Button btnClose = new Button();
-
             btnClose.Text = "X";
-            btnClose.Size = new Size(30, 30);
-            btnClose.Location = new Point(dropout.Width - 35, 5);
-
+            btnClose.Size = new Size(25, 25);
+            btnClose.Location = new Point(topPanel.Width - 28, 2);
             btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClose.FlatStyle = FlatStyle.Flat;
+            btnClose.FlatAppearance.BorderSize = 0;
+            btnClose.ForeColor = Color.White;
+            btnClose.BackColor = Color.Red;
+            btnClose.Click += (s, ev) => dropout.Close();
+            topPanel.Controls.Add(btnClose);
 
-            btnClose.Click += (s, ev) =>
-            {
-                dropout.Close();
-            };
+            FlowLayoutPanel flowPanel = new FlowLayoutPanel();
+            flowPanel.Dock = DockStyle.Fill;
+            flowPanel.AutoScroll = true;
+            flowPanel.BackColor = Color.Transparent;
 
-            dropout.Controls.Add(btnClose);
-            //////////////////////////
-
-
-
-
-            // Store original parent
-            dropout.Tag = tabGauges.Parent;
-
-            // Remove from old TabControl
-            TabControl oldTab = (TabControl)tabGauges.Parent;
-            oldTab.TabPages.Remove(tabGauges);
-
-            // Create temporary TabControl
-            TabControl tempTabs = new TabControl();
-            tempTabs.Dock = DockStyle.Fill;
-
-            // Add tab page to new TabControl
-            tempTabs.TabPages.Add(tabGauges);
-
-            // Add TabControl to form
-            dropout.Controls.Add(tempTabs);
-
-            dropout.Resize += dropout_Resize;
-            dropout.FormClosed += dropout_FormClosed2;
-
-            /////////code for making i dragable////////
             Point dragStart = Point.Empty;
-
-            tempTabs.MouseDown += (s, ev) =>
+            topPanel.MouseDown += (s, ev) =>
             {
                 if (ev.Button == MouseButtons.Left)
                     dragStart = ev.Location;
             };
-
-            tempTabs.MouseMove += (s, ev) =>
+            topPanel.MouseMove += (s, ev) =>
             {
                 if (ev.Button == MouseButtons.Left)
                 {
                     dropout.Left += ev.X - dragStart.X;
                     dropout.Top += ev.Y - dragStart.Y;
                 }
-            };/////////
+            };
 
+            int N = selectedItems.Count;
+            int cols = 1;
+            int rows = 1;
+            if (N == 2) { cols = 2; rows = 1; }
+            else if (N == 3) { cols = 3; rows = 1; }
+            else if (N == 4) { cols = 2; rows = 2; }
+            else if (N <= 6) { cols = 3; rows = 2; }
+            else { cols = 3; rows = (int)Math.Ceiling(N / 3.0); }
 
+            dropout.Size = new Size(cols * 250 + 8, rows * 250 + 30 + 8);
 
+            Action updateRegion = () =>
+            {
+                int radius = 20;
+                using (GraphicsPath path = new GraphicsPath())
+                {
+                    path.AddArc(0, 0, radius, radius, 180, 90);
+                    path.AddArc(dropout.Width - radius, 0, radius, radius, 270, 90);
+                    path.AddArc(dropout.Width - radius, dropout.Height - radius, radius, radius, 0, 90);
+                    path.AddArc(0, dropout.Height - radius, radius, radius, 90, 90);
+                    path.CloseFigure();
+                    dropout.Region = new Region(path);
+                }
+            };
+            updateRegion();
+            dropout.Resize += (s, ev) => updateRegion();
+
+            Action<Control, bool> setPopoutState = (gauge, state) =>
+            {
+                if (gauge == G_batp) g_batp_popout = state;
+                else if (gauge == Gspeed) g_speed_popout = state;
+                else if (gauge == Galt) g_alt_popout = state;
+                else if (gauge == Gheading) g_heading_popout = state;
+                else if (gauge == G_RPM) g_rpm_popout = state;
+                else if (gauge == G_engineTemp) g_enginetemp_popout = state;
+                else if (gauge == G_silencerTemp) g_silencertemp_popout = state;
+                else if (gauge == G_waterflow) g_waterflow_popout = state;
+                else if (gauge == G_waterflowTemp) g_waterflowtemp_popout = state;
+            };
+
+            List<Control> clonedGauges = new List<Control>();
+
+            foreach (var item in selectedItems)
+            {
+                Control clonedGauge = CloneControl(item.Gauge);
+                if (clonedGauge != null)
+                {
+                    clonedGauge.Size = new Size(250, 250);
+                    clonedGauge.Margin = new Padding(0);
+                    clonedGauge.Tag = item.Gauge;
+
+                    Point gaugeDragStart = Point.Empty;
+                    MouseEventHandler mdHandler = (s2, ev2) =>
+                    {
+                        if (ev2.Button == MouseButtons.Left)
+                            gaugeDragStart = ev2.Location;
+                    };
+                    MouseEventHandler mmHandler = (s2, ev2) =>
+                    {
+                        if (ev2.Button == MouseButtons.Left)
+                        {
+                            int borderSize = 10;
+                            if (ev2.X > borderSize && ev2.X < clonedGauge.Width - borderSize &&
+                                ev2.Y > borderSize && ev2.Y < clonedGauge.Height - borderSize)
+                            {
+                                dropout.Left += ev2.X - gaugeDragStart.X;
+                                dropout.Top += ev2.Y - gaugeDragStart.Y;
+                            }
+                        }
+                    };
+
+                    clonedGauge.MouseDown += mdHandler;
+                    clonedGauge.MouseMove += mmHandler;
+
+                    flowPanel.Controls.Add(clonedGauge);
+                    clonedGauges.Add(clonedGauge);
+                    setPopoutState(item.Gauge, true);
+                }
+            }
+
+            dropout.Controls.Add(flowPanel);
+            dropout.Controls.Add(topPanel);
+            flowPanel.BringToFront();
+            topPanel.SendToBack();
+
+            dropout.FormClosed += (s, ev) =>
+            {
+                foreach (var clonedGauge in clonedGauges)
+                {
+                    Control originalGauge = clonedGauge.Tag as Control;
+                    if (originalGauge != null)
+                    {
+                        setPopoutState(originalGauge, false);
+                    }
+                    clonedGauge.DataBindings.Clear();
+                    clonedGauge.Dispose();
+                }
+            };
 
             dropout.Show();
-
-            tabGauge_popout = true;
-
         }        // 30may26_task_rpm
         private void G_RPM_DoubleClick(object sender, EventArgs e)
         {
