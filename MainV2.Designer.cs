@@ -224,6 +224,8 @@ namespace MissionPlanner
             this.lblLogo.Margin = new System.Windows.Forms.Padding(0);
             this.lblLogo.Name = "lblLogo";
             this.lblLogo.Text = "SaifSeas";
+            this.lblLogo.Click += new System.EventHandler(this.lblLogo_click);
+            
             
             // 
             // menu

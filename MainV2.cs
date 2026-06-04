@@ -1968,7 +1968,10 @@ namespace MissionPlanner
                 return;
             }
         }
+        private void lblLogo_click(object sender,EventArgs e)
+        {
 
+        }
 
         private void MenuConnect_Click(object sender, EventArgs e)
         {

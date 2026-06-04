@@ -43,6 +43,7 @@ namespace MissionPlanner.GCSViews
             this.gimbalVideoFullSizedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gimbalVideoMiniToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gimbalVideoPopOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showGaugesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.but_disablejoystick = new MissionPlanner.Controls.MyButton();
             this.Zoomlevel = new System.Windows.Forms.NumericUpDown();
@@ -407,7 +408,8 @@ namespace MissionPlanner.GCSViews
             this.takeOffToolStripMenuItem,
             this.onOffCameraOverlapToolStripMenuItem,
             this.jumpToTagToolStripMenuItem,
-            this.gimbalVideoToolStripMenuItem});
+            this.gimbalVideoToolStripMenuItem,
+            this.showGaugesToolStripMenuItem});
             this.contextMenuStripMap.Name = "contextMenuStrip1";
             resources.ApplyResources(this.contextMenuStripMap, "contextMenuStripMap");
             // 
@@ -553,6 +555,12 @@ namespace MissionPlanner.GCSViews
             this.gimbalVideoPopOutToolStripMenuItem.Name = "gimbalVideoPopOutToolStripMenuItem";
             resources.ApplyResources(this.gimbalVideoPopOutToolStripMenuItem, "gimbalVideoPopOutToolStripMenuItem");
             this.gimbalVideoPopOutToolStripMenuItem.Click += new System.EventHandler(this.gimbalVideoPopOutToolStripMenuItem_Click);
+            // 
+            // showGaugesToolStripMenuItem
+            // 
+            this.showGaugesToolStripMenuItem.Name = "showGaugesToolStripMenuItem";
+            resources.ApplyResources(this.showGaugesToolStripMenuItem, "showGaugesToolStripMenuItem");
+            this.showGaugesToolStripMenuItem.Click += new System.EventHandler(this.showGaugesToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -1390,7 +1398,7 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
             this.G_waterflowTemp.CapsText = new string[] {
-        "G_waterflow\nTemp(°C)",
+        "WF Temp(°C)",
         "",
         "",
         "",
@@ -1506,6 +1514,8 @@ namespace MissionPlanner.GCSViews
             this.G_waterflowTemp.Value1 = 0F;
             this.G_waterflowTemp.Value2 = 0F;
             this.G_waterflowTemp.Value3 = 0F;
+            this.G_waterflowTemp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown);
+            this.G_waterflowTemp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp);
             // 
             // G_waterflow
             // 
@@ -1532,7 +1542,7 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
             this.G_waterflow.CapsText = new string[] {
-        "Water\nFlow (lpm)",
+        "WF (lpm)",
         "",
         "",
         "",
@@ -1648,6 +1658,8 @@ namespace MissionPlanner.GCSViews
             this.G_waterflow.Value1 = 0F;
             this.G_waterflow.Value2 = 0F;
             this.G_waterflow.Value3 = 0F;
+            this.G_waterflow.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown);
+            this.G_waterflow.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp);
             // 
             // G_silencerTemp
             // 
@@ -1790,6 +1802,8 @@ namespace MissionPlanner.GCSViews
             this.G_silencerTemp.Value1 = 0F;
             this.G_silencerTemp.Value2 = 0F;
             this.G_silencerTemp.Value3 = 0F;
+            this.G_silencerTemp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown);
+            this.G_silencerTemp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp);
             // 
             // G_engineTemp
             // 
@@ -1816,7 +1830,7 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
             this.G_engineTemp.CapsText = new string[] {
-        "Engg Temp\n(°C)",
+        "EngTemp\n(°C)",
         "",
         "",
         "",
@@ -1932,6 +1946,8 @@ namespace MissionPlanner.GCSViews
             this.G_engineTemp.Value1 = 0F;
             this.G_engineTemp.Value2 = 0F;
             this.G_engineTemp.Value3 = 0F;
+            this.G_engineTemp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown);
+            this.G_engineTemp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp);
             // 
             // G_RPM
             // 
@@ -2074,9 +2090,8 @@ namespace MissionPlanner.GCSViews
             this.G_RPM.Value1 = 0F;
             this.G_RPM.Value2 = 0F;
             this.G_RPM.Value3 = 0F;
-            this.G_RPM.DoubleClick += new System.EventHandler(this.G_RPM_DoubleClick); // 04june26_task1
-            //this.G_RPM.MouseDown += new System.Windows.Forms.MouseEventHandler(this.G_RPM_MouseDown); 
-
+            this.G_RPM.DoubleClick += new System.EventHandler(this.G_RPM_DoubleClick);
+            this.G_RPM.MouseUp += new System.Windows.Forms.MouseEventHandler(this.G_RPM_MouseUp);
             // 
             // Gheading
             // 
@@ -2383,7 +2398,7 @@ namespace MissionPlanner.GCSViews
             this.Gspeed.Value2 = 0F;
             this.Gspeed.Value3 = 0F;
             this.Gspeed.DoubleClick += new System.EventHandler(this.Gspeed_DoubleClick);
-            //this.Gspeed.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gspeed_MouseDown);
+            this.Gspeed.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gspeed_MouseUp);
             // 
             // G_batp
             // 
@@ -2520,6 +2535,7 @@ namespace MissionPlanner.GCSViews
             this.G_batp.ScaleNumbersRotation = 0;
             this.G_batp.ScaleNumbersStartScaleLine = 1;
             this.G_batp.ScaleNumbersStepScaleLines = 1;
+            this.toolTip1.SetToolTip(this.G_batp, resources.GetString("G_batp.ToolTip"));
             this.G_batp.Value = 0F;
             this.G_batp.Value0 = 0F;
             this.G_batp.Value1 = 0F;
@@ -4092,6 +4108,7 @@ private AGaugeApp.AGauge G_waterflowTemp; // 03june26_task2
 private AGaugeApp.AGauge G_waterflow; // 03june26_task2
 private AGaugeApp.AGauge G_silencerTemp; // 03june26_task2
 private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
-//private Label label_batp_onGauge;
+        private ToolStripMenuItem showGaugesToolStripMenuItem;
+        //private Label label_batp_onGauge;
     }
 }

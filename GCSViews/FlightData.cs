@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Drawing2D; //29may26_task1
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -28,6 +27,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+//using System.Web.UI.WebControls; //it appeared auto by visual studio 
 using System.Windows.Forms;
 using WebCamService;
 using ZedGraph;
@@ -556,12 +556,12 @@ namespace MissionPlanner.GCSViews
             this.G_engineTemp.DoubleClick += G_engineTemp_DoubleClick;
             this.Gheading.DoubleClick += Gheading_DoubleClick;
             this.G_batp.DoubleClick += G_batp_DoubleClick;
-            this.Galt.DoubleClick += Galt_DoubleClick;
+            //this.Galt.DoubleClick += Galt_DoubleClick;
         }
 
 
         // 09may26_task1
-        private Bitmap RotateImage(Image image, float angle)
+        private Bitmap RotateImage(System.Drawing.Image image, float angle)
         {
             Bitmap rotated = new Bitmap(image.Width, image.Height);
 
@@ -2035,7 +2035,7 @@ namespace MissionPlanner.GCSViews
             ((Control) sender).Enabled = true;
         }
 
-        void cam_camimage(Image camimage)
+        void cam_camimage(System.Drawing.Image camimage) //Image.camimage
         {
             hud1.bgimage = camimage;
         }
@@ -7299,7 +7299,7 @@ namespace MissionPlanner.GCSViews
         private bool g_speed_popout = false;
         private bool g_batp_popout = false; //04june26_task1
         private bool g_alt_popout = false; 
-        private class GaugeSelectionItem
+        private class GaugeSelectionItem //04june26_task2
         {
             public string Name { get; set; }
             public Control Gauge { get; set; }
@@ -7312,7 +7312,7 @@ namespace MissionPlanner.GCSViews
             PopoutGauge(g_alt_popout, val => g_alt_popout = val, Galt, "Altitude", new Size(250, 250));
         }
 
-        private void tabGauges_DoubleClick(object sender, EventArgs e)
+        private void tabGauges_DoubleClick(object sender, EventArgs e) // 04june26_task2
         {
             if (tabGauges.Parent == SubMainRight.Panel1)
                 SubMainRight.Panel1Collapsed = false;
@@ -7321,7 +7321,7 @@ namespace MissionPlanner.GCSViews
             {
                 new GaugeSelectionItem { Name = "Battery", Gauge = G_batp, PopoutAction = () => G_batp_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "Speed", Gauge = Gspeed, PopoutAction = () => Gspeed_DoubleClick(null, null) },
-                new GaugeSelectionItem { Name = "Altitude", Gauge = Galt, PopoutAction = () => Galt_DoubleClick(null, null) },
+                //new GaugeSelectionItem { Name = "Altitude", Gauge = Galt, PopoutAction = () => Galt_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "Heading", Gauge = Gheading, PopoutAction = () => Gheading_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "RPM", Gauge = G_RPM, PopoutAction = () => G_RPM_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "Engine Temp", Gauge = G_engineTemp, PopoutAction = () => G_engineTemp_DoubleClick(null, null) },
@@ -7497,7 +7497,8 @@ namespace MissionPlanner.GCSViews
             else if (N <= 6) { cols = 3; rows = 2; }
             else { cols = 3; rows = (int)Math.Ceiling(N / 3.0); }
 
-            dropout.Size = new Size(cols * 250 + 8, rows * 250 + 30 + 8);
+            //dropout.Size = new Size(cols * 250 + 8, rows * 250 + 30 + 8);
+            dropout.Size = new Size(258, 305);
 
             Action updateRegion = () =>
             {
@@ -7720,6 +7721,8 @@ namespace MissionPlanner.GCSViews
 
         private void PopoutGaugeCloned(bool currentState, Action<bool> setState, Control gauge, string title, Size size)
         {
+            //return;// test aypoindi aaleheha 
+
             if (currentState)
                 return;
 
@@ -7752,7 +7755,7 @@ namespace MissionPlanner.GCSViews
             Button btnClose = new Button();
             btnClose.Text = "X";
             btnClose.Size = new Size(25, 25);
-            btnClose.Location = new Point(dropout.Width - 30, 5);
+            btnClose.Location = new Point(dropout.Width - 35, 5);
             btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnClose.Click += (s, ev) => dropout.Close();
             dropout.Controls.Add(btnClose);
@@ -8106,54 +8109,106 @@ namespace MissionPlanner.GCSViews
             
         }
 
-        private void Gspeed_MouseDown(object sender, MouseEventArgs e)
+        
+        
+
+        private void Gspeed_MouseUp(object sender, MouseEventArgs e)
         {
-            if (g_speed_popout)
-                return;
-
-            string max = "60";
-            if (DialogResult.OK == InputBox.Show("Enter Max Speed", "Enter Max Speed", ref max))
+            if(e.Button == MouseButtons.Right) //right click
             {
-                float maxVal = float.Parse(max);
-                Gspeed.MaxValue = maxVal;//float.Parse(max);
-                Settings.Instance["GspeedMAX"] = maxVal.ToString();
-                //Gspeed.MaxValue.ToString();
-                //Gspeed.ScaleLinesMajorStepValue = 10; //default val
-                //if (Gspeed.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
-                //{
-                //    Gspeed.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
-                //}
+                if (g_speed_popout)
+                    return;
 
-                Gspeed.ScaleLinesMajorStepValue = Math.Max(10f, 0.1f * maxVal);
+                string max = "60";
+                if (DialogResult.OK == InputBox.Show("Enter Max Speed", "Enter Max Speed", ref max))
+                {
+                    float maxVal = float.Parse(max);
+                    Gspeed.MaxValue = maxVal;//float.Parse(max);
+                    Settings.Instance["GspeedMAX"] = maxVal.ToString();
+                    //Gspeed.MaxValue.ToString();
+                    //Gspeed.ScaleLinesMajorStepValue = 10; //default val
+                    //if (Gspeed.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
+                    //{
+                    //    Gspeed.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
+                    //}
 
-                // 03june26_task3 this will not work as color enable is set to false in flightsata.cs
-                this.Gspeed.RangesEndValue = new float[]
-                {(0.6f)* maxVal,
+                    Gspeed.ScaleLinesMajorStepValue = Math.Max(10f, 0.1f * maxVal);
+
+                    // 03june26_task3 this will not work as color enable is set to false in flightsata.cs
+                    this.Gspeed.RangesEndValue = new float[]
+                    {(0.6f)* maxVal,
                  (0.9f)* maxVal,
                  1*maxVal,0f,0f};
 
-                this.Gspeed.RangesStartValue = new float[]
-                {0f,0.6f* maxVal,0.9f* maxVal,
+                    this.Gspeed.RangesStartValue = new float[]
+                    {0f,0.6f* maxVal,0.9f* maxVal,
                  0f,0f};
+                }
             }
+    
+                 
         }
 
-        private void G_RPM_MouseDown(object sender, MouseEventArgs e) 
+        private void G_RPM_MouseUp(object sender, MouseEventArgs e)
         {
-            if (g_rpm_popout)
-                return;
+            if (e.Button == MouseButtons.Right)
+            { 
+                if (g_rpm_popout)
+                    return;
 
-            string max = "10000";
-            if (DialogResult.OK == InputBox.Show("Enter Max RPM", "Enter Max RPM", ref max))
-            {
-                G_RPM.MaxValue = float.Parse(max);
-                Settings.Instance["GrpmMAX"] = Gspeed.MaxValue.ToString(); //doubt ["GrpmMAX"]
-                G_RPM.ScaleLinesMajorStepValue = 1000F;//default min gap
-                if (G_RPM.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
+                string max = "10000";
+                if (DialogResult.OK == InputBox.Show("Enter Max RPM", "Enter Max RPM", ref max))
                 {
-                    G_RPM.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
+                    G_RPM.MaxValue = float.Parse(max);
+                    Settings.Instance["GrpmMAX"] = Gspeed.MaxValue.ToString(); //doubt ["GrpmMAX"]
+                    G_RPM.ScaleLinesMajorStepValue = 1000F;//default min gap
+                    if (G_RPM.ScaleLinesMajorStepValue < 0.1f * float.Parse(max))
+                    {
+                        G_RPM.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
+                    }
                 }
             }
         }
+
+        private void showGaugesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabGauges_DoubleClick(null,null);
+        }
+
+        //we used tags int prevX, prevY;  
+        // 04june26_task_zoomG
+        private void Gauge_MouseDown(object sender, MouseEventArgs e) // 04june26_task_zoomG
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            Control gauge = (Control)sender;
+
+            gauge.Tag = gauge.Location;//with this that aguge stores its loc in its own memory called tag
+
+            gauge.BringToFront();
+
+            gauge.Size = new Size(Galt.Width,Galt.Height);
+            
+            //prevX=gauge.Location.X;
+            //prevY = gauge.Location.Y;
+            gauge.Location = Galt.Location;
+        }
+
+        
+
+        private void Gauge_MouseUp(object sender, MouseEventArgs e) // 04june26_task_zoomG
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+            Control gauge = (Control)sender;
+
+            gauge.Size = new Size(Galt.Width / 2,Galt.Height / 2);
+
+            //gauge.Location = new Point(prevX, prevY);
+            if (gauge.Tag is Point p)
+                gauge.Location = p;
+        }
+
     }
 }
