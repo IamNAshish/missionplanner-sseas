@@ -1,0 +1,127 @@
+working
+
+
+
+ private void PopoutGaugeCloned2(     bool currentState,     Action<bool> setState,     Control gauge,     string title,     Size size)
+ {
+     if (currentState)
+         return;
+
+     Form popup = new ResizableForm();
+     popup.Text = title;
+     popup.Size = size;
+     popup.FormBorderStyle = FormBorderStyle.None;
+     popup.ShowInTaskbar = false;
+     popup.TopMost = true;
+     popup.BackColor = Color.FromArgb(40, 40, 40);
+     popup.Opacity = 0.9;
+
+     int diameter = Math.Min(size.Width, size.Height);
+
+     // ---------------- CLONE GAUGE ----------------
+     Control clonedGauge = CloneControl(gauge);
+     if (clonedGauge == null)
+     {
+         popup.Dispose();
+         return;
+     }
+
+     clonedGauge.Dock = DockStyle.Fill;
+     popup.Controls.Add(clonedGauge);
+
+     // ---------------- CIRCLE REGION ----------------
+     void ApplyCircle()
+     {
+         using (GraphicsPath path = new GraphicsPath())
+         {
+             path.AddEllipse(0, 0, diameter, diameter);
+             popup.Region = new Region(path);
+         }
+     }
+
+     popup.Load += (s, e) => ApplyCircle();
+     popup.Resize += (s, e) => ApplyCircle();
+
+     // ---------------- CONTEXT MENU ----------------
+     ContextMenuStrip menu = new ContextMenuStrip();
+
+     ToolStripMenuItem closeItem = new ToolStripMenuItem("Close");
+     ToolStripMenuItem resizeItem = new ToolStripMenuItem("Resize");
+
+     menu.Items.Add(closeItem);
+     menu.Items.Add(resizeItem);
+
+     popup.ContextMenuStrip = menu;
+     clonedGauge.ContextMenuStrip = menu;
+
+     closeItem.Click += (s, e) => popup.Close();
+
+     bool small = true;
+
+     resizeItem.Click += (s, e) =>
+     {
+         if (small)
+             popup.Size = new Size(350, 350);
+         else
+             popup.Size = size;
+
+         small = !small;
+
+         // IMPORTANT: re-apply circle after resize
+         ApplyCircle();
+     };
+
+     // ---------------- DRAG ----------------
+     Point dragStart = Point.Empty;
+     bool dragging = false;
+
+     void StartDrag(Point p)
+     {
+         dragging = true;
+         dragStart = p;
+     }
+
+     void MoveDrag(Point p)
+     {
+         if (!dragging) return;
+
+         popup.Left += p.X - dragStart.X;
+         popup.Top += p.Y - dragStart.Y;
+         dragStart = p;
+     }
+
+     void StopDrag() => dragging = false;
+
+     MouseEventHandler down = (s, e) =>
+     {
+         if (e.Button == MouseButtons.Left)
+             StartDrag(popup.PointToScreen(e.Location));
+     };
+
+     MouseEventHandler move = (s, e) =>
+     {
+         if (e.Button == MouseButtons.Left)
+             MoveDrag(popup.PointToScreen(e.Location));
+     };
+
+     MouseEventHandler up = (s, e) => StopDrag();
+
+     popup.MouseDown += down;
+     popup.MouseMove += move;
+     popup.MouseUp += up;
+
+     clonedGauge.MouseDown += down;
+     clonedGauge.MouseMove += move;
+     clonedGauge.MouseUp += up;
+
+     // ---------------- STATE ----------------
+     setState(true);
+
+     popup.FormClosed += (s, e) =>
+     {
+         clonedGauge.Dispose();
+         setState(false);
+     };
+
+     popup.Show();
+ }

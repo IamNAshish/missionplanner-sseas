@@ -873,6 +873,16 @@ namespace MissionPlanner.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap gauge_bg_fuel {
+            get {
+                object obj = ResourceManager.GetObject("gauge_bg_fuel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Gaugebg {
             get {
                 object obj = ResourceManager.GetObject("Gaugebg", resourceCulture);

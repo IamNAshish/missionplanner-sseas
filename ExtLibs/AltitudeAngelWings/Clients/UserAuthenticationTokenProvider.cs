@@ -96,6 +96,7 @@ namespace AltitudeAngelWings.Clients
 
         private static Uri FormatCodeAuthorizeUri(Uri baseUri, NameValueCollection parameters)
         {
+            //return (Uri) (null); //test 05june26_test
             var builder = new UriBuilder(baseUri)
             {
                 Query = parameters.ToString()

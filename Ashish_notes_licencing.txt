@@ -1,0 +1,205 @@
+Offline Licensing with Optional Internet Time Verification
+
+Objective: Prevent license expiration bypass through system clock changes while keeping the application usable offline most of the time.
+
+Strategy:
+
+Store the last successful run date.
+Compare current system date with last run date.
+If the date moves backward (or jumps suspiciously far forward), verify against an internet time source.
+Otherwise run completely offline.
+if (currentDate < lastRunDate)
+{
+    currentDate = GetInternetTime();
+}
+
+This reduces internet usage to only suspicious cases while catching the most common clock-tampering attempts.
+
+--------------------------------------------------
+Phase 1: Basic Expiring License (No Security Yet)
+--------------------------------------------------
+Create a license file:
+file.json
+{
+  "Customer": "Client A",
+  "ExpiryDate": "2027-01-01"
+}
+
+
+On startup of application:
+
+var license = LoadLicense();
+
+if (DateTime.Now > license.ExpiryDate)
+{
+    MessageBox.Show("License expired");
+    Application.Exit();
+}
+
+One extra improvement
+
+Store the latest trusted date:
+trustedDate = Max(lastRunDate, currentDate);
+
+and never allow it to decrease.
+
+Conceptually:
+trustedDate = max(lastRunDate,systemDate,internetDateIfChecked);
+
+Get this working first.
+__________________________________________________
+--------------------------------------------------
+Phase 2: Add Anti-Clock-Rollback
+--------------------------------------------------
+Store:
+lastRun.dat
+
+Example:
+2026-06-11
+
+Startup flow in main project(c#):
+
+DateTime currentDate = DateTime.Now;
+DateTime lastRunDate = LoadLastRunDate();
+
+if (currentDate < lastRunDate)
+{
+    currentDate = GetInternetTime();
+}
+
+SaveLastRunDate(currentDate);
+__________________________________________________
+--------------------------------------------------
+Phase 3: Protect the License File
+--------------------------------------------------
+Without protection, a user can edit:
+
+in  .json file: 
+{
+  "ExpiryDate": "2035-01-01"
+}
+
+and get a free extension.
+
+This is where RSA signatures come in.
+
+Create RSA Keys
+
+Generate:
+Private Key  <-- only you have this
+Public Key   <-- embedded in app
+
+####License Generator (your tool.. keep it with us)
+
+Your tool creates:
+.json file
+
+{
+  "Customer": "Client A",
+  "ExpiryDate": "2027-01-01"
+}
+
+Then signs it:
+
+License Data + Digital Signature
+
+Result:
+.json
+{
+  "Customer": "Client A",
+  "ExpiryDate": "2027-01-01",
+  "Signature": "abc123..."
+}
+
+####Client Application
+
+When loading (c#):
+
+VerifySignature(
+    licenseData,
+    signature,
+    publicKey);
+
+If verification fails:
+
+MessageBox.Show("Invalid license");
+Application.Exit();
+
+Now users can't modify expiry dates.
+__________________________________________________
+--------------------------------------------------
+Phase 4: Machine Binding (Optional)
+--------------------------------------------------
+Generate a machine ID:
+
+string machineId = GetMachineGuid();
+
+Store it in the signed license:
+
+{
+  "Customer": "Client A",
+  "MachineId": "XYZ123",
+  "ExpiryDate": "2027-01-01"
+}
+
+Check:
+
+if (license.MachineId != GetMachineGuid())
+{
+    InvalidLicense();
+}
+
+Now the license only works on one PC.
+__________________________________________________
+--------------------------------------------------
+Final Architecture
+Your Side
+
+License Generator App
+
+Input:
+Customer Name
+Expiry Date
+Machine ID (optional)
+
+Output:
+license.lic
+Client Side
+
+Files:
+MyApp.exe
+license.lic
+
+Startup:
+1. Load license
+2. Verify RSA signature
+3. Check machine ID
+4. Check trusted date
+5. Check expiry
+6. Start application
+
+For a first real implementation, I'd stop at:
+✅ Expiry date
+✅ Last-run-date protection
+✅ RSA-signed license file
+Those three features provide most of the value and are a solid foundation before adding machine binding or online activation.
+
+________________________________________________________________________________________________________________________________
+
+IMPLEMENTATION
+__________________________________________________
+
+Step 1 — Generate RSA Keys (DO THIS ONCE)
+
+Run this once in a console app C#:
+
+using System.Security.Cryptography;
+using System.IO;
+
+var rsa = RSA.Create(2048);
+
+File.WriteAllText("privateKey.xml", rsa.ToXmlString(true));   // keep secret
+File.WriteAllText("publicKey.xml", rsa.ToXmlString(false));   // embed in app
+Result:
+privateKey.xml → ONLY YOU
+publicKey.xml → goes inside client app
