@@ -1183,8 +1183,10 @@ namespace MissionPlanner.GCSViews
         /// <param name="alt"></param>
         public void callMeDrag(string pointno, double lat, double lng, int alt)
         {
+            
             if (pointno == "")
             {
+                MessageBox.Show("ekada 0");
                 return;
             }
 
@@ -1209,16 +1211,27 @@ namespace MissionPlanner.GCSViews
             try
             {
                 selectedrow = int.Parse(pointno) - 1;
-                Commands.CurrentCell = Commands[1, selectedrow];
+                //Commands.CurrentCell = Commands[1, selectedrow];  06june26_correction commented this
+                // 06june26_correction start
+                var firstVisibleColumn = Commands.Columns.Cast<DataGridViewColumn>().FirstOrDefault(c => c.Visible);
+                if (firstVisibleColumn != null)
+                {
+                    Commands.CurrentCell = Commands[firstVisibleColumn.Index, selectedrow];
+                }
+                // 06june26_correction end
                 // depending on the dragged item, selectedrow can be reset
                 selectedrow = int.Parse(pointno) - 1;
+                
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.ToString());
                 return;
-            }
-            updateUndoBuffer(true);
+            }            
+            System.Diagnostics.Debugger.Break();
+            updateUndoBuffer(true);            
             setfromMap(lat, lng, alt);
+            
         }
 
         public T DeepClone<T>(T obj)
@@ -1570,6 +1583,7 @@ namespace MissionPlanner.GCSViews
         /// <param name="alt"></param>
         public void setfromMap(double lat, double lng, int alt, double p1 = -1)
         {
+            
             if (selectedrow > Commands.RowCount)
             {
                 CustomMessageBox.Show("Invalid coord, How did you do this?");
@@ -1607,13 +1621,16 @@ namespace MissionPlanner.GCSViews
                 }
             }
 
+            
             if (Commands.Columns[Lat.Index].HeaderText.Equals("Lat"))
             {
+                
                 cell = Commands.Rows[selectedrow].Cells[Lat.Index] as DataGridViewTextBoxCell;
-                cell.Value = lat.ToString("0.0000000");
+                cell.Value = lat.ToString("0.0000000");                      
                 cell.DataGridView.EndEdit();
             }
 
+           
             if (Commands.Columns[Lon.Index].HeaderText.Equals("Long"))
             {
                 cell = Commands.Rows[selectedrow].Cells[Lon.Index] as DataGridViewTextBoxCell;
@@ -1715,7 +1732,7 @@ namespace MissionPlanner.GCSViews
                 cell.DataGridView.EndEdit();
             }
 
-            writeKML();
+            writeKML();  
             Commands.EndEdit();
         }
 
@@ -2946,8 +2963,9 @@ namespace MissionPlanner.GCSViews
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ee)
             {
+                MessageBox.Show(ee.ToString());//may need 06june26_correction
             }
             // Commands.EndEdit();
         }

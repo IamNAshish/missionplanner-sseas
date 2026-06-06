@@ -266,6 +266,7 @@ namespace MissionPlanner.GCSViews
             log.Info("Ctor Start");
 
             InitializeComponent();
+            tabControlactions.SelectedTab = tabQuick;
 
             //01june26
 
@@ -278,7 +279,7 @@ namespace MissionPlanner.GCSViews
             //label_batp_onGauge.TextAlign = ContentAlignment.MiddleCenter;
             //Controls.Add(label_batp_onGauge);
 
-             G_batp.Resize += G_batp_Resize;
+            G_batp.Resize += G_batp_Resize;
              G_batp_Resize(null, null);
 
 
@@ -558,6 +559,9 @@ namespace MissionPlanner.GCSViews
             this.G_batp.DoubleClick += G_batp_DoubleClick;
             //this.Galt.DoubleClick += Galt_DoubleClick;
             this.G_fuel.DoubleClick += G_fuel_DoubleClick;
+
+
+            
         }
 
         
@@ -901,8 +905,7 @@ namespace MissionPlanner.GCSViews
 
             tabControlactions.TabPages.Clear();
             
-            tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
-            tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
+            
 
             foreach (var tabname in tabarray)
             {
@@ -921,6 +924,9 @@ namespace MissionPlanner.GCSViews
                 if(!added)
                     log.Debug("not added to tabControlactions " + tabname);
             }
+            tabControlactions.SelectedTab = tabQuick;
+            tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
+            //hiding as promod sir asked 06june26_task2 tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
         }
 
         public void updateDisplayView()
@@ -2928,6 +2934,8 @@ namespace MissionPlanner.GCSViews
             {
                 mainloop();
             }
+
+            tabControlactions.SelectedTab = tabQuick;
         }
 
         private void FlightData_ParentChanged(object sender, EventArgs e)
