@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using MissionPlanner.Controls;
 using MissionPlanner.Utilities;
 using SharpDX.DirectInput;
@@ -118,6 +118,28 @@ namespace MissionPlanner.Joystick
             }
 
             this.ResumeLayout();
+
+            try
+            {
+                var picIcon = new PictureBox
+                {
+                    Name = "picJoystickIcon",
+                    Size = new Size(36, 36),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                    TabStop = false,
+                    BackColor = Color.Transparent
+                };
+                var bmp = global::MissionPlanner.Properties.Resources.joystick;
+                if (bmp != null)
+                    picIcon.Image = (Bitmap)bmp.Clone();
+                picIcon.Location = new Point(this.Width - picIcon.Width - 15, 8);
+                this.Controls.Add(picIcon);
+                picIcon.BringToFront();
+            }
+            catch
+            {
+            }
 
             if (MainV2.joystick != null && MainV2.joystick.enabled)
             {

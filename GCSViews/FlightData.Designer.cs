@@ -110,8 +110,6 @@ namespace MissionPlanner.GCSViews
             this.myButton1 = new MissionPlanner.Controls.MyButton();
             this.myButton2 = new MissionPlanner.Controls.MyButton();
             this.myButton3 = new MissionPlanner.Controls.MyButton();
-            this.tabPagePreFlight = new System.Windows.Forms.TabPage();
-            this.checkListControl1 = new MissionPlanner.Controls.PreFlight.CheckListControl();
             this.tabGauges = new System.Windows.Forms.TabPage();
             this.G_fuel2 = new AGaugeApp.AGauge();
             this.G_fuel = new AGaugeApp.AGauge();
@@ -264,6 +262,8 @@ namespace MissionPlanner.GCSViews
             this.setBatteryCellCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel_persistent = new System.Windows.Forms.Panel();
+            this.tabPagePreFlight = new System.Windows.Forms.TabPage();
+            this.checkListControl1 = new MissionPlanner.Controls.PreFlight.CheckListControl();
             this.ZedGraphTimer = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openScriptDialog = new System.Windows.Forms.OpenFileDialog();
@@ -298,7 +298,6 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel1.SuspendLayout();
             this.tabPagemessages.SuspendLayout();
             this.tabActionsSimple.SuspendLayout();
-            this.tabPagePreFlight.SuspendLayout();
             this.tabGauges.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).BeginInit();
             this.tabTransponder.SuspendLayout();
@@ -329,6 +328,7 @@ namespace MissionPlanner.GCSViews
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_yaw)).BeginInit();
             this.tabPage_hud1.SuspendLayout();
             this.contextMenuStripHud.SuspendLayout();
+            this.tabPagePreFlight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).BeginInit();
             this.SuspendLayout();
             // 
@@ -634,7 +634,7 @@ namespace MissionPlanner.GCSViews
             this.windDir1.BackColor = System.Drawing.Color.Transparent;
             this.windDir1.DataBindings.Add(new System.Windows.Forms.Binding("Direction", this.bindingSource1, "wind_dir", true, System.Windows.Forms.DataSourceUpdateMode.Never));
             this.windDir1.DataBindings.Add(new System.Windows.Forms.Binding("Speed", this.bindingSource1, "wind_vel", true, System.Windows.Forms.DataSourceUpdateMode.Never));
-            this.windDir1.Direction = 180D;
+            this.windDir1.Direction = 360D;
             resources.ApplyResources(this.windDir1, "windDir1");
             this.windDir1.Name = "windDir1";
             this.windDir1.Speed = 0D;
@@ -801,7 +801,6 @@ namespace MissionPlanner.GCSViews
             this.tabControlactions.Controls.Add(this.tabActions);
             this.tabControlactions.Controls.Add(this.tabPagemessages);
             this.tabControlactions.Controls.Add(this.tabActionsSimple);
-            //this.tabControlactions.Controls.Add(this.tabPagePreFlight); //promod sir asked to hide // 06june26_task2
             this.tabControlactions.Controls.Add(this.tabGauges);
             this.tabControlactions.Controls.Add(this.tabTransponder);
             this.tabControlactions.Controls.Add(this.tabStatus);
@@ -1345,18 +1344,6 @@ namespace MissionPlanner.GCSViews
             this.toolTip1.SetToolTip(this.myButton3, resources.GetString("myButton3.ToolTip"));
             this.myButton3.UseVisualStyleBackColor = true;
             this.myButton3.Click += new System.EventHandler(this.BUT_quickauto_Click);
-            // 
-            // tabPagePreFlight
-            // 
-            this.tabPagePreFlight.Controls.Add(this.checkListControl1);
-            resources.ApplyResources(this.tabPagePreFlight, "tabPagePreFlight");
-            this.tabPagePreFlight.Name = "tabPagePreFlight";
-            this.tabPagePreFlight.UseVisualStyleBackColor = true;
-            // 
-            // checkListControl1
-            // 
-            resources.ApplyResources(this.checkListControl1, "checkListControl1");
-            this.checkListControl1.Name = "checkListControl1";
             // 
             // tabGauges
             // 
@@ -4026,6 +4013,18 @@ namespace MissionPlanner.GCSViews
             resources.ApplyResources(this.panel_persistent, "panel_persistent");
             this.panel_persistent.Name = "panel_persistent";
             // 
+            // tabPagePreFlight
+            // 
+            this.tabPagePreFlight.Controls.Add(this.checkListControl1);
+            resources.ApplyResources(this.tabPagePreFlight, "tabPagePreFlight");
+            this.tabPagePreFlight.Name = "tabPagePreFlight";
+            this.tabPagePreFlight.UseVisualStyleBackColor = true;
+            // 
+            // checkListControl1
+            // 
+            resources.ApplyResources(this.checkListControl1, "checkListControl1");
+            this.checkListControl1.Name = "checkListControl1";
+            // 
             // ZedGraphTimer
             // 
             this.ZedGraphTimer.Tick += new System.EventHandler(this.ZedGraphTimer_Tick);
@@ -4099,7 +4098,6 @@ namespace MissionPlanner.GCSViews
             this.tabPagemessages.ResumeLayout(false);
             this.tabPagemessages.PerformLayout();
             this.tabActionsSimple.ResumeLayout(false);
-            this.tabPagePreFlight.ResumeLayout(false);
             this.tabGauges.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).EndInit();
             this.tabTransponder.ResumeLayout(false);
@@ -4138,6 +4136,7 @@ namespace MissionPlanner.GCSViews
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_yaw)).EndInit();
             this.tabPage_hud1.ResumeLayout(false);
             this.contextMenuStripHud.ResumeLayout(false);
+            this.tabPagePreFlight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).EndInit();
             this.ResumeLayout(false);
 

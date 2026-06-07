@@ -1007,6 +1007,16 @@ namespace MissionPlanner.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap joystick {
+            get {
+                object obj = ResourceManager.GetObject("joystick", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap light_01 {
             get {
                 object obj = ResourceManager.GetObject("light_01", resourceCulture);

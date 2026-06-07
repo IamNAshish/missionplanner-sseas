@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 namespace MissionPlanner
@@ -26,6 +26,9 @@ namespace MissionPlanner
 
         [DllImport("kernel32.dll")]
         public static extern uint SetThreadExecutionState(uint esFlags);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern bool DestroyIcon(IntPtr handle);
 
         public const uint ES_CONTINUOUS = 0x80000000;
         public const uint ES_SYSTEM_REQUIRED = 0x00000001;

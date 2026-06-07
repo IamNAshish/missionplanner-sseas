@@ -62,6 +62,8 @@ namespace MissionPlanner.GCSViews
         PictureBox _picOfflineMaps;
         PictureBox _picLogExport;
         PictureBox _picCameraMiniToggle;
+        PictureBox _picjoystick;
+        
 
         // Left side (HUD + Actions tabs) collapse/expand
         private MissionPlanner.Controls.MyButton _butToggleLeftPanel;
@@ -1408,9 +1410,49 @@ namespace MissionPlanner.GCSViews
             }
         }
 
+        private void OpenJoystickSetup()
+        {
+            try
+            {
+                var frm = new JoystickSetup().ShowUserControl();
+                try
+                {
+                    var bmp = global::MissionPlanner.Properties.Resources.joystick;
+                    if (bmp != null)
+                    {
+                        IntPtr hIcon = bmp.GetHicon();
+                        frm.Icon = Icon.FromHandle(hIcon);
+                        frm.FormClosed += (s, ev) =>
+                        {
+                            if (hIcon != IntPtr.Zero)
+                            {
+                                try
+                                {
+                                    NativeMethods.DestroyIcon(hIcon);
+                                }
+                                catch (Exception ex)
+                                {
+                                    log.Error(ex);
+                                }
+                            }
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error("Failed to set form icon", ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                CustomMessageBox.Show(ex.Message, Strings.ERROR);
+            }
+        }
+
         private void BUT_joystick_Click(object sender, EventArgs e)
         {
-            new JoystickSetup().ShowUserControl();
+            OpenJoystickSetup();
         }
 
 
@@ -7240,6 +7282,34 @@ namespace MissionPlanner.GCSViews
             toolTip1.SetToolTip(_picCameraMiniToggle,
                 "Camera — show or hide mini video on the map (bottom-right). Right-click the video for stream and gimbal options.");
 
+            _picjoystick = new PictureBox
+            {
+                Name = "picjoystick",
+                Size = new Size(36, 36),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Cursor = Cursors.Hand,
+                TabStop = false,
+                BackColor = Color.Transparent
+            };
+            try
+            {
+                var bmp = global::MissionPlanner.Properties.Resources.joystick;
+                if (bmp != null)
+                    _picjoystick.Image = (Bitmap)bmp.Clone();
+            }
+            catch
+            {
+            }
+
+            _picjoystick.Click += (_, __) =>
+            {
+                OpenJoystickSetup();
+            };
+
+            splitContainer1.Panel2.Controls.Add(_picjoystick);
+            _picjoystick.BringToFront();
+            toolTip1.SetToolTip(_picjoystick, "Joystick Setup");
+
             LayoutMapOverlayToolButtons();
             LayoutCameraMiniToggleButton();
         }
@@ -7317,7 +7387,15 @@ namespace MissionPlanner.GCSViews
             {
                 _picLogExport.Location = new Point(x, _picOfflineMaps.Bottom + gap);
             }
+
+            if (_picjoystick != null && !_picjoystick.IsDisposed)
+            {
+                var top = _picLogExport != null && !_picLogExport.IsDisposed ? _picLogExport.Bottom : _picOfflineMaps.Bottom;
+                _picjoystick.Location = new Point(x, top + gap);
+            }
         }
+
+
 
         // Resize the mini video or mini map when the container is resized
         private void splitContainer1_Panel2_Resize(object sender, EventArgs e)
