@@ -634,7 +634,7 @@ namespace MissionPlanner.GCSViews
             this.windDir1.BackColor = System.Drawing.Color.Transparent;
             this.windDir1.DataBindings.Add(new System.Windows.Forms.Binding("Direction", this.bindingSource1, "wind_dir", true, System.Windows.Forms.DataSourceUpdateMode.Never));
             this.windDir1.DataBindings.Add(new System.Windows.Forms.Binding("Speed", this.bindingSource1, "wind_vel", true, System.Windows.Forms.DataSourceUpdateMode.Never));
-            this.windDir1.Direction = 360D;
+            this.windDir1.Direction = 180D;
             resources.ApplyResources(this.windDir1, "windDir1");
             this.windDir1.Name = "windDir1";
             this.windDir1.Speed = 0D;
@@ -1396,7 +1396,7 @@ namespace MissionPlanner.GCSViews
         ""};
             this.G_fuel2.CapText = "";
             this.G_fuel2.Center = new System.Drawing.Point(75, 75);
-            this.G_fuel2.MaxValue = 10000F;
+            this.G_fuel2.MaxValue = 10F;
             this.G_fuel2.MinValue = 0F;
             this.G_fuel2.Name = "G_fuel2";
             this.G_fuel2.Need_Idx = ((byte)(3));
@@ -1486,7 +1486,7 @@ namespace MissionPlanner.GCSViews
             this.G_fuel2.ScaleLinesMajorColor = System.Drawing.Color.White;
             this.G_fuel2.ScaleLinesMajorInnerRadius = 50;
             this.G_fuel2.ScaleLinesMajorOuterRadius = 60;
-            this.G_fuel2.ScaleLinesMajorStepValue = 1000F;
+            this.G_fuel2.ScaleLinesMajorStepValue = 1F;
             this.G_fuel2.ScaleLinesMajorWidth = 2;
             this.G_fuel2.ScaleLinesMinorColor = System.Drawing.Color.White;
             this.G_fuel2.ScaleLinesMinorInnerRadius = 55;
@@ -1539,7 +1539,7 @@ namespace MissionPlanner.GCSViews
         ""};
             this.G_fuel.CapText = "";
             this.G_fuel.Center = new System.Drawing.Point(75, 75);
-            this.G_fuel.MaxValue = 10000F;
+            this.G_fuel.MaxValue = 10F;
             this.G_fuel.MinValue = 0F;
             this.G_fuel.Name = "G_fuel";
             this.G_fuel.Need_Idx = ((byte)(3));
@@ -1629,7 +1629,7 @@ namespace MissionPlanner.GCSViews
             this.G_fuel.ScaleLinesMajorColor = System.Drawing.Color.White;
             this.G_fuel.ScaleLinesMajorInnerRadius = 50;
             this.G_fuel.ScaleLinesMajorOuterRadius = 60;
-            this.G_fuel.ScaleLinesMajorStepValue = 1000F;
+            this.G_fuel.ScaleLinesMajorStepValue = 1F;
             this.G_fuel.ScaleLinesMajorWidth = 2;
             this.G_fuel.ScaleLinesMinorColor = System.Drawing.Color.White;
             this.G_fuel.ScaleLinesMinorInnerRadius = 55;
