@@ -272,8 +272,40 @@ namespace MissionPlanner.GCSViews
             InitializeComponent();
             tabControlactions.SelectedTab = tabQuick;
 
-            //01june26
 
+            // 10june26_task1 start
+            //Move hud1 from tabPage_hud1 to tabGauges and configure to show only roll/ pitch
+            if (tabPage_hud1.Controls.Contains(hud1))
+            {
+                tabPage_hud1.Controls.Remove(hud1);
+            }
+            if (!tabGauges.Controls.Contains(hud1))
+            {
+                tabGauges.Controls.Add(hud1);
+                hud1.Dock = DockStyle.None;
+            }
+
+            hud1.displayheading = false;
+            hud1.displayspeed = false;
+            hud1.displayalt = false;
+            hud1.displayconninfo = false;
+            hud1.displayxtrack = false;
+            hud1.displaygps = false;
+            hud1.displayicons = false;
+            hud1.batteryon = false;
+            hud1.batteryon2 = false;
+            hud1.displayekf = false;
+            hud1.displayvibe = false;
+            hud1.displayprearm = false;
+            hud1.displayAOASSA = false;
+            hud1.displayCellVoltage = false;
+            hud1.displayrollpitch = true;
+            // 10june26_task1  end
+
+
+
+
+            //01june26
 
             //label_batp_onGauge.AutoSize = false;
             //label_batp_onGauge.Size = new Size(80, 25);
@@ -616,7 +648,8 @@ namespace MissionPlanner.GCSViews
                 if (!hud1.Enabled)
                     hud1.Enabled = true;
 
-                hud1.Dock = DockStyle.Fill;
+                if (hud1.Parent != tabGauges) // 10june26_task1 
+                    hud1.Dock = DockStyle.Fill;
             }
 
             if (Settings.Instance.ContainsKey("quickViewRows"))
@@ -929,7 +962,7 @@ namespace MissionPlanner.GCSViews
                     log.Debug("not added to tabControlactions " + tabname);
             }
             tabControlactions.SelectedTab = tabQuick;
-            tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
+            // 	// 10june26_task1  commented this tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
             //hiding as promod sir asked 06june26_task2 tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
         }
 
@@ -3468,45 +3501,178 @@ namespace MissionPlanner.GCSViews
             selectform.ShowDialog(this);
         }
 
+
+
+        //10june26_task1
+        private void PopoutGaugeCloned2(bool currentState, Action<bool> setState, Control gauge, string title, Size size)
+        { //this fun is used only for hud1 ..we can use popoutGauge_circular()
+            if (currentState)
+                return;
+
+            Form popup = new ResizableForm();
+            popup.Text = title;
+            popup.Size = size;
+            popup.FormBorderStyle = FormBorderStyle.None;
+            popup.ShowInTaskbar = false;
+            popup.TopMost = true;
+            popup.BackColor = Color.FromArgb(40, 40, 40);
+            popup.Opacity = 0.9;
+
+            Size baseSize = size;
+            float scale = 1.0f;
+
+            // ---------------- CLONE GAUGE ----------------
+            Control clonedGauge = CloneControl(gauge);
+            if (clonedGauge == null)
+            {
+                popup.Dispose();
+                return;
+            }
+
+            clonedGauge.Dock = DockStyle.Fill;
+            popup.Controls.Add(clonedGauge);
+
+            // IMPORTANT: prevent gauge from stealing right-click menu
+            clonedGauge.ContextMenuStrip = null;
+
+            // ---------------- CIRCLE REGION ----------------
+            void ApplyCircle()
+            {
+                using (GraphicsPath path = new GraphicsPath())
+                {
+                    path.AddEllipse(0, 0, popup.Width, popup.Height);
+                    popup.Region = new Region(path);
+                }
+            }
+
+            popup.Load += (s, e) => ApplyCircle();
+            popup.Resize += (s, e) => ApplyCircle();
+
+            // ---------------- CONTEXT MENU ----------------
+            ContextMenuStrip menu = new ContextMenuStrip();
+
+            ToolStripMenuItem closeItem = new ToolStripMenuItem("Close");
+            ToolStripMenuItem resizeItem = new ToolStripMenuItem("Resize");
+
+            menu.Items.Add(closeItem);
+            menu.Items.Add(resizeItem);
+
+            popup.ContextMenuStrip = menu;
+
+            closeItem.Click += (s, e) => popup.Close();
+
+            // ---------------- RESIZE SLIDER ----------------
+            resizeItem.Click += (s, e) =>
+            {
+                Form sliderForm = new Form();
+                sliderForm.Text = "Resize";
+                sliderForm.Size = new Size(250, 100);
+                sliderForm.StartPosition = FormStartPosition.CenterParent;
+                sliderForm.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+
+                TrackBar slider = new TrackBar();
+                slider.Minimum = 50;
+                slider.Maximum = 150;
+                slider.Value = (int)(scale * 100);
+                slider.Dock = DockStyle.Fill;
+
+                slider.ValueChanged += (s2, e2) =>
+                {
+                    scale = slider.Value / 100f;
+
+                    popup.Size = new Size(
+                        (int)(baseSize.Width * scale),
+                        (int)(baseSize.Height * scale)
+                    );
+
+                    ApplyCircle();
+                };
+
+                sliderForm.Controls.Add(slider);
+                sliderForm.ShowDialog();
+            };
+
+            // ---------------- RIGHT CLICK FIX (IMPORTANT) ----------------
+            popup.MouseUp += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    popup.ContextMenuStrip?.Show(popup, e.Location);
+                }
+            };
+
+            // ---------------- DRAG SYSTEM ----------------
+            Point dragStart = Point.Empty;
+            bool dragging = false;
+
+            void StartDrag(Point screen)
+            {
+                dragging = true;
+                dragStart = screen;
+            }
+
+            void DoDrag(Point screen)
+            {
+                if (!dragging) return;
+
+                popup.Left += screen.X - dragStart.X;
+                popup.Top += screen.Y - dragStart.Y;
+
+                dragStart = screen;
+            }
+
+            void StopDrag()
+            {
+                dragging = false;
+            }
+
+            MouseEventHandler down = (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                    StartDrag(popup.PointToScreen(e.Location));
+            };
+
+            MouseEventHandler move = (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                    DoDrag(popup.PointToScreen(e.Location));
+            };
+
+            MouseEventHandler up = (s, e) => StopDrag();
+
+            // attach drag to form
+            popup.MouseDown += down;
+            popup.MouseMove += move;
+            popup.MouseUp += up;
+
+            // attach drag to gauge
+            clonedGauge.MouseDown += down;
+            clonedGauge.MouseMove += move;
+            clonedGauge.MouseUp += up;
+
+            // ---------------- STATE ----------------
+            setState(true);
+
+            popup.FormClosed += (s, e) =>
+            {
+                clonedGauge.Dispose();
+                setState(false);
+            };
+
+            popup.Show();
+        }
+
+
+
         private void hud1_DoubleClick(object sender, EventArgs e)
         {
-            if (huddropout)
-                return;
-            if (hud1.Parent == SubMainRight.Panel1)
-                SubMainRight.Panel1Collapsed = true;
-            Form dropout = new ResizableForm();
-            dropout.Text = "HUD Dropout";
-            dropout.Size = new Size(hud1.Width, hud1.Height + 20);
-            dropout.Tag = hud1.Parent;
-            //dropout.FormBorderStyle = FormBorderStyle.None;
-            //dropout.ShowInTaskbar = false;
-            
-           
-            //popup.Resize += (s, e) => ApplyCircle();
+            PopoutGaugeCloned_Circular(g_hud1_popout, val => g_hud1_popout = val, hud1, "Roll/Pitch", new Size(250, 250)); // 10june26_task1
 
-            dropout.BackColor = Color.FromArgb(40, 40, 40);
-            dropout.Opacity = 0.70;
-            SubMainRight.Panel1.Controls.Remove(hud1);
-            dropout.Controls.Add(hud1);
-            dropout.Resize += dropout_Resize;
-            dropout.FormClosed += dropout_FormClosed;
-            dropout.RestoreStartupLocation();
-            dropout.Show();
-            huddropout = true;
-            return;
-
-
-                 
-           
-
-
-
-
-
+            PopoutGaugeCloned2(g_hud1_popout, val => g_hud1_popout = val, hud1, "Roll/Pitch", new Size(250, 250)); // 10june26_task1
             //orginal code
             //if (huddropout)
-                //return;
-            //if(hud1.Parent == SubMainRight.Panel1)
+            //    return;
+            //if (hud1.Parent == SubMainRight.Panel1)
             //    SubMainRight.Panel1Collapsed = true;
             //Form dropout = new Form();
             //dropout.Text = "HUD Dropout";
@@ -5612,9 +5778,14 @@ namespace MissionPlanner.GCSViews
             if (tabGauges == null)
                 return;
 
-            List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, G_fuel2 };//,G_engineTemp,G_silencerTemp,G_waterflow,G_waterflowTemp };
+            if (hud1.Parent == tabGauges && hud1.Dock != DockStyle.None) // 10june26_task1
+            {
+                hud1.Dock = DockStyle.None; // 10june26_task1
+            }
 
-            int minGaugeSize = 150;
+            List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, G_fuel2, hud1 };
+
+            // 10june26_task1_commented int minGaugeSize = 150;
 
             // Calculate columns based on available width
             //int columns = Math.Max(1, tabGauges.Width / minGaugeSize);
@@ -5622,15 +5793,23 @@ namespace MissionPlanner.GCSViews
             int columns = Math.Max(1, tabGauges.Width / gaugeSize);
 
             // Calculate rows needed
-            int rows = (int)Math.Ceiling(gauges.Count / (double)columns);
+            // 10june26_task1_commented int rows = (int)Math.Ceiling(gauges.Count / (double)columns);
 
             // Calculate best square size
-            int cellWidth = tabGauges.Width / columns;
-            int cellHeight = tabGauges.Height / rows;
+            // 10june26_task1_commented int cellWidth = tabGauges.Width / columns;
+            // 10june26_task1_commented int cellHeight = tabGauges.Height / rows;
 
             //int gaugeSize = Math.Min(cellWidth, cellHeight);
             
             ArrangeControls(gauges, columns, gaugeSize, 0, 0);
+
+            // Set circular/oval region on hud1 matching its current size  // 10june26_task1 start
+            using (GraphicsPath path = new GraphicsPath())
+            {
+                path.AddEllipse(0, 0, hud1.Width, hud1.Height);
+                hud1.Region = new Region(path);
+            } 
+			// 10june26_task1 end
 
             //mini gauges  fix covering the Galt
             G_engineTemp.Location = Galt.Location;  //alt gauge[0,0]
@@ -7594,7 +7773,7 @@ namespace MissionPlanner.GCSViews
         private bool g_batp_popout = false; //04june26_task1
         private bool g_alt_popout = false;
         private bool g_fuel_popout = false;
-        private bool hud1_popout = false; // 08june26_task1
+        private bool g_hud1_popout = false;
         private class GaugeSelectionItem //04june26_task2
         {
             public string Name { get; set; }
@@ -7624,7 +7803,8 @@ namespace MissionPlanner.GCSViews
                 new GaugeSelectionItem { Name = "Silencer Temp", Gauge = G_silencerTemp, PopoutAction = () => G_silencerTemp_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "Water Flow", Gauge = G_waterflow, PopoutAction = () => G_waterflow_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "Water Flow Temp", Gauge = G_waterflowTemp, PopoutAction = () => G_waterflowTemp_DoubleClick(null, null) },
-                new GaugeSelectionItem { Name = "Fuel", Gauge = G_fuel, PopoutAction = () => G_fuel_DoubleClick(null, null) }
+                new GaugeSelectionItem { Name = "Fuel", Gauge = G_fuel, PopoutAction = () => G_fuel_DoubleClick(null, null) },
+                new GaugeSelectionItem { Name = "Roll/Pitch", Gauge = hud1, PopoutAction = () => hud1_DoubleClick(null, null) } // 10june26_task1
             };
 
             Form prompt = new Form();
@@ -7656,6 +7836,7 @@ namespace MissionPlanner.GCSViews
                 else if (item.Gauge == G_waterflow) isPoppedOut = g_waterflow_popout;
                 else if (item.Gauge == G_waterflowTemp) isPoppedOut = g_waterflowtemp_popout;
                 else if (item.Gauge == G_fuel) isPoppedOut = g_fuel_popout;
+                else if (item.Gauge == hud1) isPoppedOut = g_hud1_popout; // 10june26_task1
 
                 if (isPoppedOut)
                 {
@@ -7825,6 +8006,7 @@ namespace MissionPlanner.GCSViews
                 else if (gauge == G_silencerTemp) g_silencertemp_popout = state;
                 else if (gauge == G_waterflow) g_waterflow_popout = state;
                 else if (gauge == G_waterflowTemp) g_waterflowtemp_popout = state;
+                else if (gauge == hud1) g_hud1_popout = state; // 10june26_task1
             };
 
             List<Control> clonedGauges = new List<Control>();
@@ -7924,7 +8106,7 @@ namespace MissionPlanner.GCSViews
         }
         private void G_fuel_DoubleClick(object sender, EventArgs e)
         {
-            PopoutGaugeCloned_Cirular2(g_fuel_popout, val => g_fuel_popout = val, G_fuel, "Fuel", new Size(250, 250));
+            PopoutGaugeCloned_Circular(g_fuel_popout, val => g_fuel_popout = val, G_fuel, "Fuel", new Size(250, 250));
         }
 
 
@@ -8119,7 +8301,7 @@ namespace MissionPlanner.GCSViews
 
 
 
-        private void PopoutGaugeCloned_Cirular2( bool currentState, Action<bool> setState, Control gauge, string title,  Size size)
+        private void PopoutGaugeCloned_Circular( bool currentState, Action<bool> setState, Control gauge, string title,  Size size)
         {
             if (currentState)
                 return;
@@ -8295,9 +8477,47 @@ namespace MissionPlanner.GCSViews
             else if(source is MissionPlanner.Controls.HUD) // 08june26_task1
             {
                 MessageBox.Show("cloning the hud1");
+				return CloneHUD((MissionPlanner.Controls.HUD)source); //10june_task1
             }
             return null;
         }
+		
+		private MissionPlanner.Controls.HUD CloneHUD(MissionPlanner.Controls.HUD source)
+        {
+            MissionPlanner.Controls.HUD clone = new MissionPlanner.Controls.HUD();
+            clone.opengl = source.opengl;
+            clone.hudcolor = source.hudcolor;
+            clone.Russian = source.Russian;
+            clone.SixteenXNine = source.SixteenXNine;
+            clone.displayheading = source.displayheading;
+            clone.displayspeed = source.displayspeed;
+            clone.displayalt = source.displayalt;
+            clone.displayconninfo = source.displayconninfo;
+            clone.displayxtrack = source.displayxtrack;
+            clone.displayrollpitch = source.displayrollpitch;
+            clone.displaygps = source.displaygps;
+            clone.displayicons = source.displayicons;
+            clone.bgon = source.bgon;
+            clone.hudon = source.hudon;
+            clone.batteryon = source.batteryon;
+            clone.batteryon2 = source.batteryon2;
+            clone.displayekf = source.displayekf;
+            clone.displayvibe = source.displayvibe;
+            clone.displayprearm = source.displayprearm;
+            clone.displayCellVoltage = source.displayCellVoltage;
+            clone.displayAOASSA = source.displayAOASSA;
+            clone.altunit = source.altunit;
+            clone.speedunit = source.speedunit;
+            clone.distunit = source.distunit;
+            clone.batterycellcount = source.batterycellcount;
+
+            foreach (Binding b in source.DataBindings)
+            {
+                clone.DataBindings.Add(new Binding(b.PropertyName, b.DataSource, b.BindingMemberInfo.BindingMember, b.FormattingEnabled, b.DataSourceUpdateMode, b.NullValue, b.FormatString, b.FormatInfo));
+            }
+            return clone;
+        }
+
 
         private MissionPlanner.Controls.HSI CloneHSI(MissionPlanner.Controls.HSI source)
         {
