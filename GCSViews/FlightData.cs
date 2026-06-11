@@ -64,8 +64,8 @@ namespace MissionPlanner.GCSViews
         PictureBox _picOfflineMaps;
         PictureBox _picLogExport;
         PictureBox _picCameraMiniToggle;
-        PictureBox _picjoystick;
-        
+        PictureBox _picjoystick; // 07june26_task1
+
 
         // Left side (HUD + Actions tabs) collapse/expand
         private MissionPlanner.Controls.MyButton _butToggleLeftPanel;
@@ -1407,7 +1407,7 @@ namespace MissionPlanner.GCSViews
             form.Show();
         }
 
-        private void but_disablejoystick_Click(object sender, EventArgs e)
+        private void but_disablejoystick_Click(object sender, EventArgs e) // 07june26_task1
         {
             if (MainV2.joystick != null && MainV2.joystick.enabled)
             {
@@ -1416,6 +1416,8 @@ namespace MissionPlanner.GCSViews
                 MainV2.joystick.clearRCOverride();
 
                 but_disablejoystick.Visible = false;
+
+                
             }
         }
 
@@ -3668,7 +3670,7 @@ namespace MissionPlanner.GCSViews
         {
             PopoutGaugeCloned_Circular(g_hud1_popout, val => g_hud1_popout = val, hud1, "Roll/Pitch", new Size(250, 250)); // 10june26_task1
 
-            PopoutGaugeCloned2(g_hud1_popout, val => g_hud1_popout = val, hud1, "Roll/Pitch", new Size(250, 250)); // 10june26_task1
+                       
             //orginal code
             //if (huddropout)
             //    return;
@@ -3856,6 +3858,7 @@ namespace MissionPlanner.GCSViews
 
         private void mainloop()
         {
+            //MessageBox.Show("timer undii 2 !!");
             threadrun = true;
             EndPoint Remote = new IPEndPoint(IPAddress.Any, 0);
 
@@ -3885,6 +3888,7 @@ namespace MissionPlanner.GCSViews
 
             while (threadrun)
             {
+                
                 if (MainV2.comPort.giveComport)
                 {
                     //await Task.Delay(50);
@@ -4223,14 +4227,20 @@ namespace MissionPlanner.GCSViews
                     }
 
                     // update map - 0.3sec if connected , 2 sec if not connected
+                    //this runs every time
                     if (((MainV2.comPort.BaseStream.IsOpen || MainV2.comPort.logreadmode) &&
                          tracklast.AddSeconds(Settings.Instance.GetDouble("FD_MapUpdateDelay", 0.3)) < DateTime.Now) ||
                         tracklast.AddSeconds(2) < DateTime.Now)
                     {
+                        //MessageBox.Show("timer undii !!");
                         // show disable joystick button
-                        if (MainV2.joystick != null && MainV2.joystick.enabled)
+                        if (MainV2.joystick != null && MainV2.joystick.enabled) // 07june26_task1
                         {
                             this.BeginInvoke((MethodInvoker) delegate { but_disablejoystick.Visible = true; });
+                        }
+                        else // 07june26_task1
+                        {
+                            this.BeginInvoke((MethodInvoker)delegate { but_disablejoystick.Visible = false; });
                         }
 
                         if (MainV2.comPort.MAV.cs.Location != PointLatLngAlt.Zero)
@@ -7496,7 +7506,8 @@ namespace MissionPlanner.GCSViews
             toolTip1.SetToolTip(_picCameraMiniToggle,
                 "Camera — show or hide mini video on the map (bottom-right). Right-click the video for stream and gimbal options.");
 
-            _picjoystick = new PictureBox
+            // 07june26_task1
+            _picjoystick = new PictureBox 
             {
                 Name = "picjoystick",
                 Size = new Size(36, 36),

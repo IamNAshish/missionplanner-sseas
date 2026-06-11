@@ -31,6 +31,7 @@ namespace MissionPlanner.Joystick
         /// </summary>
         private void InitializeComponent()
         {
+
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JoystickSetup));
             this.CMB_joysticks = new System.Windows.Forms.ComboBox();
@@ -159,6 +160,8 @@ namespace MissionPlanner.Joystick
             this.Load += new System.EventHandler(this.Joystick_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
+
+            
 
         }
 

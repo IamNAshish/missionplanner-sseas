@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using MissionPlanner.Controls;
+using MissionPlanner.GCSViews;
 using MissionPlanner.Utilities;
 using SharpDX.DirectInput;
 using System;
@@ -20,6 +21,7 @@ namespace MissionPlanner.Joystick
 
         public JoystickSetup()
         {
+            
             InitializeComponent();
 
             MissionPlanner.Utilities.Tracking.AddPage(this.GetType().ToString(), this.Text);
@@ -34,7 +36,17 @@ namespace MissionPlanner.Joystick
                 foreach (var device in joysticklist)
                 {
                     CMB_joysticks.Items.Add(device);
+
                 }
+                
+                BUT_enable_Click(null, null); //default enable // 11june26_task1
+                JoystickSetup_FormClosed(null, null);// 11june26_task2
+                //this.Close(); // 11june26_task2
+                //return; // 11june26_task2
+
+                
+
+
             }
             catch
             {
@@ -165,10 +177,13 @@ namespace MissionPlanner.Joystick
         {
             if (MainV2.joystick == null || MainV2.joystick.enabled == false)
             {
+                MessageBox.Show("Enabling Joystick");
                 try
                 {
                     if (MainV2.joystick != null)
-                        MainV2.joystick.UnAcquireJoyStick();
+                    {
+                        MainV2.joystick.UnAcquireJoyStick(); 
+                    }
                 }
                 catch
                 {
@@ -184,7 +199,11 @@ namespace MissionPlanner.Joystick
                 {
                     CustomMessageBox.Show("Please Connect a Joystick", "No Joystick");
                     joy.Dispose();
-                    return;
+
+                    //MessageBox.Show(this.GetType().ToString()); // 11june26_task2
+                    //here this.close() will not work as its not a form so we have to close the parent of this control
+                    ((Form)this.Parent)?.Close(); // 11june26_task2 if this creats problem use .hide();
+                    return; // 11june26_task1_test commented
                 }
 
                 Settings.Instance["joystick_name"] = CMB_joysticks.Text;
@@ -208,7 +227,12 @@ namespace MissionPlanner.Joystick
                 //timer1.Stop();
 
                 BUT_enable.Text = "Enable";
+                
             }
+            //MessageBox.Show(this.GetType().ToString()); // 11june26_task2
+            ((Form)this.Parent)?.Close(); // 11june26_task2
+
+
         }
 
         private void BUT_save_Click(object sender, EventArgs e)

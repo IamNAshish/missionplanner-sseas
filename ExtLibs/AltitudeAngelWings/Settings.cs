@@ -73,7 +73,7 @@ namespace AltitudeAngelWings
             ? "https://dronesafetymap.com"
             : $"https://map.{UrlDomainSuffix}";
 
-        private const string DefaultDomainSuffix = "altitudeangel.com";
+        private const string DefaultDomainSuffix = ""; // 11june26_task3 //"altitudeangel.com";
 
         public string UrlDomainSuffix => OverrideClientUrlSettings ? OverrideUrlDomainSuffix : DefaultDomainSuffix;
 
@@ -97,7 +97,8 @@ namespace AltitudeAngelWings
 
         public string OverrideUrlDomainSuffix
         {
-            get => Get(nameof(OverrideUrlDomainSuffix), "altitudeangel.com", s => s);
+            get => Get(nameof(OverrideUrlDomainSuffix), "", s => s); // 11jne26_task3
+            //get => Get(nameof(OverrideUrlDomainSuffix), "altitudeangel.com", s => s); // orginal
             set => Set(nameof(OverrideUrlDomainSuffix), value);
         }
         public string OutboundNotificationsUrl
