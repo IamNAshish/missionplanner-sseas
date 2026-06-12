@@ -1783,7 +1783,7 @@ System.ComponentModel.Description("Enables or disables the range selected by Nee
                             string label;
 
                             if (v >= 1000000) { label = (v / 1000000.0).ToString("0.#") + "M"; }
-                            else if (v >= 1000) { label = (v / 1000.0).ToString("0.#") + "k"; Cap_Idx = ((byte)(0)); }//CapText = "x1000"; }
+                            else if (v >= 1000) { label = (v / 1000.0).ToString("0.#") + ""; Cap_Idx = ((byte)(2)); CapText = "x1000"; }// + "", CapText = "x1000"; }
                             else { label = v.ToString("0"); }
 
                             //label = v >= 1000 ? (v / 1000.0).ToString("0") + "k": v.ToString("0");

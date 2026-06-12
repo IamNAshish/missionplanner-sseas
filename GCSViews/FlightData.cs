@@ -5793,7 +5793,7 @@ namespace MissionPlanner.GCSViews
                 hud1.Dock = DockStyle.None; // 10june26_task1
             }
 
-            List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, G_fuel2, hud1 };
+            List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, G_fuel2, hud1, lbl_ARM, lbl_Connected };
 
             // 10june26_task1_commented int minGaugeSize = 150;
 

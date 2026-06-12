@@ -95,7 +95,8 @@ namespace MissionPlanner.Controls {
         /// </summary>
         public static string ARMED {
             get {
-                return ResourceManager.GetString("ARMED", resourceCulture);
+                //return ResourceManager.GetString("ARMED", resourceCulture); // 12june26_task1 commented orginal code
+                return ResourceManager.GetString("1ARMED", resourceCulture); // 12june26_task1
             }
         }
         
@@ -191,7 +192,8 @@ namespace MissionPlanner.Controls {
         /// </summary>
         public static string DISARMED {
             get {
-                return ResourceManager.GetString("DISARMED", resourceCulture);
+                //return ResourceManager.GetString("DISARMED", resourceCulture); // 12june26_task1 orginal code commented
+                return ResourceManager.GetString("1DISARMED", resourceCulture); // 12june26_task1
             }
         }
         

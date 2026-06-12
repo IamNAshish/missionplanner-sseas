@@ -171,7 +171,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="cmb_Baud.Location" type="System.Drawing.Point, System.Drawing">
-    <value>127, 0</value>
+    <value>142, 0</value>
   </data>
   <data name="cmb_Baud.MaxDropDownItems" type="System.Int32, mscorlib">
     <value>15</value>
@@ -181,6 +181,9 @@
   </data>
   <data name="cmb_Baud.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
+  </data>
+  <data name="cmb_Baud.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="&gt;&gt;cmb_Baud.Name" xml:space="preserve">
     <value>cmb_Baud</value>
@@ -195,7 +198,7 @@
     <value>3</value>
   </data>
   <data name="cmb_Connection.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+    <value>132, 27</value>
   </data>
   <data name="cmb_Connection.MaxDropDownItems" type="System.Int32, mscorlib">
     <value>12</value>
@@ -205,6 +208,9 @@
   </data>
   <data name="cmb_Connection.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
+  </data>
+  <data name="cmb_Connection.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="&gt;&gt;cmb_Connection.Name" xml:space="preserve">
     <value>cmb_Connection</value>
@@ -233,9 +239,6 @@
   <data name="linkLabel1.Text" xml:space="preserve">
     <value>Stats...</value>
   </data>
-  <data name="linkLabel1.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="&gt;&gt;linkLabel1.Name" xml:space="preserve">
     <value>linkLabel1</value>
   </data>
@@ -249,7 +252,7 @@
     <value>1</value>
   </data>
   <data name="cmb_sysid.Location" type="System.Drawing.Point, System.Drawing">
-    <value>102, 27</value>
+    <value>0, 0</value>
   </data>
   <data name="cmb_sysid.Size" type="System.Drawing.Size, System.Drawing">
     <value>136, 21</value>
@@ -276,7 +279,7 @@
     <value>200, 47</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>238, 47</value>
+    <value>257, 47</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ConnectionControl</value>
