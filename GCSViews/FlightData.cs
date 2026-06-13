@@ -7588,8 +7588,9 @@ namespace MissionPlanner.GCSViews
             var y = pad;
             try
             {
-                if (windDir1 != null && !windDir1.IsDisposed)
-                    x = windDir1.Right + 6;
+                // 13june26_task1_commented
+                //if (windDir1 != null && !windDir1.IsDisposed)
+                //    x = windDir1.Right + 6;
             }
             catch
             {
