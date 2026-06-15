@@ -3668,7 +3668,7 @@ namespace MissionPlanner.GCSViews
 
         private void hud1_DoubleClick(object sender, EventArgs e)
         {
-            PopoutGaugeCloned_Circular(g_hud1_popout, val => g_hud1_popout = val, hud1, "Roll/Pitch", new Size(250, 250)); // 10june26_task1
+            PopoutGaugeCloned(g_hud1_popout, val => g_hud1_popout = val, hud1, "Roll/Pitch", new Size(250, 250)); // 10june26_task1
 
                        
             //orginal code
@@ -5793,7 +5793,7 @@ namespace MissionPlanner.GCSViews
                 hud1.Dock = DockStyle.None; // 10june26_task1
             }
 
-            List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, G_fuel2, hud1, lbl_ARM, lbl_Connected };
+            List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, G_fuel2, hud1, tableLayoutPanel_gaugeData };
 
             // 10june26_task1_commented int minGaugeSize = 150;
 

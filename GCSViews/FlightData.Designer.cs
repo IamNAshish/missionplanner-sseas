@@ -85,8 +85,6 @@ namespace MissionPlanner.GCSViews
             this.CMB_action = new System.Windows.Forms.ComboBox();
             this.BUTactiondo = new MissionPlanner.Controls.MyButton();
             this.BUT_resumemis = new MissionPlanner.Controls.MyButton();
-            this.CMB_setwp = new System.Windows.Forms.ComboBox();
-            this.BUT_ARM = new MissionPlanner.Controls.MyButton();
             this.BUT_mountmode = new MissionPlanner.Controls.MyButton();
             this.BUT_joystick = new MissionPlanner.Controls.MyButton();
             this.BUT_RAWSensor = new MissionPlanner.Controls.MyButton();
@@ -95,10 +93,7 @@ namespace MissionPlanner.GCSViews
             this.CMB_mountmode = new System.Windows.Forms.ComboBox();
             this.BUT_quickrtl = new MissionPlanner.Controls.MyButton();
             this.BUT_quickmanual = new MissionPlanner.Controls.MyButton();
-            this.BUT_setwp = new MissionPlanner.Controls.MyButton();
-            this.CMB_modes = new System.Windows.Forms.ComboBox();
             this.BUT_quickauto = new MissionPlanner.Controls.MyButton();
-            this.BUT_setmode = new MissionPlanner.Controls.MyButton();
             this.tabPagemessages = new System.Windows.Forms.TabPage();
             this.txt_messagebox = new System.Windows.Forms.TextBox();
             this.tabActionsSimple = new System.Windows.Forms.TabPage();
@@ -106,8 +101,13 @@ namespace MissionPlanner.GCSViews
             this.myButton2 = new MissionPlanner.Controls.MyButton();
             this.myButton3 = new MissionPlanner.Controls.MyButton();
             this.tabGauges = new System.Windows.Forms.TabPage();
-            this.lbl_Connected = new System.Windows.Forms.Label();
+            this.tableLayoutPanel_gaugeData = new System.Windows.Forms.TableLayoutPanel();
+            this.CMB_setwp = new System.Windows.Forms.ComboBox();
+            this.BUT_setwp = new MissionPlanner.Controls.MyButton();
+            this.CMB_modes = new System.Windows.Forms.ComboBox();
+            this.BUT_setmode = new MissionPlanner.Controls.MyButton();
             this.lbl_ARM = new System.Windows.Forms.Label();
+            this.lbl_Connected = new System.Windows.Forms.Label();
             this.G_fuel2 = new AGaugeApp.AGauge();
             this.G_fuel = new AGaugeApp.AGauge();
             this.G_waterflowTemp = new AGaugeApp.AGauge();
@@ -230,6 +230,7 @@ namespace MissionPlanner.GCSViews
             this.Messagetabtimer = new System.Windows.Forms.Timer(this.components);
             this.bindingSourceStatusTab = new System.Windows.Forms.BindingSource(this.components);
             this.timer_gauge = new System.Windows.Forms.Timer(this.components);
+            this.BUT_ARM = new MissionPlanner.Controls.MyButton();
             this.distanceBar1 = new MissionPlanner.Controls.DistanceBar();
             this.modifyandSetLoiterRad = new MissionPlanner.Controls.ModifyandSet();
             this.modifyandSetAlt = new MissionPlanner.Controls.ModifyandSet();
@@ -298,6 +299,7 @@ namespace MissionPlanner.GCSViews
             this.tabPagemessages.SuspendLayout();
             this.tabActionsSimple.SuspendLayout();
             this.tabGauges.SuspendLayout();
+            this.tableLayoutPanel_gaugeData.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).BeginInit();
             this.tabTransponder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Squawk_nud)).BeginInit();
@@ -940,8 +942,6 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel1.Controls.Add(this.BUT_resumemis, 3, 4);
             this.tableLayoutPanel1.Controls.Add(this.modifyandSetAlt, 4, 1);
             this.tableLayoutPanel1.Controls.Add(this.modifyandSetSpeed, 4, 0);
-            this.tableLayoutPanel1.Controls.Add(this.CMB_setwp, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_ARM, 3, 3);
             this.tableLayoutPanel1.Controls.Add(this.BUT_mountmode, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.BUT_joystick, 2, 3);
             this.tableLayoutPanel1.Controls.Add(this.BUT_RAWSensor, 3, 2);
@@ -950,10 +950,7 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel1.Controls.Add(this.CMB_mountmode, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.BUT_quickrtl, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.BUT_quickmanual, 2, 1);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_setwp, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.CMB_modes, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.BUT_quickauto, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_setmode, 1, 2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // BUT_SendMSG
@@ -1022,29 +1019,6 @@ namespace MissionPlanner.GCSViews
             this.BUT_resumemis.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
             this.BUT_resumemis.UseVisualStyleBackColor = true;
             this.BUT_resumemis.Click += new System.EventHandler(this.BUT_resumemis_Click);
-            // 
-            // CMB_setwp
-            // 
-            resources.ApplyResources(this.CMB_setwp, "CMB_setwp");
-            this.CMB_setwp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CMB_setwp.DropDownWidth = 150;
-            this.CMB_setwp.FormattingEnabled = true;
-            this.CMB_setwp.Items.AddRange(new object[] {
-            resources.GetString("CMB_setwp.Items")});
-            this.CMB_setwp.Name = "CMB_setwp";
-            this.CMB_setwp.Click += new System.EventHandler(this.CMB_setwp_Click);
-            // 
-            // BUT_ARM
-            // 
-            this.BUT_ARM.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_ARM.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_ARM.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_ARM, "BUT_ARM");
-            this.BUT_ARM.Name = "BUT_ARM";
-            this.BUT_ARM.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_ARM, resources.GetString("BUT_ARM.ToolTip"));
-            this.BUT_ARM.UseVisualStyleBackColor = true;
-            this.BUT_ARM.Click += new System.EventHandler(this.BUT_ARM_Click);
             // 
             // BUT_mountmode
             // 
@@ -1138,27 +1112,6 @@ namespace MissionPlanner.GCSViews
             this.BUT_quickmanual.UseVisualStyleBackColor = true;
             this.BUT_quickmanual.Click += new System.EventHandler(this.BUT_quickmanual_Click);
             // 
-            // BUT_setwp
-            // 
-            this.BUT_setwp.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_setwp.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_setwp.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_setwp, "BUT_setwp");
-            this.BUT_setwp.Name = "BUT_setwp";
-            this.BUT_setwp.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_setwp, resources.GetString("BUT_setwp.ToolTip"));
-            this.BUT_setwp.UseVisualStyleBackColor = true;
-            this.BUT_setwp.Click += new System.EventHandler(this.BUT_setwp_Click);
-            // 
-            // CMB_modes
-            // 
-            resources.ApplyResources(this.CMB_modes, "CMB_modes");
-            this.CMB_modes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CMB_modes.DropDownWidth = 150;
-            this.CMB_modes.FormattingEnabled = true;
-            this.CMB_modes.Name = "CMB_modes";
-            this.CMB_modes.Click += new System.EventHandler(this.CMB_modes_Click);
-            // 
             // BUT_quickauto
             // 
             this.BUT_quickauto.ColorMouseDown = System.Drawing.Color.Empty;
@@ -1170,18 +1123,6 @@ namespace MissionPlanner.GCSViews
             this.toolTip1.SetToolTip(this.BUT_quickauto, resources.GetString("BUT_quickauto.ToolTip"));
             this.BUT_quickauto.UseVisualStyleBackColor = true;
             this.BUT_quickauto.Click += new System.EventHandler(this.BUT_quickauto_Click);
-            // 
-            // BUT_setmode
-            // 
-            this.BUT_setmode.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_setmode.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_setmode.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_setmode, "BUT_setmode");
-            this.BUT_setmode.Name = "BUT_setmode";
-            this.BUT_setmode.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_setmode, resources.GetString("BUT_setmode.ToolTip"));
-            this.BUT_setmode.UseVisualStyleBackColor = true;
-            this.BUT_setmode.Click += new System.EventHandler(this.BUT_setmode_Click);
             // 
             // tabPagemessages
             // 
@@ -1243,8 +1184,7 @@ namespace MissionPlanner.GCSViews
             // tabGauges
             // 
             resources.ApplyResources(this.tabGauges, "tabGauges");
-            this.tabGauges.Controls.Add(this.lbl_Connected);
-            this.tabGauges.Controls.Add(this.lbl_ARM);
+            this.tabGauges.Controls.Add(this.tableLayoutPanel_gaugeData);
             this.tabGauges.Controls.Add(this.G_fuel2);
             this.tabGauges.Controls.Add(this.G_fuel);
             this.tabGauges.Controls.Add(this.G_waterflowTemp);
@@ -1261,15 +1201,67 @@ namespace MissionPlanner.GCSViews
             this.tabGauges.DoubleClick += new System.EventHandler(this.tabGauges_DoubleClick);
             this.tabGauges.Resize += new System.EventHandler(this.tabPage1_Resize);
             // 
-            // lbl_Connected
+            // tableLayoutPanel_gaugeData
             // 
-            resources.ApplyResources(this.lbl_Connected, "lbl_Connected");
-            this.lbl_Connected.Name = "lbl_Connected";
+            resources.ApplyResources(this.tableLayoutPanel_gaugeData, "tableLayoutPanel_gaugeData");
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.BUT_ARM, 1, 0);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.CMB_setwp, 0, 2);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.BUT_setwp, 1, 2);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.CMB_modes, 0, 1);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.BUT_setmode, 1, 1);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_ARM, 0, 0);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_Connected, 0, 3);
+            this.tableLayoutPanel_gaugeData.Name = "tableLayoutPanel_gaugeData";
+            // 
+            // CMB_setwp
+            // 
+            resources.ApplyResources(this.CMB_setwp, "CMB_setwp");
+            this.CMB_setwp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CMB_setwp.DropDownWidth = 150;
+            this.CMB_setwp.FormattingEnabled = true;
+            this.CMB_setwp.Items.AddRange(new object[] {
+            resources.GetString("CMB_setwp.Items")});
+            this.CMB_setwp.Name = "CMB_setwp";
+            // 
+            // BUT_setwp
+            // 
+            this.BUT_setwp.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_setwp.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_setwp.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_setwp, "BUT_setwp");
+            this.BUT_setwp.Name = "BUT_setwp";
+            this.BUT_setwp.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_setwp, resources.GetString("BUT_setwp.ToolTip"));
+            this.BUT_setwp.UseVisualStyleBackColor = true;
+            // 
+            // CMB_modes
+            // 
+            resources.ApplyResources(this.CMB_modes, "CMB_modes");
+            this.CMB_modes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CMB_modes.DropDownWidth = 150;
+            this.CMB_modes.FormattingEnabled = true;
+            this.CMB_modes.Name = "CMB_modes";
+            // 
+            // BUT_setmode
+            // 
+            this.BUT_setmode.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_setmode.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_setmode.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_setmode, "BUT_setmode");
+            this.BUT_setmode.Name = "BUT_setmode";
+            this.BUT_setmode.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_setmode, resources.GetString("BUT_setmode.ToolTip"));
+            this.BUT_setmode.UseVisualStyleBackColor = true;
             // 
             // lbl_ARM
             // 
             resources.ApplyResources(this.lbl_ARM, "lbl_ARM");
             this.lbl_ARM.Name = "lbl_ARM";
+            // 
+            // lbl_Connected
+            // 
+            resources.ApplyResources(this.lbl_Connected, "lbl_Connected");
+            this.lbl_Connected.Name = "lbl_Connected";
             // 
             // G_fuel2
             // 
@@ -3543,7 +3535,7 @@ namespace MissionPlanner.GCSViews
             this.hud1.gpshdop = 0F;
             this.hud1.gpshdop2 = 0F;
             this.hud1.groundalt = 0F;
-            this.hud1.groundColor1 = System.Drawing.Color.Blue;
+            this.hud1.groundColor1 = System.Drawing.Color.DarkGray;
             this.hud1.groundcourse = 0F;
             this.hud1.groundspeed = 0F;
             this.hud1.heading = 0F;
@@ -3564,8 +3556,8 @@ namespace MissionPlanner.GCSViews
             this.hud1.roll = 0F;
             this.hud1.Russian = false;
             this.hud1.safetyactive = false;
-            this.hud1.skyColor1 = System.Drawing.Color.Blue;
-            this.hud1.skyColor2 = System.Drawing.Color.LightBlue;
+            this.hud1.skyColor1 = System.Drawing.Color.LightGray;
+            this.hud1.skyColor2 = System.Drawing.Color.Gainsboro;
             this.hud1.speedunit = null;
             this.hud1.SSA = 0F;
             this.hud1.status = false;
@@ -3742,6 +3734,17 @@ namespace MissionPlanner.GCSViews
             // 
             this.timer_gauge.Enabled = true;
             this.timer_gauge.Tick += new System.EventHandler(this.timer_gauge_Tick);
+            // 
+            // BUT_ARM
+            // 
+            this.BUT_ARM.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_ARM.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_ARM.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_ARM, "BUT_ARM");
+            this.BUT_ARM.Name = "BUT_ARM";
+            this.BUT_ARM.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_ARM, resources.GetString("BUT_ARM.ToolTip"));
+            this.BUT_ARM.UseVisualStyleBackColor = true;
             // 
             // distanceBar1
             // 
@@ -4087,7 +4090,8 @@ namespace MissionPlanner.GCSViews
             this.tabPagemessages.PerformLayout();
             this.tabActionsSimple.ResumeLayout(false);
             this.tabGauges.ResumeLayout(false);
-            this.tabGauges.PerformLayout();
+            this.tableLayoutPanel_gaugeData.ResumeLayout(false);
+            this.tableLayoutPanel_gaugeData.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).EndInit();
             this.tabTransponder.ResumeLayout(false);
             this.tabTransponder.PerformLayout();
@@ -4231,8 +4235,6 @@ private Controls.MyButton BUTactiondo;
 private Controls.MyButton BUT_resumemis;
 private Controls.ModifyandSet modifyandSetAlt;
 private Controls.ModifyandSet modifyandSetSpeed;
-private ComboBox CMB_setwp;
-private Controls.MyButton BUT_ARM;
 private Controls.MyButton BUT_mountmode;
 private Controls.MyButton BUT_joystick;
 private Controls.MyButton BUT_RAWSensor;
@@ -4241,10 +4243,7 @@ private Controls.MyButton BUTrestartmission;
 private ComboBox CMB_mountmode;
 private Controls.MyButton BUT_quickrtl;
 private Controls.MyButton BUT_quickmanual;
-private Controls.MyButton BUT_setwp;
-private ComboBox CMB_modes;
 private Controls.MyButton BUT_quickauto;
-private Controls.MyButton BUT_setmode;
 public TabPage tabPagemessages;
 private TextBox txt_messagebox;
 public TabPage tabActionsSimple;
@@ -4389,6 +4388,12 @@ private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
         private AGaugeApp.AGauge G_fuel2;
         private Label lbl_ARM;
         private Label lbl_Connected;
+        private TableLayoutPanel tableLayoutPanel_gaugeData;
+        private ComboBox CMB_modes;
+        private Controls.MyButton BUT_setmode;
+        private ComboBox CMB_setwp;
+        private Controls.MyButton BUT_setwp;
+        private Controls.MyButton BUT_ARM;
         //private Label label_batp_onGauge;
     }
 }

@@ -65,10 +65,12 @@ namespace MissionPlanner.Controls {
         /// </summary>
         public static System.Drawing.Bitmap _2dfix_wide {
             get {
+                
                 object obj = ResourceManager.GetObject("_2dfix_wide", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.

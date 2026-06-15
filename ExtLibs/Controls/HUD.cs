@@ -984,9 +984,9 @@ namespace MissionPlanner.Controls
             set { _groundColor2 = value; }
         }
 
-        private Color _skyColor1 = Color.Blue;
-        private Color _skyColor2 = Color.LightBlue;
-        private Color _groundColor1 = Color.FromArgb(0x9b, 0xb8, 0x24);
+        private Color _skyColor1 = Color.Gray; // Color.Blue; // 15june26_task2 
+        private Color _skyColor2 = Color.LightGray; // Color.LightBlue; // 15june26_task2 
+        private Color _groundColor1 = Color.DarkGray; // Color.FromArgb(0x9b, 0xb8, 0x24); // 15june26_task2 
         private Color _groundColor2 = Color.FromArgb(0x41, 0x4f, 0x07);
 
         private Color _hudcolor = Color.White;

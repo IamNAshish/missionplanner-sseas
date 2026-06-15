@@ -90,8 +90,8 @@ namespace MissionPlanner.Controls
         private float _pitch = 0;
         float _redSSAp = 90;
         private float _roll = 0;
-        private Color _skyColor1 = Color.Blue;
-        private Color _skyColor2 = Color.LightBlue;
+        private Color _skyColor1 = Color.Gray;//Color.Blue; 
+        private Color _skyColor2 = Color.DarkGray;//Color.LightBlue;
         float _SSA = 0;
         private MemoryStream _streamjpg = new MemoryStream();
         private float _targetalt = 0;
