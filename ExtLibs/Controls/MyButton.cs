@@ -57,13 +57,23 @@ namespace MissionPlanner.Controls
 
         public MyButton()
         {
-            _BGGradTop = Color.FromArgb(0x94, 0xc1, 0x1f);
-            _BGGradBot = Color.FromArgb(0xcd, 0xe2, 0x96);
-            _TextColor = Color.FromArgb(0x40, 0x57, 0x04);
+            // 25june26_task1 commented _BGGradTop = Color.FromArgb(0x94, 0xc1, 0x1f);
+            _BGGradTop = Color.FromArgb(45, 125, 255); //25june26_task1 
+
+            // 25june26_task1 commented _BGGradBot = Color.FromArgb(0xcd, 0xe2, 0x96);
+            _BGGradBot = _BGGradTop; //25june26_task1 
+
+            // 25june26_task1 commented _TextColor = Color.FromArgb(0x40, 0x57, 0x04); 
+            _TextColor = Color.White; //25june26_task1 
+
             _Outline = Color.FromArgb(0x79, 0x94, 0x29);
             _ColorNotEnabled = Color.FromArgb(73, 0x2b, 0x3a, 0x03);
-            _ColorMouseOver = Color.FromArgb(73, 0x2b, 0x3a, 0x03);
-            _ColorMouseDown = Color.FromArgb(150, 0x2b, 0x3a, 0x03);
+
+            // 25june26_task1 commented  _ColorMouseOver = Color.FromArgb(73, 0x2b, 0x3a, 0x03);
+            _ColorMouseOver = Color.FromArgb(40, Color.White); //25june26_task1 
+
+            _ColorMouseDown = Color.FromArgb(150, 0x2b, 0x3a, 0x03);// orgial code
+            _ColorMouseDown = Color.FromArgb(60, Color.Black);//25june26_task1 
         }
 
         protected override void OnPaint(PaintEventArgs pevent)
@@ -85,15 +95,24 @@ namespace MissionPlanner.Controls
 
                 Rectangle outside = new Rectangle(0, 0, this.Width, this.Height);
 
+               
                 LinearGradientBrush linear = new LinearGradientBrush(outside, BGGradTop, BGGradBot, LinearGradientMode.Vertical);
 
-                Pen mypen = new Pen(Outline, 1);
+
+                //// 25june26_task1 commented Pen mypen = new Pen(Outline, 1); // 
+                Pen mypen = new Pen(Color.FromArgb(70, 70, 70), 1); // 25june26_task1
+
+
+                //(Color.FromArgb(60, 60, 60)
 
                 GraphicsPath outline = new GraphicsPath();
 
                 float wid = this.Height / 3f;
-
                 wid = 1;
+
+                wid = Math.Min(15f, this.Height / 3f); // 25june26_task1
+
+
 
                 int width = this.Width - 1;
                 int height = this.Height - 1;
@@ -114,7 +133,11 @@ namespace MissionPlanner.Controls
                 outline.AddLine(0, height - wid, 0, wid - wid / 2);
 
 
-                gr.FillPath(linear, outline);
+                // 25june26_task1 commented gr.FillPath(linear, outline);
+                using (SolidBrush brush = new SolidBrush(BGGradTop)) // 25june26_task1
+                {
+                    gr.FillPath(brush, outline);
+                }
 
                 gr.DrawPath(mypen, outline);
 

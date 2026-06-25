@@ -1281,8 +1281,11 @@ namespace MissionPlanner.Controls
                     graphicsObject.TranslateTransform(this.Width / 2, this.Height / 2);
 
                     // draw roll ind
-                    RectangleF arcrect = new RectangleF(-lengthlong * 3 - extra, -lengthlong * 3 - extra,
-                        (extra + lengthlong * 3) * 2f, (extra + lengthlong * 3) * 2f);
+                    RectangleF arcrect = new RectangleF(-lengthlong * 3 , -lengthlong * 3 ,
+                        (extra + lengthlong * 3) * 2f, (extra + lengthlong * 3) * 2f );
+                    //orginal code // 25june26_task1
+                    //RectangleF arcrect = new RectangleF(-lengthlong * 3 - extra, -lengthlong * 3 - extra,
+                    //    (extra + lengthlong * 3) * 2f, (extra + lengthlong * 3) * 2f);
 
                     //DrawRectangle(Pens.Beige, arcrect);
 
