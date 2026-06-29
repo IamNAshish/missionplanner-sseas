@@ -46,3 +46,9 @@ docs/
 obj2/
 obj3/
 
+# Inno Setup output
+Installer/Output/
+
+# Optional: Ignore compiled installer executables anywhere in Installer
+Installer/*.exe
+

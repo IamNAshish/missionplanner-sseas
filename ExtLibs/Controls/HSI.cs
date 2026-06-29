@@ -219,7 +219,7 @@ namespace MissionPlanner.Controls
 
 
 
-        //20may26_task1 start
+        // 20may26_task1 start
             e.Graphics.RotateTransform((float)(HomeBearing - Heading));
 
             // marker radius
@@ -238,11 +238,8 @@ namespace MissionPlanner.Controls
             //double hbearing = GetBearing(0, 0, 75, 83);//(currentLat,currentLon, FlighPlanner;,homeLon);
 
 
-
-
-
             // calculate home bearing
-            double homeBearing = GetBearing(0, 0, 50, 50);// (VehicleLat,VehicleLon,HomeLat,HomeLon);
+            double homeBearing = GetBearing(VehicleLat, VehicleLon, HomeLat, HomeLon);//(0, 0, 50, 50);// (VehicleLat,VehicleLon,HomeLat,HomeLon);
 
             // rotate toward home
             e.Graphics.RotateTransform((float)(homeBearing - Heading));
@@ -252,7 +249,7 @@ namespace MissionPlanner.Controls
 
             e.Graphics.FillEllipse(Brushes.Lime,-6,-markerRadius1 - 6,12,12);
 
-            //20may26_task1 end
+        // 20may26_task1 end
 
 
             // reset rotation
@@ -264,10 +261,10 @@ namespace MissionPlanner.Controls
             headbug[0] = new Point(-5, -_radiusoutside + 0);
             headbug[1] = new Point(-5, -_radiusoutside + 4);
             headbug[2] = new Point(-3, -_radiusoutside + 4);
-            headbug[3] = new Point(0, -_radiusoutside + 8);
-            headbug[4] = new Point(3, -_radiusoutside + 4);
-            headbug[5] = new Point(5, -_radiusoutside + 4);
-            headbug[6] = new Point(5, -_radiusoutside + 0);
+            headbug[3] = new Point( 0, -_radiusoutside + 8);
+            headbug[4] = new Point( 3, -_radiusoutside + 4);
+            headbug[5] = new Point( 5, -_radiusoutside + 4);
+            headbug[6] = new Point( 5, -_radiusoutside + 0);
 
             //e.Graphics.DrawLines(or, headbug); // 13may26_task1_3
 

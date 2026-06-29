@@ -337,8 +337,13 @@ namespace MissionPlanner.GCSViews
                     e.Value = connected ? "Connected" : "Disconnected";
 
                     lbl_Connected.ForeColor = connected
+                        ? Color.Yellow
+                        : Color.White;
+
+                    // 27june2026_task3
+                    lbl_Connected.BackColor = connected
                         ? Color.LimeGreen
-                        : Color.Red;
+                        : Color.Gray;
                 }
             };
 
@@ -362,8 +367,14 @@ namespace MissionPlanner.GCSViews
                     e.Value = armed ? "ARMED" : "DISARMED";
 
                     lbl_ARM.ForeColor = armed
+                        ? Color.Black //Color.LimeGreen
+                        : Color.White;//Color.Red;
+
+                    // 27june2026_task3
+                    lbl_ARM.BackColor = armed
                         ? Color.LimeGreen
                         : Color.Red;
+
                 }
             };
 
@@ -386,12 +397,6 @@ namespace MissionPlanner.GCSViews
             heading = Convert.ToSingle(MainV2.comPort.MAV.cs.roll);
             pictureBox_roll.Image = RotateImage(originalVehicleImage_rearView, heading);
             //09may26_task2 end ..
-
-
-
-
-
-
 
 
 
@@ -5838,6 +5843,8 @@ namespace MissionPlanner.GCSViews
             G_waterflowTemp.Height = G_engineTemp.Height;
             G_waterflowTemp.Width = G_engineTemp.Width;
 
+            //lbl_ARM.Font = BUT_ARM.Font;
+
         }
         // 05june26_task3_v2 end
 
@@ -8489,7 +8496,7 @@ namespace MissionPlanner.GCSViews
             else if(source is MissionPlanner.Controls.HUD) // 08june26_task1
             {
                 MessageBox.Show("cloning the hud1");
-				return CloneHUD((MissionPlanner.Controls.HUD)source); //10june_task1
+                return CloneHUD((MissionPlanner.Controls.HUD)source); //10june_task1
             }
             return null;
         }
@@ -8522,6 +8529,7 @@ namespace MissionPlanner.GCSViews
             clone.speedunit = source.speedunit;
             clone.distunit = source.distunit;
             clone.batterycellcount = source.batterycellcount;
+            
 
             foreach (Binding b in source.DataBindings)
             {

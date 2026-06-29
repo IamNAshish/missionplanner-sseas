@@ -137,6 +137,7 @@ namespace MissionPlanner.Utilities
             //HUD Color setting
             if (GCSViews.FlightData.myhud != null)
             {
+
                 GCSViews.FlightData.myhud.groundColor1 = ThemeManager.HudGroundTop;
                 GCSViews.FlightData.myhud.groundColor2 = ThemeManager.HudGroundBot;
                 GCSViews.FlightData.myhud.skyColor1 = ThemeManager.HudSkyTop;

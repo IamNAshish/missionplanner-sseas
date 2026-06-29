@@ -31,9 +31,9 @@ using SkiaSharp;
 
 namespace MissionPlanner.Controls
 {
-    public class HUD2 : HUD
+    public class graphicsObject : HUD
     {
-        public HUD2() : base()
+        public graphicsObject() : base()
         {
             started = true;
             opengl = false;
@@ -108,12 +108,16 @@ namespace MissionPlanner.Controls
         {
             this.SuspendLayout();
             // 
-            // HUD2
+            // graphicsObject
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.groundColor1 = System.Drawing.Color.DodgerBlue;
+            this.groundColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.hudcolor = System.Drawing.Color.LightGray;
-            this.Name = "HUD2";
-            this.Size = new System.Drawing.Size(466, 354);
+            this.Name = "graphicsObject";
+            this.Size = new System.Drawing.Size(354, 354);//(466, 354);
+            this.skyColor1 = System.Drawing.Color.Yellow;
+            this.skyColor2 = System.Drawing.Color.Moccasin;
             this.VSync = false;
             this.ResumeLayout(false);
 
@@ -968,8 +972,9 @@ namespace MissionPlanner.Controls
         [System.ComponentModel.Browsable(true), System.ComponentModel.Category("Values")]
         public Color skyColor2
         {
+            
             get { return _skyColor2; }
-            set { _skyColor2 = value; }
+            set { _skyColor2 = value;}
         }
         [System.ComponentModel.Browsable(true), System.ComponentModel.Category("Values"), DefaultValue(typeof(Color), "0x9bb824")]
         public Color groundColor1
@@ -984,10 +989,10 @@ namespace MissionPlanner.Controls
             set { _groundColor2 = value; }
         }
 
-        private Color _skyColor1 = Color.Gray; // Color.Blue; // 15june26_task2 
-        private Color _skyColor2 = Color.LightGray; // Color.LightBlue; // 15june26_task2 
-        private Color _groundColor1 = Color.DarkGray; // Color.FromArgb(0x9b, 0xb8, 0x24); // 15june26_task2 
-        private Color _groundColor2 = Color.FromArgb(0x41, 0x4f, 0x07);
+        private Color _skyColor1 = Color.Black; // Color.Blue; // 15june26_task2 
+        private Color _skyColor2 = Color.Black;//.LightGray; // Color.LightBlue; // 15june26_task2 
+        private Color _groundColor1 = Color.Black;//.DarkGray; // Color.FromArgb(0x9b, 0xb8, 0x24); // 15june26_task2 
+        private Color _groundColor2 = Color.Black;//.FromArgb(0x41, 0x4f, 0x07);
 
         private Color _hudcolor = Color.White;
         private Pen _whitePen = new Pen(Color.White, 2);
@@ -2039,6 +2044,7 @@ namespace MissionPlanner.Controls
 
                     if (bg.Height != 0)
                     {
+                        _skyColor1 = Color.Black; _skyColor2=Color.Black; // 27june26_task2
                         using (LinearGradientBrush linearBrush = new LinearGradientBrush(
                             bg, _skyColor1, _skyColor2, LinearGradientMode.Vertical))
                         {
@@ -2051,6 +2057,7 @@ namespace MissionPlanner.Controls
 
                     if (bg.Height != 0)
                     {
+                        _groundColor1 = Color.Black; _groundColor2=Color.Black; // 27june26_task2
                         using (
                             LinearGradientBrush linearBrush = new LinearGradientBrush(
                                 bg, _groundColor1, _groundColor2,
@@ -2161,8 +2168,9 @@ namespace MissionPlanner.Controls
 
                     // draw roll ind
                     RectangleF arcrect = new RectangleF(-lengthlong * 3 - extra, -lengthlong * 3 - extra,
-                        (extra + lengthlong * 3) * 2f, (extra + lengthlong * 3) * 2f);
-
+                       (extra + lengthlong * 3) * 2f, (extra + lengthlong * 3) * 2f);
+                                     
+                    
                     //DrawRectangle(Pens.Beige, arcrect);
 
                     graphicsObject.DrawArc(this._whitePen, arcrect, 180 + 30 + -_roll, 120); // 120
@@ -2453,6 +2461,7 @@ namespace MissionPlanner.Controls
 
                 if (displayspeed)
                 {
+
                     graphicsObject.DrawRectangle(this._whitePen, scrollbg);
 
                     graphicsObject.FillRectangle(SolidBrush, scrollbg);
