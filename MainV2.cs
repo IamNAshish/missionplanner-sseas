@@ -46,6 +46,7 @@ using System.Numerics;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using static MAVLink;
 using DroneCAN;
+using MissionPlanner.WebServer;
 
 namespace MissionPlanner
 {
@@ -633,9 +634,18 @@ namespace MissionPlanner
             }
         }
 
-
+        private SimpleWebServer webServer; // 29june26_task1_task
+        
         public MainV2()
         {
+            // 29june26_task1 start..
+            webServer = new SimpleWebServer();
+            webServer.Start();
+            // 29june26_task1 end..
+
+            //WebServerManager.Start(); // 29june26_task2
+
+
             log.Info("Mainv2 ctor");
 
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);

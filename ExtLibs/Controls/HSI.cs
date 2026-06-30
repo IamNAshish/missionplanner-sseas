@@ -40,7 +40,7 @@ namespace MissionPlanner.Controls
         public double VehicleLon { get; set; }
         public double HomeLat { get; set; }
         public double HomeLon { get; set; }
-        //20may26_task1 end
+        // 20may26_task1 end
 
 
 
