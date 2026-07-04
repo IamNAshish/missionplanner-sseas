@@ -109,6 +109,7 @@ namespace MissionPlanner.Utilities
 
         public static Form ShowUserControl(this Control ctl, bool showit = true)
         {
+         
             Form frm = new Form();
             int header = frm.Height - frm.ClientRectangle.Height;
             frm.Text = ctl.Text;

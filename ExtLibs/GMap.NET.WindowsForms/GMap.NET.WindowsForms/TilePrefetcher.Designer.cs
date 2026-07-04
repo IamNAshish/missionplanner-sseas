@@ -122,7 +122,7 @@
             this.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen; // 03july2026_task2 CenterParent
             this.Text = "GMap.NET - esc to cancel fetching";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Prefetch_FormClosed);
             this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Prefetch_PreviewKeyDown);

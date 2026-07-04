@@ -303,7 +303,7 @@ namespace MissionPlanner
                 MaximizeBox = false,
                 MinimizeBox = false,
                 Padding = new Padding(0),
-                StartPosition = FormStartPosition.CenterParent,
+                StartPosition = FormStartPosition.CenterScreen,// 03july2026_task2 CenterParent, 
                 Text = title,
             };
             var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainV2));

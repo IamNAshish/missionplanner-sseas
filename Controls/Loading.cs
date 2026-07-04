@@ -87,7 +87,7 @@ namespace MissionPlanner.Controls
                    Loading frm = new Loading();
                    if (owner == null)
                        frm.TopMost = true;
-                   frm.StartPosition = FormStartPosition.CenterParent;
+                   frm.StartPosition = FormStartPosition.CenterScreen; // 03july2026_task2 CenterParent
                    frm.Closing += Frm_Closing;
 
                     // set instance

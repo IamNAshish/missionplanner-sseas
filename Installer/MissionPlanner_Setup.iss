@@ -2,10 +2,12 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 ; Non-commercial use only
 
-#define MyAppName "Mission Planner"
+; #define MyAppName "Mission Planner"
+#define MyAppName "SaifSeas Mission Planner"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Aashish"
 #define MyAppExeName "MissionPlanner.exe"
+; #define MyAppExeName "SaifSeasMP.exe" this will only work if our app in bin has that name
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -15,7 +17,8 @@ AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-DefaultDirName={autopf}\Mission Planner
+; DefaultDirName={autopf}\Mission Planner
+DefaultDirName={autopf}\SaifSeasMP
 UninstallDisplayIcon={app}\{#MyAppExeName}
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
@@ -24,7 +27,8 @@ OutputDir=Output
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern dynamic
-OutputBaseFilename=MissionPlanner_Setup_v1.0
+OutputBaseFilename=SaifSeasMP_setup_v1.0
+;MissionPlanner_Setup_v1.0
 
 
 [Languages]

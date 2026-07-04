@@ -195,7 +195,7 @@
             this.MinimizeBox = false;
             this.Name = "TilePrefetcherMenu";
             this.Padding = new System.Windows.Forms.Padding(4);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen; // 03july2026_task2 CenterParent
             this.Text = "Tile Prefetcher Menu";
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMaxZoom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMinZoom)).EndInit();

@@ -110,7 +110,7 @@ namespace MissionPlanner.MsgBox
             {
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 ShowInTaskbar = true,
-                StartPosition = FormStartPosition.CenterParent,
+                StartPosition = FormStartPosition.CenterScreen, // 03july2026_task2 CenterParent
                 Text = caption,
                 MaximizeBox = false,
                 MinimizeBox = false,

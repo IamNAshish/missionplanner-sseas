@@ -38,8 +38,8 @@ namespace MissionPlanner.Joystick
                     CMB_joysticks.Items.Add(device);
 
                 }
-                
-                BUT_enable_Click(null, null); //default enable // 11june26_task1
+
+                // 04july2026_test1_problemSolution1 commented this line BUT_enable_Click(null, null); //default enable // 11june26_task1
                 JoystickSetup_FormClosed(null, null);// 11june26_task2
                 //this.Close(); // 11june26_task2
                 //return; // 11june26_task2
@@ -198,7 +198,7 @@ namespace MissionPlanner.Joystick
                 if (!joy.start(CMB_joysticks.Text))
                 {
                     CustomMessageBox.Show("Please Connect a Joystick", "No Joystick");
-                    joy.Dispose();
+                     joy.Dispose(); // 04july2026_test1_SUS not not culprit
 
                     //MessageBox.Show(this.GetType().ToString()); // 11june26_task2
                     //here this.close() will not work as its not a form so we have to close the parent of this control

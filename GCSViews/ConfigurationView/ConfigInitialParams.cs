@@ -223,7 +223,7 @@ namespace MissionPlanner.GCSViews.ConfigurationView
 
             MissionPlanner.Controls.MyButton button = paramCompareForm.Controls.Find("BUT_save", true).FirstOrDefault() as MissionPlanner.Controls.MyButton;
             button.Text = "Write to FC";
-            paramCompareForm.StartPosition = FormStartPosition.CenterParent;
+            paramCompareForm.StartPosition = FormStartPosition.CenterScreen; // 03july2026_task2 CenterParent
             paramCompareForm.ShowDialog();
 
             if (paramCompareForm.DialogResult == DialogResult.OK)

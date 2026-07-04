@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebCamService;
 using ZedGraph;
+using static Stimulsoft.Report.Func;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
 using TableLayoutPanelCellPosition = System.Windows.Forms.TableLayoutPanelCellPosition;
 using UnauthorizedAccessException = System.UnauthorizedAccessException;
@@ -362,7 +363,7 @@ namespace MissionPlanner.GCSViews
             {
                 if (e.Value != null)
                 {
-                    bool armed = Convert.ToBoolean(e.Value);
+                    bool armed = System.Convert.ToBoolean(e.Value);
 
                     e.Value = armed ? "ARMED" : "DISARMED";
 
@@ -387,14 +388,14 @@ namespace MissionPlanner.GCSViews
 
             //09may26_task2 start ..
             //heading
-            var heading = Convert.ToSingle(MainV2.comPort.MAV.cs.yaw);
+            var heading = System.Convert.ToSingle(MainV2.comPort.MAV.cs.yaw);
             //private Bitmap originalVehicleImage_top =Properties.Resources.drone_top;//moved to ouside globally
             pictureBox_yaw.Image =  RotateImage(originalVehicleImage_top, heading);
             //09may26_task2 end ..
 
             //09may26_task3 start ..
             //roll
-            heading = Convert.ToSingle(MainV2.comPort.MAV.cs.roll);
+            heading = System.Convert.ToSingle(MainV2.comPort.MAV.cs.roll);
             pictureBox_roll.Image = RotateImage(originalVehicleImage_rearView, heading);
             //09may26_task2 end ..
 
@@ -1457,6 +1458,7 @@ namespace MissionPlanner.GCSViews
             try
             {
                 var frm = new JoystickSetup().ShowUserControl();
+             
                 try
                 {
                     var bmp = global::MissionPlanner.Properties.Resources.joystick;
@@ -1488,7 +1490,7 @@ namespace MissionPlanner.GCSViews
             catch (Exception ex)
             {
                 log.Error(ex);
-                CustomMessageBox.Show(ex.Message, Strings.ERROR);
+                CustomMessageBox.Show("CODE_1"+ex.Message, Strings.ERROR);
             }
         }
 
@@ -1989,7 +1991,7 @@ namespace MissionPlanner.GCSViews
             {
                 var now = DateTime.UtcNow;
                 var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                ulong time_unix_us = Convert.ToUInt64((now - epoch).TotalMilliseconds * 1000);
+                ulong time_unix_us = System.Convert.ToUInt64((now - epoch).TotalMilliseconds * 1000);
                 try
                 {
                     MainV2.comPort.sendPacket(
@@ -2965,7 +2967,7 @@ namespace MissionPlanner.GCSViews
 
             Zoomlevel.Minimum = gMapControl1.MapProvider.MinZoom;
             Zoomlevel.Maximum = 24;
-            Zoomlevel.Value = Convert.ToDecimal(gMapControl1.Zoom);
+            Zoomlevel.Value = System.Convert.ToDecimal(gMapControl1.Zoom);
 
 
             var mnt_mode_paramnames = new List<string> { "MNT1_DEFLT_MODE", "MNT_DEFLT_MODE", "MNT_MODE" };
@@ -3290,7 +3292,7 @@ namespace MissionPlanner.GCSViews
             {
                 // Exception System.Runtime.InteropServices.SEHException: External component has thrown an exception.
                 TRK_zoom.Value = (float) gMapControl1.Zoom;
-                Zoomlevel.Value = Convert.ToDecimal(gMapControl1.Zoom);
+                Zoomlevel.Value = System.Convert.ToDecimal(gMapControl1.Zoom);
             }
             catch
             {
@@ -5071,7 +5073,7 @@ namespace MissionPlanner.GCSViews
                 Height = MainV2.instance.Height - 100,
                 Text = "Display This",
                 AutoSize = false,
-                StartPosition = FormStartPosition.CenterParent,
+                StartPosition = FormStartPosition.CenterScreen, // 03july2026_task2 CenterParent
                 MaximizeBox = false,
                 MinimizeBox = false,
                 AutoScroll = true,
@@ -6210,12 +6212,12 @@ namespace MissionPlanner.GCSViews
                 if (gMapControl1.MaxZoom + 1 == (double) TRK_zoom.Value)
                 {
                     gMapControl1.Zoom = TRK_zoom.Value - .1;
-                    Zoomlevel.Value = Convert.ToDecimal(TRK_zoom.Value - .1);
+                    Zoomlevel.Value = System.Convert.ToDecimal(TRK_zoom.Value - .1);
                 }
                 else
                 {
                     gMapControl1.Zoom = TRK_zoom.Value;
-                    Zoomlevel.Value = Convert.ToDecimal(TRK_zoom.Value);
+                    Zoomlevel.Value = System.Convert.ToDecimal(TRK_zoom.Value);
                 }
 
                 UpdateOverlayVisibility();
@@ -8694,6 +8696,13 @@ namespace MissionPlanner.GCSViews
             //int mav_batp_custom_number = 0;
             int mav_Gspeed_custom_number = 0;
             int mav_Grpm_custom_number = 0;
+            int mav_G_engineTemp_custom_number = 0;
+            int mav_G_waterflow_custom_number = 0;
+            int mav_G_waterflowTemp_custom_number = 0;
+            int mav_G_fuel_custom_number = 0;
+            int mav_lbl_LeakSts_custom_number = 0;
+            int mav_lbl_EngineSts_custom_number = 0;
+
             object thisBoxed = MainV2.comPort.MAV.cs;
             Type test = thisBoxed.GetType();
             //int max_length = 0;
@@ -8758,6 +8767,76 @@ namespace MissionPlanner.GCSViews
                                 this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
                                 this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
                             }
+                            else if (name == "MAV_ET")//engine temp
+                            {
+                                mav_G_engineTemp_custom_number = n;
+                                this.G_engineTemp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_engineTemp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                this.G_engineTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_engineTemp_custom_number, true));//bindingSourceGaugesTab
+                                this.G_engineTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_engineTemp_custom_number, true));//bindingSourceGaugesTab
+                            }
+                            else if (name == "MAV_WF")//water flow
+                            {
+                                mav_G_waterflow_custom_number = n;
+                                this.G_waterflow.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_waterflow_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                this.G_waterflow.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflow_custom_number, true));//bindingSourceGaugesTab
+                                this.G_waterflow.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflow_custom_number, true));//bindingSourceGaugesTab
+                            }
+                            else if (name == "MAV_FUEL")//fuel
+                            {
+                                mav_G_fuel_custom_number = n;
+                                this.G_fuel.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_fuel_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                this.G_fuel.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_fuel_custom_number, true));//bindingSourceGaugesTab
+                                this.G_fuel.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_fuel_custom_number, true));//bindingSourceGaugesTab
+                            }
+                            else if (name == "MAV_WT")//water flow temp
+                            {
+                                mav_G_waterflowTemp_custom_number = n;
+                                this.G_waterflowTemp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_waterflowTemp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                this.G_waterflowTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflowTemp_custom_number, true));//bindingSourceGaugesTab
+                                this.G_waterflowTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflowTemp_custom_number, true));//bindingSourceGaugesTab
+                            }
+                            else if (name=="MAV_LS1") //leak status // 04july2026_task1
+                            {
+                                mav_lbl_LeakSts_custom_number = n;
+                                
+                                var binding = new Binding("Text", this.bindingSourceHud, "customfield" + mav_lbl_LeakSts_custom_number, true);
+
+                                    binding.Format += (s, e) =>
+                                    {
+                                        if (e.Value != null)
+                                        {
+                                            double leakValue = System.Convert.ToDouble(e.Value);
+
+                                            e.Value = (leakValue>2.5) ? "NO LEAK" : "LEAK DETECTED";
+
+                                            lbl_LeakSts.ForeColor = (leakValue > 2.5)? Color.White : Color.White;
+                                            lbl_LeakSts.BackColor = (leakValue > 2.5) ? Color.LimeGreen:Color.Red;
+                                        }
+                                    };
+                                    this.lbl_LeakSts.DataBindings.Add(binding);
+                            }
+                            else if (name == "MAV_ES") // engine status // 04july2026_task2
+                            {
+                                mav_lbl_EngineSts_custom_number = n;
+
+                                var binding2 = new Binding("Text", this.bindingSourceHud, "customfield" + mav_lbl_EngineSts_custom_number, true);
+
+                                binding2.Format += (s, e) =>
+                                {
+                                    if (e.Value != null)
+                                    {
+                                        bool EngSts = System.Convert.ToBoolean(e.Value);
+
+                                        e.Value = EngSts ? "ON" : "OFF";
+
+                                        lbl_EngineSts.ForeColor = EngSts ? Color.White : Color.Black;
+                                        lbl_EngineSts.BackColor = EngSts ? Color.LimeGreen : Color.Gray;
+                                    }
+                                };
+                                this.lbl_EngineSts.DataBindings.Add(binding2);
+                            }
+
+
                         }
                         catch { 
                             //MessageBox.Show("mali bind add chesara?"); 
@@ -8773,9 +8852,17 @@ namespace MissionPlanner.GCSViews
             
         }
 
-
+        int i = 0;
         private void timer_gauge_Tick(object sender, EventArgs e)
         {//02june26_task2 change captext color based on value
+
+            //test start
+            //txt_messagebox.Text = i.ToString();
+            //i = i + 1;
+            //test end
+
+
+
 
             float batp = 0;
            
@@ -8922,6 +9009,60 @@ namespace MissionPlanner.GCSViews
             gauge.Location = new Point(prevX, prevY);
             //if (gauge.Tag is Point p)
             //    gauge.Location = p;
+        }
+
+        private Form messagePopup;
+        private RichTextBox popupRTB;
+        Control originalParent;
+        private void BUT_ShowMessages_Click(object sender, EventArgs e) //03july2027_task1
+        {            
+            if (messagePopup != null && !messagePopup.IsDisposed)
+            {
+                messagePopup.Activate();
+                return;
+            }
+
+            messagePopup = new Form();
+            messagePopup.Text = "Messages";
+            messagePopup.Size = new Size(500, 300);
+            messagePopup.StartPosition = FormStartPosition.CenterScreen; // 03july2026_task2 CenterParent
+
+            
+
+            //icon pedam
+            var bmp = global::MissionPlanner.Properties.Resources.terminal_ico;
+            if (bmp != null)
+            {
+                IntPtr hIcon = bmp.GetHicon();
+                messagePopup.Icon = Icon.FromHandle(hIcon);
+            }
+
+            messagePopup.Opacity = 0.85;
+            RichTextBox rtb = new RichTextBox();
+            rtb.ForeColor = Color.LightGreen;
+            rtb.Dock = DockStyle.Fill;
+            rtb.ReadOnly = true;
+
+            txt_messagebox.Visible = true;
+            originalParent = txt_messagebox.Parent;
+            originalParent.Controls.Remove(txt_messagebox);
+
+            txt_messagebox.Dock = DockStyle.Fill;
+            messagePopup.Controls.Add(txt_messagebox);
+
+               
+
+
+            messagePopup.Show(this);
+
+            messagePopup.FormClosed += (s, ee) =>
+            {
+                txt_messagebox.Visible = false;
+                txt_messagebox.Parent = originalParent;
+                txt_messagebox.Dock = DockStyle.None;
+            };
+
+
         }
 
     }

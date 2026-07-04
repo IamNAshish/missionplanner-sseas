@@ -324,7 +324,7 @@ namespace MissionPlanner.Controls
 
             var form = new VideoStreamSelector()
             {
-                StartPosition = FormStartPosition.CenterParent,
+                StartPosition = FormStartPosition.CenterScreen,// 03july2026_task2 CenterParent
             };
             if (form.ShowDialog() == DialogResult.OK)
             {

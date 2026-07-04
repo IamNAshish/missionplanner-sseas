@@ -47,9 +47,29 @@ using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using static MAVLink;
 using DroneCAN;
 using MissionPlanner.WebServer;
+using System.Speech.Synthesis; //01july2026_task1
+
 
 namespace MissionPlanner
 {
+    
+    public class TTS //01july2026_task1
+    {
+        private SpeechSynthesizer synth = new SpeechSynthesizer();
+
+        public TTS()
+        {
+            synth.Volume = 100;   // 0-100
+            synth.Rate = 0;       // -10 to 10
+        }
+
+        public void Speak(string text)
+        {
+            synth.SpeakAsyncCancelAll();
+            synth.SpeakAsync(text);
+        }
+    }
+
     public partial class MainV2 : Form
     {
         
@@ -636,14 +656,22 @@ namespace MissionPlanner
 
         private SimpleWebServer webServer; // 29june26_task1_task
         
+
+
+
         public MainV2()
         {
+            
+            TTS tts = new TTS();//01july2026_task1
+            tts.Speak("Welcome to Saif Seas..");//01july2026_task1
+
             // 29june26_task1 start..
             webServer = new SimpleWebServer();
-            webServer.Start();
+            //webServer.Start(); //uncomment this line for API working (localhost)
             // 29june26_task1 end..
 
             //WebServerManager.Start(); // 29june26_task2
+
 
 
             log.Info("Mainv2 ctor");
