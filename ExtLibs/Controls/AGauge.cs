@@ -197,6 +197,37 @@ namespace AGaugeApp
                 Refresh();
             }
         }
+
+        // 08july2026_task1 start
+        private Font[] m_CapFonts =
+        {
+            SystemFonts.DefaultFont,
+            SystemFonts.DefaultFont,
+            SystemFonts.DefaultFont,
+            SystemFonts.DefaultFont,
+            SystemFonts.DefaultFont
+        };
+        public Font CapFont
+        {
+            get => m_CapFonts[m_CapIdx];
+            set
+            {
+                m_CapFonts[m_CapIdx] = value;
+                Refresh();
+            }
+        }
+        public Font[] CapsFonts
+        {
+            get => m_CapFonts;
+            set
+            {
+                m_CapFonts = value;
+                Refresh();
+            }
+        }
+        // 08july2026_task1 end
+
+
         public override System.Windows.Forms.ImageLayout BackgroundImageLayout
         {
             get
@@ -1778,7 +1809,7 @@ System.ComponentModel.Description("Enables or disables the range selected by Nee
 
                         if (counter1 >= ScaleNumbersStartScaleLine - 1)
                         {
-                            //test 02june26_task1
+                            // 02june26_task1 start
                             double v = m_MinValue + countValue;
                             string label;
 
@@ -1786,12 +1817,12 @@ System.ComponentModel.Description("Enables or disables the range selected by Nee
                             else if (v >= 1000) { label = (v / 1000.0).ToString("0.#") + ""; Cap_Idx = ((byte)(2)); CapText = "x1000"; }// + "", CapText = "x1000"; }
                             else { label = v.ToString("0"); }
 
-                            //label = v >= 1000 ? (v / 1000.0).ToString("0") + "k": v.ToString("0");
+                           
 
                             SizeF labelSize = ggr.MeasureString(label, Font, -1, StringFormat.GenericTypographic);
 
                             ggr.DrawString(label, Font, new SolidBrush(m_ScaleNumbersColor),-labelSize.Width / 2,-fontBoundY1 - (fontBoundY2 - fontBoundY1 + 1) / 2, StringFormat.GenericTypographic);
-                            //test end
+                            //02june26_task1 end
 
                             //orginal code before test test 02june26_task1 
                             //ggr.DrawString(valueText, Font, new SolidBrush(m_ScaleNumbersColor), -boundingBox.Width / 2,
@@ -1817,11 +1848,19 @@ System.ComponentModel.Description("Enables or disables the range selected by Nee
 
                     for (Int32 counter = 0; counter < NUMOFCAPS; counter++)
                     {
-                        if (m_CapText[counter] != "")
-                        {
-                            ggr.DrawString(m_CapText[counter], Font, new SolidBrush(m_CapColor[counter]),
-                                m_CapPosition[counter].X, m_CapPosition[counter].Y, StringFormat.GenericTypographic);
-                        }
+                        // commented orginal under // 08july2026_task1 start
+                            //if (m_CapText[counter] != "")
+                            //{
+                            //    ggr.DrawString(m_CapText[counter], Font, new SolidBrush(m_CapColor[counter]),
+                            //        m_CapPosition[counter].X, m_CapPosition[counter].Y, StringFormat.GenericTypographic);
+                            //}
+                        // commented orginal under // 08july2026_task1 end
+
+                        // 08july2026_task1 start
+                        Font capFont = m_CapFonts[counter] ?? Font;                      
+                        ggr.DrawString(m_CapText[counter],capFont,new SolidBrush(m_CapColor[counter]),
+                            m_CapPosition[counter].X,m_CapPosition[counter].Y,StringFormat.GenericTypographic);
+                        // 08july2026_task1 end
                     }
                 }
             } // end bg

@@ -320,8 +320,29 @@ namespace MissionPlanner.GCSViews
              G_batp_Resize(null, null);
 
 
+            // 07july2026_task2  start
+            //this.lbl_Mode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "mode", true));
+            //simple code //this.lbl_Mode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceHud, "battery_remaining", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0 %")); 
+            var binding_mode = new Binding("Text", this.bindingSourceHud, "mode", true);
 
+            binding_mode.Format += (s, e) =>
+            {
+                lbl_Mode.Text = e.Value.ToString();
+                if (e.Value != null)
+                {
+                    String modeValue = System.Convert.ToString(e.Value);
+                    switch (modeValue)
+                    {
+                        case "AUTO":
+                            lbl_Mode.BackColor = Color.Yellow;
+                            break;
 
+                        default:
+                            break;
+                    }
+                }
+            };
+            // 07july2026_task2  end
 
 
             //hud1 shifting to tabpageDynamics
@@ -3677,7 +3698,7 @@ namespace MissionPlanner.GCSViews
         {
             PopoutGaugeCloned(g_hud1_popout, val => g_hud1_popout = val, hud1, "Roll/Pitch", new Size(250, 250)); // 10june26_task1
 
-                       
+
             //orginal code
             //if (huddropout)
             //    return;
@@ -3708,6 +3729,7 @@ namespace MissionPlanner.GCSViews
 
         private void hud1_Resize(object sender, EventArgs e)
         {
+
             Console.WriteLine("HUD resize " + hud1.Width + " " + hud1.Height); // +"\n"+ System.Environment.StackTrace);
 
             if (hud1.Parent == this.SubMainRight.Panel1)
@@ -5800,7 +5822,8 @@ namespace MissionPlanner.GCSViews
                 hud1.Dock = DockStyle.None; // 10june26_task1
             }
 
-            List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, hud1, tableLayoutPanel_gaugeData };
+            // 06july2026_task1_commented List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, hud1, tableLayoutPanel_gaugeData };
+            List<Control> gauges = new List<Control> { G_engineTemp, G_silencerTemp, Galt, Gheading, G_waterflow, G_waterflowTemp, hud1, tableLayoutPanel_gaugeData }; // 06july2026_task1
 
             // 10june26_task1_commented int minGaugeSize = 150;
 
@@ -5809,288 +5832,44 @@ namespace MissionPlanner.GCSViews
             int gaugeSize = CalculateBestGaugeSize(tabGauges, gauges.Count);
             int columns = Math.Max(1, tabGauges.Width / gaugeSize);
 
-            // Calculate rows needed
-            // 10june26_task1_commented int rows = (int)Math.Ceiling(gauges.Count / (double)columns);
-
-            // Calculate best square size
-            // 10june26_task1_commented int cellWidth = tabGauges.Width / columns;
-            // 10june26_task1_commented int cellHeight = tabGauges.Height / rows;
-
-            //int gaugeSize = Math.Min(cellWidth, cellHeight);
+            
             
             ArrangeControls(gauges, columns, gaugeSize, 0, 0);
+
 
             // Set circular/oval region on hud1 matching its current size  // 10june26_task1 start
             using (GraphicsPath path = new GraphicsPath())
             {
-                path.AddEllipse(0, 0, hud1.Width, hud1.Height);
+                //path.AddEllipse(0, 0, hud1.Width, hud1.Height); 
+                path.AddEllipse((hud1.Width - hud1.Height) / 2, 0, hud1.Height, hud1.Height);// 07july2026_task1
                 hud1.Region = new Region(path);
-            } 
-			// 10june26_task1 end
+                //hud1.Size = hud1.Size + new Size(hud1.Height/2, hud1.Height /2);
+            }
+            // 10june26_task1 end
 
+
+            
             //mini gauges  fix covering the Galt
-            G_engineTemp.Location = Galt.Location;  //alt gauge[0,0]
-            G_engineTemp.Height = G_batp.Height / 2;
-            G_engineTemp.Width = G_batp.Width / 2;
+            G_batp.Location = Galt.Location;  //alt gauge[0,0]
+            G_batp.Height = G_engineTemp.Height / 2;
+            G_batp.Width = G_engineTemp.Width / 2;
 
-            G_silencerTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y); ////alt gauge[0,1]
-            G_silencerTemp.Height = G_engineTemp.Height;
-            G_silencerTemp.Width = G_engineTemp.Width;
+            Gspeed.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y); ////alt gauge[0,1]
+            Gspeed.Height = G_batp.Height;
+            Gspeed.Width = G_batp.Width;
 
-            G_waterflow.Location = new Point(Galt.Location.X, Galt.Location.Y + G_engineTemp.Height); ////alt gauge[1,0]
-            G_waterflow.Height = G_engineTemp.Height;
-            G_waterflow.Width = G_engineTemp.Width;
+            G_RPM.Location = new Point(Galt.Location.X, Galt.Location.Y + G_batp.Height); ////alt gauge[1,0]
+            G_RPM.Height = G_batp.Height;
+            G_RPM.Width = G_batp.Width;
 
-            G_waterflowTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y + G_engineTemp.Height); //alt gauge[1,1]
-            G_waterflowTemp.Height = G_engineTemp.Height;
-            G_waterflowTemp.Width = G_engineTemp.Width;
+            G_fuel.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y + G_batp.Height); //alt gauge[1,1]
+            G_fuel.Height = G_batp.Height;
+            G_fuel.Width = G_batp.Width;
 
             //lbl_ARM.Font = BUT_ARM.Font;
 
         }
-        // 05june26_task3_v2 end
-
-
-        // 05june26_task3_backup_v1_orginal start
-        //uncomment this fun to get to older version of resize
-        //private void tabPage1_Resize(object sender, EventArgs e)
-        //{
-        //    int mywidth, myheight;
-
-        //    Control tabGauges = sender as Control;
-
-        //    float scale = tabGauges.Width / (float)tabGauges.Height;
-
-        //    if (scale > 0.5 && scale < 1.9)
-        //    {
-        //        // 2 rows layout
-
-        //         G_batp.Visible = true;
-
-        //        if (tabGauges.Height < tabGauges.Width)
-        //            myheight = tabGauges.Height / 2;
-        //        else
-        //            myheight = tabGauges.Width / 3;
-
-        //        myheight = Math.Max(myheight, 150);
-
-
-        //        // size all gauges
-        //         G_batp.Width = myheight;
-        //         G_batp.Height = myheight;
-
-        //        //this.tb_BatValue.Location = new System.Drawing.Point((G_batp.Location.X + G_batp.Width / 2), (G_batp.Location.Y + G_batp.Height / 2));
-
-
-        //        Gspeed.Width = myheight;
-        //        Gspeed.Height = myheight;
-
-        //        Galt.Width = myheight;
-        //        Galt.Height = myheight;
-
-        //        Gheading.Width = myheight;
-        //        Gheading.Height = myheight;
-
-        //        G_RPM.Width = myheight; // 30may26_task_rpm
-        //        G_RPM.Height = myheight;// 30may26_task_rpm
-
-        //        // top row
-        //         G_batp.Location = new Point(0, 0);
-        //         Gspeed.Location = new Point(G_batp.Right, 0);
-        //        Galt.Location = new Point(Gspeed.Right, 0);
-
-        //        // bottom row
-        //         Gheading.Location = new Point(0, G_batp.Bottom);
-        //         G_RPM.Location = new Point(Gheading.Right, G_batp.Bottom); // 30may26_task_rpm
-
-
-        //        //new gauges  // 03june26_task2
-        //        G_engineTemp.Location = Galt.Location;  //alt gauge[0,0]
-        //        G_engineTemp.Height = myheight / 2;
-        //        G_engineTemp.Width = myheight / 2;
-
-        //        G_silencerTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y); ////alt gauge[0,1]
-        //        G_silencerTemp.Height = myheight/2;
-        //        G_silencerTemp.Width= myheight/2;
-
-        //        G_waterflow.Location = new Point(Galt.Location.X, Galt.Location.Y + G_engineTemp.Height); ////alt gauge[1,0]
-        //        G_waterflow.Height = myheight/2;
-        //        G_waterflow.Width = myheight/2;
-
-        //        G_waterflowTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y + G_engineTemp.Height); //alt gauge[1,1]
-        //        G_waterflowTemp.Height = myheight/2;
-        //        G_waterflowTemp.Width = myheight/2;
-
-        //        return;
-        //    }
-
-        //    // wide layout
-        //    if (tabGauges.Width < 700)
-        //    {
-        //         G_batp.Visible = true;//false;
-
-        //        mywidth = tabGauges.Width / 4;
-
-        //        mywidth = Math.Max(mywidth, 150);
-
-        //        Gspeed.Width = mywidth;
-        //        Gspeed.Height = mywidth;
-
-        //        Galt.Width = mywidth;
-        //        Galt.Height = mywidth;
-
-        //        Gheading.Width = mywidth;
-        //        Gheading.Height = mywidth;
-
-        //        G_RPM.Width = mywidth; // 30may26_task_rpm
-        //        G_RPM.Height = mywidth; // 30may26_task_rpm
-
-        //        Gspeed.Location = new Point(G_batp.Right, 0);
-        //        Galt.Location = new Point(Gspeed.Right, 0);
-        //        Gheading.Location = new Point(Galt.Right, 0);
-        //        G_RPM.Location = new Point(Gheading.Right, 0); // 30may26_task_rpm
-        //    }
-        //    else
-        //    {
-        //         G_batp.Visible = true;
-
-        //        mywidth = tabGauges.Width / 5;
-
-        //        mywidth = Math.Max(mywidth, 150);
-
-        //         G_batp.Width = mywidth;
-        //         G_batp.Height = mywidth;
-
-        //        Gspeed.Width = mywidth;
-        //        Gspeed.Height = mywidth;
-
-        //        Galt.Width = mywidth;
-        //        Galt.Height = mywidth;
-
-        //        Gheading.Width = mywidth;
-        //        Gheading.Height = mywidth;
-
-        //        G_RPM.Width = mywidth; // 30may26_task_rpm
-        //        G_RPM.Height = mywidth; // 30may26_task_rpm
-
-        //         G_batp.Location = new Point(0, 0);
-        //         Gspeed.Location = new Point(G_batp.Right, 0);
-        //        Galt.Location = new Point(Gspeed.Right, 0);
-        //        Gheading.Location = new Point(Galt.Right, 0);
-        //        G_RPM.Location = new Point(Gheading.Right, 0); // 30may26_task_rpm
-        //    }
-
-        //    // 01june26 
-        //    //tb_BatValue.Location = G_batp.Location;//new Point(G_batp.Left + G_batp.Width , G_batp.Top + G_batp.Height);
-        //    //tb_BatValue.Location = new Point(G_batp.Left + (G_batp.Width - tb_BatValue.Width) / 2, G_batp.Top + (int)(G_batp.Height * 0.60));
-        //    //tb_BatValue.BringToFront();
-        //    //this.tb_BatValue.Location = new System.Drawing.Point((G_batp.Location.X + G_batp.Width/2 ) , (G_batp.Location.Y + G_batp.Height / 2 ));
-        //    //this.tb_BatValue.Location = new System.Drawing.Point((G_batp.Width - tb_BatValue.Width) / 2, (G_batp.Height / 2 - 15 )- 30);
-
-
-        //    //new gauges // 03june26_task2
-        //    G_engineTemp.Location = Galt.Location;  //alt gauge[0,0]
-        //    G_engineTemp.Height = G_batp.Height / 2;
-        //    G_engineTemp.Width = G_batp.Width / 2;
-
-        //    G_silencerTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y); ////alt gauge[0,1]
-        //    G_silencerTemp.Height = G_engineTemp.Height;
-        //    G_silencerTemp.Width = G_engineTemp.Width;
-
-        //    G_waterflow.Location = new Point(Galt.Location.X, Galt.Location.Y + G_engineTemp.Height); ////alt gauge[1,0]
-        //    G_waterflow.Height = G_engineTemp.Height;
-        //    G_waterflow.Width = G_engineTemp.Width;
-
-        //    G_waterflowTemp.Location = new Point(Galt.Location.X + G_engineTemp.Width, Galt.Location.Y + G_engineTemp.Height); //alt gauge[1,1]
-        //    G_waterflowTemp.Height = G_engineTemp.Height;
-        //    G_waterflowTemp.Width = G_engineTemp.Width;
-
-
-        //}
-        // 05june26_task3_backup_v1_orginal end
-
-
-        // 05june26_task3_backup_v3 version3 start 
-        //this handles same as orginal code with no helper
-        //private void LayoutSmallGaugeCluster(Rectangle area)
-        //{
-        //    int w = area.Width / 2;
-        //    int h = area.Height / 2;
-
-        //    G_engineTemp.Bounds =
-        //        new Rectangle(area.X, area.Y, w, h);
-
-        //    G_silencerTemp.Bounds =
-        //        new Rectangle(area.X + w, area.Y, w, h);
-
-        //    G_waterflow.Bounds =
-        //        new Rectangle(area.X, area.Y + h, w, h);
-
-        //    G_waterflowTemp.Bounds =
-        //        new Rectangle(area.X + w, area.Y + h, w, h);
-        //}
-        //private void tabPage1_Resize(object sender, EventArgs e)
-        //{
-        //    Control tabGauges = sender as Control;
-
-        //    if (tabGauges == null)
-        //        return;
-
-        //    int gaugeSize;
-
-        //    float scale = tabGauges.Width / (float)tabGauges.Height;
-
-        //    if (scale > 0.5f && scale < 1.9f)
-        //    {
-        //        // Two-row layout
-
-        //        gaugeSize = Math.Max(
-        //            Math.Min(tabGauges.Width / 3,
-        //                     tabGauges.Height / 2),
-        //            150);
-
-        //        // Top row
-        //        G_batp.Bounds = new Rectangle(0, 0, gaugeSize, gaugeSize);
-        //        Gspeed.Bounds = new Rectangle(gaugeSize, 0, gaugeSize, gaugeSize);
-
-        //        Rectangle cluster =
-        //            new Rectangle(gaugeSize * 2, 0, gaugeSize, gaugeSize);
-
-        //        LayoutSmallGaugeCluster(cluster);
-
-        //        // Bottom row
-        //        Gheading.Bounds =
-        //            new Rectangle(0, gaugeSize, gaugeSize, gaugeSize);
-
-        //        G_RPM.Bounds =
-        //            new Rectangle(gaugeSize, gaugeSize, gaugeSize, gaugeSize);
-        //    }
-        //    else
-        //    {
-        //        // One-row layout
-
-        //        gaugeSize = Math.Max(tabGauges.Width / 5, 150);
-
-        //        G_batp.Bounds =
-        //            new Rectangle(0, 0, gaugeSize, gaugeSize);
-
-        //        Gspeed.Bounds =
-        //            new Rectangle(gaugeSize, 0, gaugeSize, gaugeSize);
-
-        //        Rectangle cluster =
-        //            new Rectangle(gaugeSize * 2, 0, gaugeSize, gaugeSize);
-
-        //        LayoutSmallGaugeCluster(cluster);
-
-        //        Gheading.Bounds =
-        //            new Rectangle(gaugeSize * 3, 0, gaugeSize, gaugeSize);
-
-        //        G_RPM.Bounds =
-        //            new Rectangle(gaugeSize * 4, 0, gaugeSize, gaugeSize);
-        //    }
-        //}
-
-        //05june26_task3_backup_v3 end
+        // 05june26_task3_v2 end        
 
         private void tabQuick_Resize(object sender, EventArgs e)
         {
@@ -8335,7 +8114,8 @@ namespace MissionPlanner.GCSViews
             popup.ShowInTaskbar = false;
             popup.TopMost = true;
             popup.BackColor = Color.FromArgb(40, 40, 40);
-            popup.Opacity = 0.70;
+            popup.Opacity = 0.70;                       
+            
 
             // ---------------- CIRCLE SHAPE ----------------
 
@@ -8577,6 +8357,8 @@ namespace MissionPlanner.GCSViews
             clone.CapsPosition = (Point[])source.CapsPosition.Clone();
             clone.CapsText = (string[])source.CapsText.Clone();
             clone.CapText = source.CapText;
+            clone.CapsFonts = (Font[])source.CapsFonts.Clone(); // 08july2026_task1
+            clone.CapFont = source.CapFont; // 08july2026_task1
             clone.Center = source.Center;
             clone.MaxValue = source.MaxValue;
             clone.MinValue = source.MinValue;
@@ -8631,6 +8413,8 @@ namespace MissionPlanner.GCSViews
             clone.Value1 = source.Value1;
             clone.Value2 = source.Value2;
             clone.Value3 = source.Value3;
+
+
 
             foreach (Binding b in source.DataBindings)
             {
@@ -9015,7 +8799,7 @@ namespace MissionPlanner.GCSViews
         private RichTextBox popupRTB;
         Control originalParent;
         private void BUT_ShowMessages_Click(object sender, EventArgs e) //03july2027_task1
-        {            
+        {
             if (messagePopup != null && !messagePopup.IsDisposed)
             {
                 messagePopup.Activate();
@@ -9027,7 +8811,7 @@ namespace MissionPlanner.GCSViews
             messagePopup.Size = new Size(500, 300);
             messagePopup.StartPosition = FormStartPosition.CenterScreen; // 03july2026_task2 CenterParent
 
-            
+
 
             //icon pedam
             var bmp = global::MissionPlanner.Properties.Resources.terminal_ico;
@@ -9050,7 +8834,7 @@ namespace MissionPlanner.GCSViews
             txt_messagebox.Dock = DockStyle.Fill;
             messagePopup.Controls.Add(txt_messagebox);
 
-               
+
 
 
             messagePopup.Show(this);
@@ -9062,7 +8846,7 @@ namespace MissionPlanner.GCSViews
                 txt_messagebox.Dock = DockStyle.None;
             };
 
-
+            // 07july2026_task2_commented end..
         }
 
     }

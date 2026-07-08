@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Geometry.Text;
+//using System.Geometry.Text;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -212,14 +212,22 @@ namespace MissionPlanner.Controls
 
             int boatsize = Width / 2;
             e.Graphics.DrawImage(boat,-boatsize / 2,-boatsize / 2,boatsize,boatsize);// 13may6_task1_3
+                                                                                     //e.Graphics.DrawLine(new Pen(Color.White,2),0,-_radiusoutside,0,-_radiusinside); // 13may26_task1_3
+
+            // 06july2026_task2 start... Draw current heading below the boat
+            
+            string headingText = Heading.ToString("0") + "°";
+
+            using (Font headingFont = new Font("Segoe UI", Width / 25f, FontStyle.Bold))
+            {
+                SizeF sz = e.Graphics.MeasureString(headingText, headingFont);
+
+                e.Graphics.DrawString(headingText, headingFont, Brushes.LimeGreen, -sz.Width / 2 +1, boatsize / 4 );
+            }
+            // 06july2026_task2 end...
 
 
-
-            //e.Graphics.DrawLine(new Pen(Color.White,2),0,-_radiusoutside,0,-_radiusinside); // 13may26_task1_3
-
-
-
-        // 20may26_task1 start
+            // 20may26_task1 start
             e.Graphics.RotateTransform((float)(HomeBearing - Heading));
 
             // marker radius

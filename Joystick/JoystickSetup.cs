@@ -36,7 +36,6 @@ namespace MissionPlanner.Joystick
                 foreach (var device in joysticklist)
                 {
                     CMB_joysticks.Items.Add(device);
-
                 }
 
                 // 04july2026_test1_problemSolution1 commented this line BUT_enable_Click(null, null); //default enable // 11june26_task1
