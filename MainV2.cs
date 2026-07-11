@@ -663,7 +663,7 @@ namespace MissionPlanner
         {
             
             TTS tts = new TTS();//01july2026_task1
-            tts.Speak("Welcome to Saif Seas..");//01july2026_task1
+            tts.Speak("Welcome to Saif Seas..Telugu kosam okti nokandi");//01july2026_task1
 
             // 29june26_task1 start..
             webServer = new SimpleWebServer();

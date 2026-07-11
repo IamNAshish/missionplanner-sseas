@@ -103,6 +103,9 @@ namespace MissionPlanner.GCSViews
             this.tabGauges = new System.Windows.Forms.TabPage();
             this.txt_messagebox = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel_gaugeData = new System.Windows.Forms.TableLayoutPanel();
+            this.lbl_disttowp = new System.Windows.Forms.Label();
+            this.lblGPS = new System.Windows.Forms.Label();
+            this.lbl_EKFstatus = new System.Windows.Forms.Label();
             this.lbl_Mode = new System.Windows.Forms.Label();
             this.lbl_EngineSts = new System.Windows.Forms.Label();
             this.lbl_LeakSts = new System.Windows.Forms.Label();
@@ -235,6 +238,7 @@ namespace MissionPlanner.GCSViews
             this.Messagetabtimer = new System.Windows.Forms.Timer(this.components);
             this.bindingSourceStatusTab = new System.Windows.Forms.BindingSource(this.components);
             this.timer_gauge = new System.Windows.Forms.Timer(this.components);
+            this.lbl_signalStrength = new System.Windows.Forms.Label();
             this.distanceBar1 = new MissionPlanner.Controls.DistanceBar();
             this.modifyandSetLoiterRad = new MissionPlanner.Controls.ModifyandSet();
             this.modifyandSetSpeed = new MissionPlanner.Controls.ModifyandSet();
@@ -1259,7 +1263,11 @@ namespace MissionPlanner.GCSViews
             // tableLayoutPanel_gaugeData
             // 
             resources.ApplyResources(this.tableLayoutPanel_gaugeData, "tableLayoutPanel_gaugeData");
-            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_Mode, 0, 5);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_signalStrength, 0, 10);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_disttowp, 1, 8);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lblGPS, 0, 8);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_EKFstatus, 1, 6);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_Mode, 0, 6);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_EngineSts, 1, 4);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_LeakSts, 0, 4);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_Connected, 0, 3);
@@ -1271,6 +1279,29 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel_gaugeData.Controls.Add(this.BUT_setmode, 1, 1);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_ARM, 0, 0);
             this.tableLayoutPanel_gaugeData.Name = "tableLayoutPanel_gaugeData";
+            // 
+            // lbl_disttowp
+            // 
+            resources.ApplyResources(this.lbl_disttowp, "lbl_disttowp");
+            this.lbl_disttowp.BackColor = System.Drawing.Color.Gray;
+            this.lbl_disttowp.ForeColor = System.Drawing.Color.White;
+            this.lbl_disttowp.Name = "lbl_disttowp";
+            // 
+            // lblGPS
+            // 
+            resources.ApplyResources(this.lblGPS, "lblGPS");
+            this.lblGPS.BackColor = System.Drawing.Color.Gray;
+            this.lblGPS.ForeColor = System.Drawing.Color.White;
+            this.lblGPS.Name = "lblGPS";
+            // 
+            // lbl_EKFstatus
+            // 
+            resources.ApplyResources(this.lbl_EKFstatus, "lbl_EKFstatus");
+            this.lbl_EKFstatus.BackColor = System.Drawing.Color.Gray;
+            this.lbl_EKFstatus.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lbl_EKFstatus.ForeColor = System.Drawing.Color.White;
+            this.lbl_EKFstatus.Name = "lbl_EKFstatus";
+            this.lbl_EKFstatus.Click += new System.EventHandler(this.hud1_ekfclick);
             // 
             // lbl_Mode
             // 
@@ -1397,23 +1428,30 @@ namespace MissionPlanner.GCSViews
             this.G_fuel.CapColors = new System.Drawing.Color[] {
         System.Drawing.Color.White,
         System.Drawing.Color.Lime,
-        System.Drawing.Color.Black,
+        System.Drawing.Color.Gray,
         System.Drawing.Color.Red,
         System.Drawing.Color.Lime};
-            this.G_fuel.CapPosition = new System.Drawing.Point(60, 45);
+            this.G_fuel.CapFont = new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold);
+            this.G_fuel.CapPosition = new System.Drawing.Point(73, 45);
+            this.G_fuel.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.G_fuel.CapsPosition = new System.Drawing.Point[] {
-        new System.Drawing.Point(60, 85),
-        new System.Drawing.Point(60, 45),
+        new System.Drawing.Point(67, 90),
+        new System.Drawing.Point(73, 45),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(45, 100),
         new System.Drawing.Point(100, 100)};
             this.G_fuel.CapsText = new string[] {
         "Fuel",
-        "",
+        "0",
         "",
         "E",
         "F"};
-            this.G_fuel.CapText = "";
+            this.G_fuel.CapText = "0";
             this.G_fuel.Center = new System.Drawing.Point(75, 75);
             this.G_fuel.MaxValue = 100F;
             this.G_fuel.MinValue = 0F;
@@ -1544,7 +1582,14 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Gray,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
+            this.G_waterflowTemp.CapFont = new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold);
             this.G_waterflowTemp.CapPosition = new System.Drawing.Point(70, 45);
+            this.G_waterflowTemp.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.G_waterflowTemp.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(58, 90),
         new System.Drawing.Point(70, 45),
@@ -1557,14 +1602,7 @@ namespace MissionPlanner.GCSViews
         "(°C)",
         "",
         ""};
-            this.G_waterflowTemp.CapsFonts = new System.Drawing.Font[] {
-            new Font("Segoe UI", 6, FontStyle.Bold),
-            new Font("Segoe UI", 5, FontStyle.Bold),
-            new Font("Segoe UI", 5, FontStyle.Bold),
-            SystemFonts.DefaultFont,
-            SystemFonts.DefaultFont
-            };  // 08july2026_task1
-
+            this.G_waterflowTemp.CapText = "";
             this.G_waterflowTemp.Center = new System.Drawing.Point(75, 75);
             this.G_waterflowTemp.MaxValue = 80F;
             this.G_waterflowTemp.MinValue = 0F;
@@ -1693,7 +1731,14 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Gray,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
+            this.G_waterflow.CapFont = new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold);
             this.G_waterflow.CapPosition = new System.Drawing.Point(70, 45);
+            this.G_waterflow.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.G_waterflow.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(58, 90),
         new System.Drawing.Point(70, 45),
@@ -1706,14 +1751,7 @@ namespace MissionPlanner.GCSViews
         "(L/min)",
         "",
         ""};
-            this.G_waterflow.CapsFonts= new System.Drawing.Font[] {
-            new Font("Segoe UI", 6, FontStyle.Bold),
-            new Font("Segoe UI", 5, FontStyle.Bold),
-            new Font("Segoe UI", 5, FontStyle.Bold),
-            SystemFonts.DefaultFont,
-            SystemFonts.DefaultFont
-            };  // 08july2026_task1
-            
+            this.G_waterflow.CapText = "";
             this.G_waterflow.Center = new System.Drawing.Point(75, 75);
             this.G_waterflow.MaxValue = 25F;
             this.G_waterflow.MinValue = 0F;
@@ -1842,7 +1880,14 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Gray,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
+            this.G_silencerTemp.CapFont = new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold);
             this.G_silencerTemp.CapPosition = new System.Drawing.Point(70, 45);
+            this.G_silencerTemp.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.G_silencerTemp.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(54, 88),
         new System.Drawing.Point(70, 45),
@@ -1855,14 +1900,7 @@ namespace MissionPlanner.GCSViews
         "(°C)",
         "",
         ""};
-            this.G_silencerTemp.CapsFonts = new System.Drawing.Font[] { 
-            new Font("Segoe UI", 6, FontStyle.Bold),
-            new Font("Segoe UI", 5, FontStyle.Bold),
-            new Font("Segoe UI", 5, FontStyle.Bold),
-            SystemFonts.DefaultFont,
-            SystemFonts.DefaultFont
-            };  // 08july2026_task1
-
+            this.G_silencerTemp.CapText = "";
             this.G_silencerTemp.Center = new System.Drawing.Point(75, 75);
             this.G_silencerTemp.MaxValue = 150F;
             this.G_silencerTemp.MinValue = 0F;
@@ -1983,14 +2021,22 @@ namespace MissionPlanner.GCSViews
             this.G_engineTemp.BaseArcStart = 135;
             this.G_engineTemp.BaseArcSweep = 270;
             this.G_engineTemp.BaseArcWidth = 2;
-            this.G_engineTemp.Cap_Idx = ((byte)(1));
-            this.G_engineTemp.CapColor = System.Drawing.Color.Lime;
+            this.G_engineTemp.Cap_Idx = ((byte)(0));
+            this.G_engineTemp.CapColor = System.Drawing.Color.White;
             this.G_engineTemp.CapColors = new System.Drawing.Color[] {
         System.Drawing.Color.White,
         System.Drawing.Color.Gray,
         System.Drawing.Color.Gray,
         System.Drawing.Color.White,
         System.Drawing.Color.White};
+            this.G_engineTemp.CapFont = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Bold);
+            this.G_engineTemp.CapPosition = new System.Drawing.Point(58, 85);
+            this.G_engineTemp.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.G_engineTemp.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(58, 85),
         new System.Drawing.Point(68, 45),
@@ -2003,11 +2049,7 @@ namespace MissionPlanner.GCSViews
         "(°C)",
         "",
         ""};
-            this.G_engineTemp.Cap_Idx = 2; // 08july2026_task1
-            this.G_engineTemp.CapFont = new Font("Segoe UI", 5, FontStyle.Bold); // 08july2026_task1
-            this.G_engineTemp.Cap_Idx = 0;// 08july2026_task1
-            this.G_engineTemp.CapFont = new Font("Segoe UI", 6,FontStyle.Bold);// 08july2026_task1
-
+            this.G_engineTemp.CapText = "EngTemp";
             this.G_engineTemp.Center = new System.Drawing.Point(75, 75);
             this.G_engineTemp.MaxValue = 150F;
             this.G_engineTemp.MinValue = 0F;
@@ -2136,16 +2178,23 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Gray,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
-            this.G_RPM.CapPosition = new System.Drawing.Point(60, 94);
+            this.G_RPM.CapFont = new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold);
+            this.G_RPM.CapPosition = new System.Drawing.Point(64, 94);
+            this.G_RPM.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.G_RPM.CapsPosition = new System.Drawing.Point[] {
-        new System.Drawing.Point(65, 85),
-        new System.Drawing.Point(60, 45),
-        new System.Drawing.Point(60, 94),
+        new System.Drawing.Point(66, 85),
+        new System.Drawing.Point(74, 45),
+        new System.Drawing.Point(64, 94),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
             this.G_RPM.CapsText = new string[] {
         "RPM",
-        "",
+        "0",
         "x1000",
         "",
         ""};
@@ -2300,7 +2349,14 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Black,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
+            this.Galt.CapFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Galt.CapPosition = new System.Drawing.Point(10, 10);
+            this.Galt.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.Galt.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(68, 85),
         new System.Drawing.Point(30, 55),
@@ -2444,22 +2500,29 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Gray,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
-            this.Gspeed.CapPosition = new System.Drawing.Point(70, 45);
+            this.Gspeed.CapFont = new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold);
+            this.Gspeed.CapPosition = new System.Drawing.Point(74, 45);
+            this.Gspeed.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.Gspeed.CapsPosition = new System.Drawing.Point[] {
-        new System.Drawing.Point(58, 85),
-        new System.Drawing.Point(70, 45),
-        new System.Drawing.Point(64, 96),
+        new System.Drawing.Point(63, 85),
+        new System.Drawing.Point(74, 45),
+        new System.Drawing.Point(67, 96),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
             this.Gspeed.CapsText = new string[] {
         "Speed",
-        "",
+        "0",
         "(kts)",
         "",
         ""};
-            this.Gspeed.CapText = "";
+            this.Gspeed.CapText = "0";
             this.Gspeed.Center = new System.Drawing.Point(75, 75);
-            this.Gspeed.MaxValue = 100F;
+            this.Gspeed.MaxValue = 30F;
             this.Gspeed.MinValue = 0F;
             this.Gspeed.Name = "Gspeed";
             this.Gspeed.Need_Idx = ((byte)(3));
@@ -2549,7 +2612,7 @@ namespace MissionPlanner.GCSViews
             this.Gspeed.ScaleLinesMajorColor = System.Drawing.Color.White;
             this.Gspeed.ScaleLinesMajorInnerRadius = 50;
             this.Gspeed.ScaleLinesMajorOuterRadius = 60;
-            this.Gspeed.ScaleLinesMajorStepValue = 10F;
+            this.Gspeed.ScaleLinesMajorStepValue = 5F;
             this.Gspeed.ScaleLinesMajorWidth = 2;
             this.Gspeed.ScaleLinesMinorColor = System.Drawing.Color.White;
             this.Gspeed.ScaleLinesMinorInnerRadius = 55;
@@ -2589,20 +2652,27 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Black,
         System.Drawing.Color.Black,
         System.Drawing.Color.Black};
-            this.G_batp.CapPosition = new System.Drawing.Point(60, 45);
+            this.G_batp.CapFont = new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold);
+            this.G_batp.CapPosition = new System.Drawing.Point(67, 45);
+            this.G_batp.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Segoe UI", 5F, System.Drawing.FontStyle.Bold),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.G_batp.CapsPosition = new System.Drawing.Point[] {
         new System.Drawing.Point(58, 85),
-        new System.Drawing.Point(60, 45),
+        new System.Drawing.Point(67, 45),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
             this.G_batp.CapsText = new string[] {
-        "BAT",
-        "",
+        "Battery",
+        "0",
         "",
         "",
         ""};
-            this.G_batp.CapText = "";
+            this.G_batp.CapText = "0";
             this.G_batp.Center = new System.Drawing.Point(68, 75);
             this.G_batp.MaxValue = 100F;
             this.G_batp.MinValue = 0F;
@@ -3614,6 +3684,7 @@ namespace MissionPlanner.GCSViews
             this.hud1.groundspeed = 0F;
             this.hud1.heading = 0F;
             this.hud1.hudcolor = System.Drawing.Color.LightGray;
+            this.hud1.KeepAspectRatio = true;
             this.hud1.linkqualitygcs = 0F;
             this.hud1.load = 0F;
             this.hud1.lowairspeed = false;
@@ -3809,6 +3880,13 @@ namespace MissionPlanner.GCSViews
             this.timer_gauge.Enabled = true;
             this.timer_gauge.Interval = 1000;
             this.timer_gauge.Tick += new System.EventHandler(this.timer_gauge_Tick);
+            // 
+            // lbl_signalStrength
+            // 
+            resources.ApplyResources(this.lbl_signalStrength, "lbl_signalStrength");
+            this.lbl_signalStrength.BackColor = System.Drawing.Color.Gray;
+            this.lbl_signalStrength.ForeColor = System.Drawing.Color.White;
+            this.lbl_signalStrength.Name = "lbl_signalStrength";
             // 
             // distanceBar1
             // 
@@ -4459,7 +4537,11 @@ private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
         private TextBox txt_messagebox;
         private Label lbl_LeakSts;
         private Label lbl_EngineSts;
+        private Label lbl_EKFstatus;
         private Label lbl_Mode;
+        private Label lblGPS;
+        private Label lbl_disttowp;
+        private Label lbl_signalStrength;
         //private Label label_batp_onGauge;
     }
 }

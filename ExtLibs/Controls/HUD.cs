@@ -50,6 +50,8 @@ namespace MissionPlanner.Controls
             }
         }
 
+
+        
         protected override void OnPaint(PaintEventArgs e)
         {
             opengl = false;
@@ -2899,8 +2901,8 @@ namespace MissionPlanner.Controls
                     }
                 }
 
-                // gps
-                if (displaygps)
+                // gps                
+                if (false) // if(displaygps) // 09july2026_GPS
                 {
                     string gps = "";
                     SolidBrush col = _whiteBrush;
@@ -3053,7 +3055,7 @@ namespace MissionPlanner.Controls
 
                 graphicsObject.TranslateTransform(this.Width / 2, this.Height / 2);
 
-                // draw armed
+                // draw armed // 11july2026_potential_problem1
 
                 if (status != statuslast)
                 {
@@ -3697,6 +3699,9 @@ namespace MissionPlanner.Controls
             OnResize(EventArgs.Empty);
         }
 
+        
+        public bool KeepAspectRatio { get; set; } = true; // 08july2026_task2
+
         protected override void OnResize(EventArgs e)
         {
             log.Info("OnResize start");
@@ -3708,23 +3713,28 @@ namespace MissionPlanner.Controls
 
             base.OnResize(e);
 
-            if (SixteenXNine)
+            // we kept KeepAspectRatio=false so it will be square
+            if (KeepAspectRatio) // 08july2026_task2 only this if condtion added
             {
-                int ht = (int) (this.Width / 1.777f);
-                if (ht >= this.Height + 5 || ht <= this.Height - 5)
+                if (SixteenXNine)
                 {
-                    this.Height = ht;
-                    return;
+                    int ht = (int)(this.Width / 1.777f);
+
+                    if (ht >= this.Height + 5 || ht <= this.Height - 5)
+                    {
+                        this.Height = ht;
+                        return;
+                    }
                 }
-            }
-            else
-            {
-                // 4x3
-                int ht = (int) (this.Width / 1.333f);
-                if (ht >= this.Height + 5 || ht <= this.Height - 5)
+                else
                 {
-                    this.Height = ht;
-                    return;
+                    int ht = (int)(this.Width / 1.333f);
+
+                    if (ht >= this.Height + 5 || ht <= this.Height - 5)
+                    {
+                        this.Height = ht;
+                        return;
+                    }
                 }
             }
 

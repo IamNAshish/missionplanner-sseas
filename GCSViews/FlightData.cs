@@ -34,6 +34,7 @@ using System.Windows.Forms;
 using WebCamService;
 using ZedGraph;
 using static Stimulsoft.Report.Func;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
 using TableLayoutPanelCellPosition = System.Windows.Forms.TableLayoutPanelCellPosition;
 using UnauthorizedAccessException = System.UnauthorizedAccessException;
@@ -321,8 +322,8 @@ namespace MissionPlanner.GCSViews
 
 
             // 07july2026_task2  start
-            //this.lbl_Mode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "mode", true));
-            //simple code //this.lbl_Mode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceHud, "battery_remaining", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0 %")); 
+            //simple code  //this.lbl_Mode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "mode", true));
+            //this.lbl_Mode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceHud, "battery_remaining", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0 %")); 
             var binding_mode = new Binding("Text", this.bindingSourceHud, "mode", true);
 
             binding_mode.Format += (s, e) =>
@@ -343,6 +344,63 @@ namespace MissionPlanner.GCSViews
                 }
             };
             // 07july2026_task2  end
+
+
+            // 09july2026_GPS start
+            Binding b = new Binding("Text",bindingSourceHud,"gpsstatus",true);
+
+            b.Format += (s, e) =>
+            {
+                switch (System.Convert.ToInt32(e.Value))
+                {
+                    case 0: e.Value = "No GPS"; lblGPS.BackColor = Color.FromArgb(200,0,0); break;
+                    case 1: e.Value = "No Fix"; lblGPS.BackColor = Color.FromArgb(200, 0, 0); break;
+                    case 2: e.Value = "2D Fix"; lblGPS.BackColor = Color.FromArgb(255, 182, 0); break; //kind of yellow 
+                    case 3: e.Value = "3D Fix"; lblGPS.BackColor = Color.LimeGreen; break;
+                    case 4: e.Value = "DGPS"; lblGPS.BackColor = Color.LimeGreen; break;
+                    case 5: e.Value = "RTK Float"; lblGPS.BackColor = Color.FromArgb(127, 111, 248); break;
+                    case 6: e.Value = "RTK Fixed"; lblGPS.BackColor = Color.FromArgb(127, 111, 248); break;
+                    default: e.Value = "Unknown"; lblGPS.BackColor = Color.LimeGreen; break;
+                }
+            };
+            lblGPS.DataBindings.Add(b);
+            // 09july2026_GPS end
+
+            // 10july2026_disttowp start
+                b = new Binding("Text", bindingSourceHud, "wp_dist", true);
+                b.Format += (s, e) =>
+                {                    
+                   e.Value = "D2WP: "+ e.Value;   
+                };
+                lbl_disttowp.DataBindings.Add(b);
+            // 10july2026_disttowp end
+
+            //11july2026_task1 start
+                //signal strength
+                b = new Binding("Text", bindingSourceHud, "linkqualitygcs", true);
+                b.Format += (s, e) =>
+                    {
+                        e.Value = "Signal: " + e.Value + hud1.datetime.ToString("HH:mm:ss");
+                    };
+                lbl_signalStrength.DataBindings.Add(b);
+               
+            //11july2026_task1 end
+
+
+
+
+            // 08july2026_task3 start
+            //EKF status
+            //this.lbl_EKFstatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "ekfstatus", true));
+            var binding_ekf = new Binding("Text", this.bindingSourceHud, "ekfstatus", true);
+
+                binding_ekf.Format += (s, e) =>
+                {
+                    e.Value = "EKF: " + e.Value;
+                };
+
+                this.lbl_EKFstatus.DataBindings.Add(binding_ekf);
+            // 08july2026_task3 end
 
 
             //hud1 shifting to tabpageDynamics
@@ -595,6 +653,7 @@ namespace MissionPlanner.GCSViews
             gMapControl1.Overlays.Add(poioverlay);
 
             float gspeedMax = Settings.Instance.GetFloat("GspeedMAX");
+            gspeedMax = 30;
             if (gspeedMax != 0)
             {
                 Gspeed.MaxValue = gspeedMax;
@@ -5802,12 +5861,21 @@ namespace MissionPlanner.GCSViews
                 int row = i / columns;
                 int col = i % columns;
 
-                controls[i].Size = new Size(cellSize, cellSize);
+                if (controls[i] == hud1)
+                {
+                    controls[i].Size = new Size(cellSize, cellSize);
+
+                }
+                else
+                {
+                    controls[i].Size = new Size(cellSize, cellSize);
+                }
 
                 controls[i].Location = new Point(
                     startX + col * cellSize,
                     startY + row * cellSize);
             }
+            // 08july2026_task2 end
         }
         // 05june26_task3 //v2
         private void tabPage1_Resize(object sender, EventArgs e)
@@ -5835,15 +5903,15 @@ namespace MissionPlanner.GCSViews
             
             
             ArrangeControls(gauges, columns, gaugeSize, 0, 0);
-
-
+            
+            hud1.KeepAspectRatio = false; // 08july2026_task2
+            
             // Set circular/oval region on hud1 matching its current size  // 10june26_task1 start
             using (GraphicsPath path = new GraphicsPath())
             {
                 //path.AddEllipse(0, 0, hud1.Width, hud1.Height); 
                 path.AddEllipse((hud1.Width - hud1.Height) / 2, 0, hud1.Height, hud1.Height);// 07july2026_task1
-                hud1.Region = new Region(path);
-                //hud1.Size = hud1.Size + new Size(hud1.Height/2, hud1.Height /2);
+                hud1.Region = new Region(path);                
             }
             // 10june26_task1 end
 
@@ -8277,7 +8345,6 @@ namespace MissionPlanner.GCSViews
             }
             else if(source is MissionPlanner.Controls.HUD) // 08june26_task1
             {
-                MessageBox.Show("cloning the hud1");
                 return CloneHUD((MissionPlanner.Controls.HUD)source); //10june_task1
             }
             return null;
@@ -8311,6 +8378,13 @@ namespace MissionPlanner.GCSViews
             clone.speedunit = source.speedunit;
             clone.distunit = source.distunit;
             clone.batterycellcount = source.batterycellcount;
+
+            clone.roll = source.roll;
+            clone.pitch = source.pitch;
+            clone.skyColor1 = source.skyColor1;
+            clone.skyColor2 = source.skyColor2;
+            clone.groundColor1 = source.groundColor1;
+            clone.groundColor2 = source.groundColor2;
             
 
             foreach (Binding b in source.DataBindings)
@@ -8413,6 +8487,7 @@ namespace MissionPlanner.GCSViews
             clone.Value1 = source.Value1;
             clone.Value2 = source.Value2;
             clone.Value3 = source.Value3;
+            clone.BackgroundImage = source.BackgroundImage;
 
 
 
@@ -8543,7 +8618,7 @@ namespace MissionPlanner.GCSViews
                                 this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
                                 this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
                             }
-                            else if (name == "MAV_CSR")//Grpm
+                            else if (name == "MAV_RPM")//"MAV_CSR")//Grpm
                             {
                                 //MessageBox.Show("mav_Grpm_custom_number:" + n.ToString());
                                 mav_Grpm_custom_number = n;
@@ -8771,13 +8846,13 @@ namespace MissionPlanner.GCSViews
 
             //gauge.Tag = gauge.Location;//with this that aguge stores its loc in its own memory called tag
 
-            gauge.BringToFront();
+            prevX = gauge.Location.X;
+            prevY = gauge.Location.Y;
+            gauge.Location = Galt.Location;            
 
             gauge.Size = new Size(Galt.Width,Galt.Height);
-            
-            prevX=gauge.Location.X;
-            prevY = gauge.Location.Y;
-            gauge.Location = Galt.Location;
+
+            gauge.BringToFront();
         }
 
         
@@ -8790,7 +8865,16 @@ namespace MissionPlanner.GCSViews
 
             gauge.Size = new Size(Galt.Width / 2,Galt.Height / 2);
 
-            gauge.Location = new Point(prevX, prevY);
+            //gauge.Location = new Point(prevX, prevY); // commented under 11june2026_problemSol1
+
+            // 11june2026_problemSol1 start //or just call tabPage1_Resize();            
+                G_batp.Location = Galt.Location;
+                Gspeed.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y);
+                G_RPM.Location = new Point(Galt.Location.X, Galt.Location.Y + G_batp.Height);
+                G_fuel.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y + G_batp.Height);
+            // 11june2026_problemSol1 end 
+
+
             //if (gauge.Tag is Point p)
             //    gauge.Location = p;
         }
