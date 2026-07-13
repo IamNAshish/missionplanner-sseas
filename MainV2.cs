@@ -1556,6 +1556,9 @@ namespace MissionPlanner
             MyView.ShowScreen("Terminal");
         }
 
+
+        private string CurrentTlogFilename { get; set; } // 13july2026_task1
+
         public void doDisconnect(MAVLinkInterface comPort)
         {
             log.Info("We are disconnecting");
@@ -1601,6 +1604,15 @@ namespace MissionPlanner
                         try
                         {
                             MissionPlanner.Log.LogSort.SortLogs(Directory.GetFiles(Settings.Instance.LogDir, "*.tlog"));
+                            // 13july2026_task1 start
+                                if (File.Exists(CurrentTlogFilename))
+                                {
+                                // Call converter here later
+
+                                ConvertCurrentTlog();
+
+                            }
+                            // 13july2026_task1 end
                         }
                         catch
                         {
@@ -1614,6 +1626,52 @@ namespace MissionPlanner
 
             this.MenuConnect.Image = global::MissionPlanner.Properties.Resources.light_connect_icon;
         }
+
+
+        private void ConvertCurrentTlog() // 13july2026_task1
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(CurrentTlogFilename))
+                    return;
+
+                if (!File.Exists(CurrentTlogFilename))
+                    return;
+
+                string converter = Path.Combine(Application.StartupPath, "TLOG2Excel.exe");
+
+                if (!File.Exists(converter))
+                {
+                    MessageBox.Show("TLOG2Excel.exe not found.");
+                    return;
+                }
+
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = converter,
+                    Arguments = "\"" + CurrentTlogFilename + "\"",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = Application.StartupPath
+                };
+
+                try
+                {
+                    Process.Start(psi); //it will run independently even if the app closes
+                }
+                catch (Exception ex)
+                {
+                    log.Error("Failed to launch TLOG2Excel.exe", ex);
+                }
+                 
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+            }
+        }
+
+
 
         public void doConnect(MAVLinkInterface comPort, string portname, string baud, bool getparams = true, bool showui = true)
         {
@@ -1769,6 +1827,8 @@ namespace MissionPlanner
                         var dt = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
                         var tlog = Settings.Instance.LogDir + Path.DirectorySeparatorChar +
                                    dt + ".tlog";
+                        CurrentTlogFilename = tlog; // 13july2026_task1
+
                         var rlog = Settings.Instance.LogDir + Path.DirectorySeparatorChar +
                                    dt + ".rlog";
 
@@ -2294,6 +2354,7 @@ namespace MissionPlanner
                     {
                         try
                         {
+                            
                             MissionPlanner.Log.LogSort.SortLogs(Directory.GetFiles(Settings.Instance.LogDir, "*.tlog"));
                         }
                         catch
