@@ -272,7 +272,7 @@ namespace MissionPlanner.GCSViews
             log.Info("Ctor Start");
 
             InitializeComponent();
-            tabControlactions.SelectedTab = tabQuick;
+            //tabControlactions.SelectedTab = tabQuick; // 15july2026_task2
 
 
             // 10june26_task1 start
@@ -332,6 +332,7 @@ namespace MissionPlanner.GCSViews
                 if (e.Value != null)
                 {
                     String modeValue = System.Convert.ToString(e.Value);
+                    MessageBox.Show("mode:" + modeValue);
                     switch (modeValue)
                     {
                         case "AUTO":
@@ -369,8 +370,12 @@ namespace MissionPlanner.GCSViews
             // 10july2026_disttowp start
                 b = new Binding("Text", bindingSourceHud, "wp_dist", true);
                 b.Format += (s, e) =>
-                {                    
-                   e.Value = "D2WP: "+ e.Value;   
+                {
+                    int currentWp =(int) (MainV2.comPort.MAV.cs.wpno); // 15july2026_task1
+                    int totalWp = FlightPlanner.instance.NoOfWayPoints; // 15july2026_task1
+                    //e.Value = "D2WP :"+ e.Value;
+                    e.Value = $"D2WP ({currentWp}/{totalWp}) = {e.Value} m"; // 15july2026_task1
+                    
                 };
                 lbl_disttowp.DataBindings.Add(b);
             // 10july2026_disttowp end
@@ -1047,7 +1052,8 @@ namespace MissionPlanner.GCSViews
                 if(!added)
                     log.Debug("not added to tabControlactions " + tabname);
             }
-            tabControlactions.SelectedTab = tabQuick;
+            //tabControlactions.SelectedTab = tabQuick;
+            tabControlactions.SelectedTab = tabGauges; // 15july2026_task2
             // 	// 10june26_task1  commented this tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
             //hiding as promod sir asked 06june26_task2 tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
         }
@@ -3101,7 +3107,15 @@ namespace MissionPlanner.GCSViews
                 mainloop();
             }
 
-            tabControlactions.SelectedTab = tabQuick;
+            //tabControlactions.SelectedTab = tabQuick;
+
+            // 15july2026_task2 start (hiding all other tabs)
+            //    tabControlactions.Appearance = TabAppearance.FlatButtons;
+            //    tabControlactions.ItemSize = new Size(0, 1);
+            //    tabControlactions.SizeMode = TabSizeMode.Fixed;
+            //    tabControlactions.SelectedTab = tabGauges;
+            //tabControlactions.SelectedTab = tabGauges;
+            // 15july2026_task2 end
         }
 
         private void FlightData_ParentChanged(object sender, EventArgs e)
@@ -8853,9 +8867,12 @@ namespace MissionPlanner.GCSViews
             gauge.Size = new Size(Galt.Width,Galt.Height);
 
             gauge.BringToFront();
+            toolTip1.SetToolTip(gauge, "RightClick to Freez.");
+
+
         }
 
-        
+
 
         private void Gauge_MouseUp(object sender, MouseEventArgs e) // 04june26_task_zoomG
         {
@@ -8877,6 +8894,8 @@ namespace MissionPlanner.GCSViews
 
             //if (gauge.Tag is Point p)
             //    gauge.Location = p;
+
+            toolTip1.SetToolTip(gauge, "");
         }
 
         private Form messagePopup;

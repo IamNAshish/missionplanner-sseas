@@ -60,9 +60,15 @@ using ZedGraph;
 using Renci.SshNet.Common;
 using Dowding.Model;
 using static MissionPlanner.Controls.ConnectionControl;
+using System.Runtime.InteropServices;
+
+
+
 
 namespace MissionPlanner.GCSViews
 {
+    
+
     public partial class FlightPlanner : MyUserControl, IDeactivate, IActivate
     {
         private static readonly Dictionary<string, List<Locationwp>> MissionCacheByMav =
@@ -71,12 +77,18 @@ namespace MissionPlanner.GCSViews
         private static readonly string MissionPerMavDirectory =
             Path.Combine(Settings.GetDataDirectory(), "missions-per-mav");
 
+        // 14july2026_placeholderForTextbox start
+            //[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+            //private static extern Int32 SendMessage(IntPtr hWnd, int msg, IntPtr wp, string lp);
+            //private const int EM_SETCUEBANNER = 0x1501;
+        // 14july2026_placeholderForTextbox end
         public FlightPlanner()
         {
             InitializeComponent();
             Init();
         }
 
+        
 
         private void but_mincommands_Click(object sender, System.EventArgs e)
         {
@@ -4004,6 +4016,58 @@ namespace MissionPlanner.GCSViews
             Visible = true;
 
             timer1.Start();
+
+
+            //SendMessage(tb_no_of_plans.Handle, EM_SETCUEBANNER, (IntPtr)1, "No. of planes"); // 14july2026_placeholderForTextbox
+
+
+            // 14july2026_placeholderForTextbox start
+            tb_no_of_plans.Text = "No. of plans";
+            tb_no_of_plans.ForeColor = Color.White;   // or Gainsboro
+
+            tb_no_of_plans.Enter += (s, ee) =>
+            {
+                if (tb_no_of_plans.Text == "No. of plans")
+                    tb_no_of_plans.Text = "";
+            };
+
+            tb_no_of_plans.Leave += (s, ee) =>
+            {
+                if (string.IsNullOrWhiteSpace(tb_no_of_plans.Text))
+                    tb_no_of_plans.Text = "No. of plans";
+            };
+            ///////////
+            tb_distance.Text = "Distance to shift";
+            tb_distance.ForeColor = Color.White;   // or Gainsboro
+
+            tb_distance.Enter += (s, ee) =>
+            {
+                if (tb_distance.Text == "Distance to shift")
+                    tb_distance.Text = "";
+            };
+
+            tb_distance.Leave += (s, ee) =>
+            {
+                if (string.IsNullOrWhiteSpace(tb_distance.Text))
+                    tb_distance.Text = "Distance to shift";
+            };
+            /////////////
+            tb_angle.Text = "Angle to shift";
+            tb_angle.ForeColor = Color.White;   // or Gainsboro
+
+            tb_angle.Enter += (s, ee) =>
+            {
+                if (tb_angle.Text == "Angle to shift")
+                    tb_angle.Text = "";
+            };
+
+            tb_angle.Leave += (s, ee) =>
+            {
+                if (string.IsNullOrWhiteSpace(tb_angle.Text))
+                    tb_angle.Text = "Angle to shift";
+            };
+            // 14july2026_placeholderForTextbox end
+
         }
 
 
@@ -4407,6 +4471,10 @@ namespace MissionPlanner.GCSViews
                 CustomMessageBox.Show("Failed to send new fence points " + ex, Strings.ERROR);
             }
         }
+
+
+
+        public int NoOfWayPoints => Commands.Rows.Count; // 15july2026_task1
 
         private List<Locationwp> GetCommandList()
         {
@@ -9849,8 +9917,22 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
             }
         }
 
+
+        
+
+
         // eye-open = show all plans in folder; eye-closed = show only the current plan-series
         private bool isVisible = false;
+
+        private static readonly Color[] PlanColors = // 15july2026_task3
+        {
+            Color.Green,
+            Color.Purple,
+            Color.Gold,
+            Color.Blue,
+            Color.Orange,
+            Color.Red
+        };
         private void btn_seeAllPlans_Click(object sender, EventArgs e)
         {
             isVisible = !isVisible; //toggle
@@ -9861,13 +9943,58 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
                 ShowAllPlansOnMap();
                 MainMap.Zoom = MainMap.Zoom - 0.5;
                 MainMap.Zoom = MainMap.Zoom + 0.5;
+
+                // 15july2026_task3 start
+                legendPanel.Controls.Clear();
+
+                legendPanel.AutoSize = true;
+                legendPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                legendPanel.WrapContents = false;
+                legendPanel.FlowDirection = FlowDirection.TopDown;
+
+                TableLayoutPanel legend_table = new TableLayoutPanel();
+                legend_table.Location = new Point(0, 0);
+                legend_table.BackColor = Color.Transparent;
+                legend_table.ColumnCount = 1;
+                legend_table.RowCount = comboBox_plans.Items.Count;
+                legendPanel.Controls.Add(legend_table);
+                legendPanel.BackColor = Color.FromArgb(180, 40, 40, 40);
+                legendPanel.Padding = new Padding(5);
+                legend_table.AutoSize = true;
+                legend_table.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                legend_table.Dock = DockStyle.Top;
+                MessageBox.Show($"{comboBox_plans.Items.Count} plans unai");
+                for (int i = 0; i < comboBox_plans.Items.Count; i++)
+                {
+                    string filename = comboBox_plans.Items[i].ToString();
+                    Color cor = PlanColors[i % PlanColors.Length];
+
+                    System.Windows.Forms.Label lbl = new System.Windows.Forms.Label
+                    {
+                        AutoSize = true,
+                        Margin = new Padding(2),
+                        Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                        ForeColor = cor,
+                        Text = "■ " + Path.GetFileNameWithoutExtension(filename)
+                    };
+
+                    legend_table.Controls.Add(lbl, 0, i);
+                }
+                // 15july2026_task3 end
             }
             else
             {
                 btn_seeAllPlans.BackgroundImage = Properties.Resources.eye_close;
                 ClearExtraPlanOverlays();
+
+                legendPanel.Controls.Clear(); // 15july2026_task3
             }
-                        
+
+
+            
+
+
+
         }
 
         // 11may26_task3
@@ -9899,6 +10026,9 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
                     //now after //14may26_task2 we will not have telemetry vehicle in the for loop of swarm write  button i.e btn_SwarmRun_Click
 
                     result.Add(temp);
+
+                    // 18july2026_task1
+                    
                 }
             }
 
@@ -9976,7 +10106,7 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
 
                 if (vehicles.Count == 0)
                 {
-                    CustomMessageBox.Show("No vehicles found!! \n వాహనాలు లేవు రా అయ్య !!");
+                    CustomMessageBox.Show("No vehicles found!!");
                     return;
                 }
 

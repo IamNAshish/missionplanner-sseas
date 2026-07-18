@@ -662,8 +662,8 @@ namespace MissionPlanner
         public MainV2()
         {
             
-            TTS tts = new TTS();//01july2026_task1
-            tts.Speak("Welcome to Saif Seas..Telugu kosam okti nokandi");//01july2026_task1
+           
+           
 
             // 29june26_task1 start..
             webServer = new SimpleWebServer();
@@ -742,6 +742,9 @@ namespace MissionPlanner
             }
 
             InitializeComponent();
+
+            TTS tts = new TTS();//01july2026_task1
+            tts.Speak("Welcome to Saif Seas.. saif seesku swagatamm...");//01july2026_task1
 
             // Default: keep Simulation + Help hidden behind the "more" toggle.
             SetMoreMenuExpanded(false);
