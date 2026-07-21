@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebCamService;
 using ZedGraph;
+using static MissionPlanner.Controls.ConnectionControl;
 using static Stimulsoft.Report.Func;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
@@ -840,6 +841,9 @@ namespace MissionPlanner.GCSViews
             updateDisplayView();
 
             hud1.doResize();
+
+
+            RefreshVehicleTabs(MainV2._connectionControl.VehicleList); // 20july2026_vehicletabs
         }
 
         public void BUT_playlog_Click(object sender, EventArgs e)
@@ -1054,8 +1058,19 @@ namespace MissionPlanner.GCSViews
             }
             //tabControlactions.SelectedTab = tabQuick;
             tabControlactions.SelectedTab = tabGauges; // 15july2026_task2
-            // 	// 10june26_task1  commented this tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
-            //hiding as promod sir asked 06june26_task2 tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
+                                                       // 	// 10june26_task1  commented this tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
+                                                       //hiding as promod sir asked 06june26_task2 tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
+
+
+            
+
+
+            // Restore vehicle tabs after Mission Planner rebuilds the tab control // 20july2026_vehicletabs
+            //if (MainV2._connectionControl != null)
+            //{
+            //    RefreshVehicleTabs(MainV2._connectionControl.VehicleList);
+            //}
+
         }
 
         public void updateDisplayView()
@@ -1063,6 +1078,15 @@ namespace MissionPlanner.GCSViews
             updateDisplayTabControlActions();
 
             loadTabControlActions();
+
+            // 20july2026_vehicletabs start
+            if (MainV2._connectionControl != null &&
+                        MainV2._connectionControl.VehicleList.Count > 0)
+            { // Recreate runtime vehicle tabs auv1 auv2 after coming back from Mission Planner or other tabs, rebuilds the default tab layout.
+                RefreshVehicleTabs(MainV2._connectionControl.VehicleList);
+            }
+            // 20july2026_vehicletabs end
+
 
             //we want to at least have one tabpage
             if (tabControlactions.TabPages.Count == 0)
@@ -5810,6 +5834,8 @@ namespace MissionPlanner.GCSViews
             e.DrawFocusRectangle();
         }
 
+
+        private bool _changingVehicleTab = false; // 20july2026_vehicletabs
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Messagetabtimer.Stop();
@@ -5843,8 +5869,95 @@ namespace MissionPlanner.GCSViews
             {
                 assignCustomFields();//(null, null);//test
             }
-            
+
+
+
+            //  20july2026_vehicletabs start
+            if (_changingVehicleTab)
+                return;
+
+            TabPage clicked = tabControlactions.SelectedTab;
+
+            if (clicked == null)
+                return;
+
+            // Ignore normal tabs
+            if (clicked == tabQuick || clicked == tabGauges)
+                return;
+
+            // Placeholder vehicle tab clicked
+            MoveVehicleTab(clicked);
+            //  20july2026_vehicletabs end
         }
+
+        //internal bool _ignoreVehicleTabRefresh = false; // 20july2026_vehicletabs
+        private void MoveVehicleTab(TabPage clicked) // 20july2026_vehicletabs
+        {   //this fun swaps the gaugetab and clicked tab
+
+            _changingVehicleTab = true;
+
+            try
+            {
+                TabPage gauge = tabGauges;
+
+                int gaugeIndex = tabControlactions.TabPages.IndexOf(gauge);
+                int clickedIndex = tabControlactions.TabPages.IndexOf(clicked);
+
+                // Swap tab texts
+                string txt = gauge.Text;
+                object tag = gauge.Tag;
+
+                gauge.Text = clicked.Text;
+                gauge.Tag = clicked.Tag;
+
+                clicked.Text = txt;
+                clicked.Tag = tag;
+
+                // Swap positions or index
+                tabControlactions.TabPages.Remove(gauge);
+                tabControlactions.TabPages.Remove(clicked);
+
+                if (gaugeIndex < clickedIndex)
+                {
+                    tabControlactions.TabPages.Insert(gaugeIndex, clicked);
+                    tabControlactions.TabPages.Insert(clickedIndex, gauge);
+                }
+                else
+                {
+                    tabControlactions.TabPages.Insert(clickedIndex, gauge);
+                    tabControlactions.TabPages.Insert(gaugeIndex, clicked);
+                }
+
+
+                // Change vehicle here using gauge.Tag or simulate dropdown change
+                ////////
+                ///ekade update chai list ne            
+                //_ignoreVehicleTabRefresh = true;
+                VehicleSwitchInProgress = true;
+                MainV2._connectionControl.SelectVehicle((port_sysid)gauge.Tag); //line 5914
+                MessageBox.Show(tabControlactions.TabPages.Count.ToString());
+                VehicleSwitchInProgress = false;
+                //_ignoreVehicleTabRefresh = false;
+                ///
+
+
+                tabControlactions.SelectedTab = gauge;
+            }
+            finally
+            {
+                _changingVehicleTab = false;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
 
         // 05june26_task3_v2 start
         // 05june26_task3 //v2
@@ -8952,5 +9065,146 @@ namespace MissionPlanner.GCSViews
             // 07july2026_task2_commented end..
         }
 
+
+        //private bool _changingVehicleTab = false; // 20july2026_vehicletabs
+        private void tabControlactions_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            //// 20july2026_vehicletabs start
+            //if (e.TabPage == null) //tabs levu kani selection initially kotha tabs loading
+            //    return;
+
+            //if (!tabControlactions.TabPages.Contains(e.TabPage)) 
+            //    return;
+
+            //// prevent recursion when we change SelectedTab while exchanging
+            //if (_changingVehicleTab)
+            //    return;
+
+            //// allow Quick tab normally
+            //if (e.TabPage == tabQuick || e.TabPage == tabGauges)
+            //    return;
+
+            ////e.Cancel = true;
+
+            //TabPage clicked = e.TabPage;
+            //TabPage gauge = tabGauges;
+
+            //// Find where the real gauge page is NOW
+            //int gaugeIndex = tabControlactions.TabPages.IndexOf(gauge);
+            //int clickedIndex = tabControlactions.TabPages.IndexOf(clicked);
+
+            //// Swap display information
+            //string txt = gauge.Text;
+            //object tag = gauge.Tag;
+
+            //gauge.Text = clicked.Text;
+            //gauge.Tag = clicked.Tag;
+
+            //clicked.Text = txt;
+            //clicked.Tag = tag;
+
+            //// Swap their positions
+            //tabControlactions.TabPages.Remove(gauge);
+            ////tabControlactions.TabPages.Remove(clicked);
+
+            //if (gaugeIndex < clickedIndex)
+            //{
+            //    tabControlactions.TabPages.Insert(gaugeIndex, clicked);
+            //    tabControlactions.TabPages.Insert(clickedIndex, gauge);
+            //}
+            //else
+            //{
+            //    tabControlactions.TabPages.Insert(clickedIndex, gauge);
+            //    tabControlactions.TabPages.Insert(gaugeIndex, clicked);
+            //}
+
+            //// TODO: Change the vehicle using gauge.Tag
+            //// Example:
+            //// cmb_sysid.SelectedItem = gauge.Tag;
+
+            //_changingVehicleTab = true;
+            //tabControlactions.SelectedTab = gauge;
+            //_changingVehicleTab = false;
+
+
+            // 20july2026_vehicletabs end
+
+            //TabPage clicked = e.TabPage;
+            //if (clicked == tabQuick)
+            //{
+            //    return; //do noting
+            //}
+            //if (firstime)
+            //{ 
+            //    gaugeIndex = tabControlactions.TabPages.IndexOf(tabGauges);//index where gauge is present
+            //    firstime = false;
+            //}
+            //int clickedIndex = tabControlactions.TabPages.IndexOf(clicked);//index where user clicked
+
+            //tabControlactions.TabPages.Remove(tabGauges);
+            //tabControlactions.TabPages.Remove(clicked);
+
+            ////exchange tabs indexes
+            //if (gaugeIndex < clickedIndex)
+            //{
+            //    tabControlactions.TabPages.Insert(gaugeIndex, clicked);
+            //    tabControlactions.TabPages.Insert(clickedIndex, tabGauges);
+            //}
+            //else
+            //{
+            //    tabControlactions.TabPages.Insert(clickedIndex, tabGauges);
+            //    tabControlactions.TabPages.Insert(gaugeIndex, clicked);
+            //}
+
+
+            //string temp = tabGauges.Text;
+            //tabGauges.Text = clicked.Text;
+            //clicked.Text = temp;
+
+            //gaugeIndex = clickedIndex;
+
+            // 20july2026_vehicletabs end
+        }
+
+        // 20july2026_vehicletabs start
+        internal void RefreshVehicleTabs(List<port_sysid> vehicles)
+        {//this fun creats and renames the tabs as auvo auv1 as per the list of avus from cmb_sysid in ConnectionControl.cs
+
+            MessageBox.Show("RefreshVehicleTabs");
+            MessageBox.Show(tabGauges.Tag == null ? "Tag is NULL" : tabGauges.Tag.ToString());
+
+            //remove tabs            
+            for (int i = tabControlactions.TabPages.Count - 1; i >= 0; i--)
+            {
+
+                if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabQuick)
+                {
+                    tabControlactions.TabPages.RemoveAt(i);
+                }
+            }
+
+            //first tab (actual gaugetab) to be renamed as vehicle 0            
+            if (vehicles.Count == 0)
+                return;
+            tabGauges.Text = vehicles[0].ToString();
+            tabGauges.Tag = vehicles[0];
+
+            port_sysid current =(port_sysid)MainV2._connectionControl.cmb_sysid.SelectedItem;
+
+
+            // for other vehicle clone and name
+            for (int i = 1; i < vehicles.Count; i++)
+            {
+                TabPage page = new TabPage();
+
+                page.Text = vehicles[i].ToString();
+                page.Tag = vehicles[i];
+
+                tabControlactions.TabPages.Add(page);
+            }
+            
+
+        }
+        // 20july2026_vehicletabs end
     }
 }

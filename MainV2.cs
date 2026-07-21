@@ -53,22 +53,22 @@ using System.Speech.Synthesis; //01july2026_task1
 namespace MissionPlanner
 {
     
-    public class TTS //01july2026_task1
-    {
-        private SpeechSynthesizer synth = new SpeechSynthesizer();
+    //public class TTS //01july2026_task1
+    //{
+    //    private SpeechSynthesizer synth = new SpeechSynthesizer();
 
-        public TTS()
-        {
-            synth.Volume = 100;   // 0-100
-            synth.Rate = 0;       // -10 to 10
-        }
+    //    public TTS()
+    //    {
+    //        synth.Volume = 100;   // 0-100
+    //        synth.Rate = 0;       // -10 to 10
+    //    }
 
-        public void Speak(string text)
-        {
-            synth.SpeakAsyncCancelAll();
-            synth.SpeakAsync(text);
-        }
-    }
+    //    public void Speak(string text)
+    //    {
+    //        synth.SpeakAsyncCancelAll();
+    //        synth.SpeakAsync(text);
+    //    }
+    //}
 
     public partial class MainV2 : Form
     {
@@ -654,19 +654,19 @@ namespace MissionPlanner
             }
         }
 
-        private SimpleWebServer webServer; // 29june26_task1_task
+        //private SimpleWebServer webServer; // 29june26_task1_task
         
 
 
 
         public MainV2()
         {
-            
-           
-           
+
+            InitializeComponent();
+          
 
             // 29june26_task1 start..
-            webServer = new SimpleWebServer();
+            //webServer = new SimpleWebServer();
             //webServer.Start(); //uncomment this line for API working (localhost)
             // 29june26_task1 end..
 
@@ -695,7 +695,7 @@ namespace MissionPlanner
             }
 
             // load config
-            LoadConfig();
+            LoadConfig(); 
 
             speech_armed_only = Settings.Instance.GetBoolean("speech_armed_only", false);
 
@@ -741,10 +741,10 @@ namespace MissionPlanner
                 changelanguage(CultureInfoEx.GetCultureInfo(Settings.Instance["language"]));
             }
 
-            InitializeComponent();
+            
 
-            TTS tts = new TTS();//01july2026_task1
-            tts.Speak("Welcome to Saif Seas.. saif seesku swagatamm...");//01july2026_task1
+            //TTS tts = new TTS();//01july2026_task1
+            //tts.Speak("Welcome to Saif Seas.. saif seesku swagatamm...");//01july2026_task1
 
             // Default: keep Simulation + Help hidden behind the "more" toggle.
             SetMoreMenuExpanded(false);

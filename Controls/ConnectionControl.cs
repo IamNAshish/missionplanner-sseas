@@ -1,5 +1,7 @@
 ﻿using MissionPlanner.Comms;
+using MissionPlanner.GCSViews;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -74,15 +76,42 @@ namespace MissionPlanner.Controls
             e.DrawFocusRectangle();
         }
 
+        internal void SelectVehicle(port_sysid vehicle)// 20july2026_vehicletabs
+        { //this fun is for calling from flightdata.cs to change cmb_sysid combobox
+            for (int i = 0; i < cmb_sysid.Items.Count; i++)
+            {
+                port_sysid item = (port_sysid)cmb_sysid.Items[i];
+
+                if (item.port == vehicle.port &&
+                    item.sysid == vehicle.sysid &&
+                    item.compid == vehicle.compid)
+                {
+                    cmb_sysid.SelectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+
+
+
+
+        internal static bool VehicleSwitchInProgress = false; // 20july2026_vehicletabs
+
+        List<port_sysid> vehicleList = new List<port_sysid>(); // 20july2026_vehicletabs
+        internal List<port_sysid> VehicleList // 20july2026_vehicletabs
+        {
+            get { return vehicleList; }
+        }
         //ashish: this code updates the cmb_sysid with availabe vehicles
         public void UpdateSysIDS()
         {
+            
+
+            vehicleList.Clear(); // 20july2026_vehicletabs
             cmb_sysid.SelectedIndexChanged -= CMB_sysid_SelectedIndexChanged;
-
             var oldidx = cmb_sysid.SelectedIndex;
-
             cmb_sysid.Items.Clear();
-
             int selectidx = -1;
 
             foreach (var port in MainV2.Comports.ToArray())
@@ -99,6 +128,8 @@ namespace MissionPlanner.Controls
 
                     var idx = cmb_sysid.Items.Add(temp);
 
+                    vehicleList.Add(temp); // 20july2026_vehicletabs
+
                     //MessageBox.Show("test 123: "+temp.ToString());
 
                     if (temp.port == MainV2.comPort && temp.sysid == MainV2.comPort.sysidcurrent && temp.compid == MainV2.comPort.compidcurrent)
@@ -113,7 +144,13 @@ namespace MissionPlanner.Controls
                 cmb_sysid.SelectedIndex = selectidx;
             }
 
-            cmb_sysid.SelectedIndexChanged += CMB_sysid_SelectedIndexChanged;
+                        
+            cmb_sysid.SelectedIndexChanged += CMB_sysid_SelectedIndexChanged;// 20july2026_vehicletabs
+            //FlightData.instance?.RefreshVehicleTabs(vehicleList);// 20july2026_vehicletabs
+            if (!VehicleSwitchInProgress)// 20july2026_vehicletabs i.e dont referesh while i am changing dropdown cmb_sysid from this fun
+            {
+                FlightData.instance?.RefreshVehicleTabs(vehicleList);
+            }
         }
 
         internal struct port_sysid
@@ -143,7 +180,7 @@ namespace MissionPlanner.Controls
                         !(Control.ModifierKeys == Keys.Control))
                         MainV2.comPort.getParamList();
 
-                    MainV2.View.Reload();
+                    //MainV2.View.Reload();   // test 21july2026_test1
                 }
             }
         }

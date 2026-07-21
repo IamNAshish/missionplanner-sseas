@@ -1223,4 +1223,20 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+	<!--  20july2026_p1 start -->
+	<ItemGroup>
+		<Compile Update="MainV2.cs">
+			<SubType>Form</SubType>
+		</Compile>
+
+		<Compile Update="MainV2.Designer.cs">
+			<DependentUpon>MainV2.cs</DependentUpon>
+		</Compile>
+
+		<EmbeddedResource Update="MainV2.resx">
+			<DependentUpon>MainV2.cs</DependentUpon>
+		</EmbeddedResource>
+	</ItemGroup>
+	<!--  20july2026_p1 end -->
+	
 </Project>
