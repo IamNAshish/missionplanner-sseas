@@ -68,6 +68,28 @@ namespace MissionPlanner
                         itemr.IsActive = MAV == MainV2.comPort?.MAV;
                         return null;
                     }
+
+                    // 22july2026_colorBoatsFlightData start
+                    //step3
+                    else if (item is GMapMarkerBoat)
+                    {
+                        var itemb = (GMapMarkerBoat)item;
+
+                        itemb.Position = portlocation;
+                        itemb.Heading = MAV.cs.yaw;
+                        itemb.Cog = MAV.cs.groundcourse;
+                        itemb.Target = MAV.cs.target_bearing;
+                        itemb.Nav_bearing = MAV.cs.nav_bearing;
+
+                        itemb.Sysid = MAV.sysid;
+                        itemb.IsActive = MAV == MainV2.comPort?.MAV;
+
+                        return null;
+                    }
+                    // 22july2026_colorBoatsFlightData end
+
+
+
                     else
                     {
                         existing.ForEach((a)=> overlay.Markers.Remove(a));
@@ -113,12 +135,15 @@ namespace MissionPlanner
             }
             else if (MAV.aptype == MAVLink.MAV_TYPE.SURFACE_BOAT)
             {
-                return new GMapMarkerBoat(
-                    portlocation,
-                    MAV.cs.yaw,
-                    MAV.cs.groundcourse,
-                    MAV.cs.nav_bearing,
-                    MAV.cs.target_bearing)
+                //return new GMapMarkerBoat(
+                //    portlocation,
+                //    MAV.cs.yaw,
+                //    MAV.cs.groundcourse,
+                //    MAV.cs.nav_bearing,
+                //    MAV.cs.target_bearing) // commented orginal code under // 22july2026_colorBoatsFlightData
+
+                return new GMapMarkerBoat( portlocation,MAV.cs.yaw,MAV.cs.groundcourse, MAV.cs.nav_bearing,MAV.cs.target_bearing,
+    MAV.sysid) // 22july2026_colorBoatsFlightData new code
                 {
                     IsActive = MAV == MainV2.comPort?.MAV,
                     ToolTipText = ArduPilot.Common.speechConversion(MAV, "" + Settings.Instance["mapicondesc"]),
@@ -215,7 +240,8 @@ namespace MissionPlanner
                                   MarkerTooltipMode.Always,
                     Tag = MAV
                 };
-            }
+            }         
+
             else
             {
                 // unknown type
@@ -256,6 +282,8 @@ namespace MissionPlanner
             Application.DoEvents();
             return form;
         }
+
+         
 
         public static DialogResult MessageShowAgain(string title, string promptText, bool show_cancel = false, string tag = "")
         {
