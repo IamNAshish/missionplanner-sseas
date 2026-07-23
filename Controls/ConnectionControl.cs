@@ -1,4 +1,5 @@
-﻿using MissionPlanner.Comms;
+﻿using ExcelLibrary.BinaryFileFormat;
+using MissionPlanner.Comms;
 using MissionPlanner.GCSViews;
 using System;
 using System.Collections.Generic;
@@ -128,7 +129,10 @@ namespace MissionPlanner.Controls
 
                     var idx = cmb_sysid.Items.Add(temp);
 
-                    vehicleList.Add(temp); // 20july2026_vehicletabs
+                    if (temp.compid == 1)// i.e idf its a surface boat // 20july2026_vehicletabs
+                    {
+                        vehicleList.Add(temp); // 20july2026_vehicletabs
+                    }
 
                     //MessageBox.Show("test 123: "+temp.ToString());
 

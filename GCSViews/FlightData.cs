@@ -9186,7 +9186,8 @@ namespace MissionPlanner.GCSViews
             //first tab (actual gaugetab) to be renamed as vehicle 0            
             if (vehicles.Count == 0)
                 return;
-            tabGauges.Text = vehicles[0].ToString();
+            MessageBox.Show("name of vehicle 0:" + vehicles[0].ToString());
+            tabGauges.Text = "Cheetaah_"+vehicles[0].sysid.ToString();
             tabGauges.Tag = vehicles[0];
 
             port_sysid current =(port_sysid)MainV2._connectionControl.cmb_sysid.SelectedItem;
@@ -9196,8 +9197,7 @@ namespace MissionPlanner.GCSViews
             for (int i = 1; i < vehicles.Count; i++)
             {
                 TabPage page = new TabPage();
-
-                page.Text = vehicles[i].ToString();
+                page.Text = "Cheetaah_"+vehicles[i].sysid.ToString();
                 page.Tag = vehicles[i];
 
                 tabControlactions.TabPages.Add(page);

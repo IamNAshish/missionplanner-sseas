@@ -1,8 +1,10 @@
-﻿using System;
-using System.Drawing;
-using GMap.NET;
+﻿using GMap.NET;
 using GMap.NET.WindowsForms;
 using MissionPlanner.Utilities;
+using System;
+using System.Drawing;
+using static alglib;
+//using static MissionPlanner.Controls.ConnectionControl;
 
 namespace MissionPlanner.Maps
 {
@@ -76,6 +78,34 @@ namespace MissionPlanner.Maps
 
 #if NET472_OR_GREATER
             var img = Resources.boat;
+            // 22july2026_colorBoatsMissionData 
+            //port_sysid current = (port_sysid)MainV2._connectionControl.cmb_sysid.SelectedItem;
+            //switch (current.sysid % 6)
+            //{
+            //    case 0: //6
+            //        img = Resources.boat;
+            //        break;
+            //    case 1:
+            //        img = Resources.boat1_green;
+            //        break;
+            //    case 2:
+            //        img = Resources.boat2_purple;
+            //        break;
+            //    case 3:
+            //        img = Resources.boat;
+            //        break;
+            //    case 4:
+            //        img = Resources.boat4_blue;
+            //        break;
+            //    case 5:
+            //        img = Resources.boat5_orange;
+            //        break;
+            //}
+
+            // 22july2026_colorBoatsMissionData end
+
+
+
             var ia = new System.Drawing.Imaging.ImageAttributes();
             if(IsTransparent)
             {
