@@ -1971,7 +1971,7 @@ namespace MissionPlanner
 
                     // Ashishhh
                     //this.Text = titlebar + " " + comPort.MAV.VersionString + " on " + comPort.MAV.SerialString;
-                    this.Text = "saif seas";
+                    this.Text = "Saif Seas Planner V1.0";
 
                     // refresh config window if needed
                     if (MyView.current != null && showui)

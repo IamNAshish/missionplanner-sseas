@@ -61,7 +61,7 @@
             this.MinimumSize = new System.Drawing.Size(600, 300);
             this.Name = "Splash";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Saif Seas Planner v1.0";
+            this.Text = "Saif Seas Planner V1.0";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.Splash_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

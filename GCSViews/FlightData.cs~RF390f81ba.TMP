@@ -5,9 +5,11 @@ using GMap.NET;
 using GMap.NET.Internals;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using IronPython.Runtime.Operations;
 using log4net;
 using Microsoft.Scripting.Utils;
 using MissionPlanner.ArduPilot;
+using MissionPlanner.Comms;
 using MissionPlanner.Controls;
 using MissionPlanner.GeoRef;
 using MissionPlanner.Joystick;
@@ -16,6 +18,7 @@ using MissionPlanner.Maps;
 using MissionPlanner.Utilities;
 using MissionPlanner.Warnings;
 using Org.BouncyCastle.Bcpg.OpenPgp;
+using RFDLib.IO.ATCommand;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,7 +36,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebCamService;
 using ZedGraph;
+using static log4net.Appender.ColoredConsoleAppender;
 using static MissionPlanner.Controls.ConnectionControl;
+using static MissionPlanner.Utilities.LTM;
 using static Stimulsoft.Report.Func;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
@@ -168,12 +173,6 @@ namespace MissionPlanner.GCSViews
         GMapOverlay adsbais;
 
         // 24july2026_DrawAllPathsFlightData start
-        private static bool IsValidSurfaceBoat(MAVLinkInterface port)
-        {
-            return port.sysidcurrent != 0 && port.compidcurrent == 1;
-            //i.e compidcurrent == 1 is surface boat sysidcurrent=0 is initial port
-        }
-
         private readonly Dictionary<MAVLinkInterface, GMapRoute> vehicleRoutes = new Dictionary<MAVLinkInterface, GMapRoute>();
 
         Color[] colors4trail ={
@@ -225,10 +224,10 @@ namespace MissionPlanner.GCSViews
 
         List<PointLatLng> trackPoints = new List<PointLatLng>();
         volatile int updateBindingSourcecount;
-
         object updateBindingSourcelock = new object();
-
         string updateBindingSourceThreadName = "";
+
+        // 24july2026_DrawAllPathsFlightData
 
         public enum actions
         {
@@ -1447,7 +1446,9 @@ namespace MissionPlanner.GCSViews
 
         private void BUT_clear_track_Click(object sender, EventArgs e)
         {
-            GetRoute(MainV2.comPort).Points.Clear();
+            if (route != null)
+                //route.Points.Clear(); // commented orginal code under // 24july2026_DrawAllPathsFlightData
+                GetRoute(MainV2.comPort).Points.Clear(); // 24july2026_DrawAllPathsFlightData
 
             if (MainV2.comPort.MAV.camerapoints != null)
                 MainV2.comPort.MAV.camerapoints.Clear();
@@ -3909,13 +3910,11 @@ namespace MissionPlanner.GCSViews
             // if controls are empty, but panel is visible -> hide
             if (controlsEmpty && panelVisible)
                 MainH.Panel1Collapsed = true;
-            
-
             // if controls have content, but panel is hidden -> show (unless user manually collapsed)
             if (!_leftPanelUserCollapsed && !controlsEmpty && !panelVisible)
                 MainH.Panel1Collapsed = false;
 
-            MainH.Panel1Collapsed = false;  //default dont hide even if have contents  // 07may26_task5
+            MainH.Panel1Collapsed = false; //default unhidden even if have contents  // 07may26_task5
 
             UpdateLeftPanelToggleUi();
         }
@@ -4438,9 +4437,6 @@ namespace MissionPlanner.GCSViews
                             //24july2026_DrawAllPathsFlightData start
                             foreach (var port in MainV2.Comports)
                             {
-                                if (!IsValidSurfaceBoat(port))
-                                continue;
-
                                 var route1 = GetRoute(port);
 
                                 var currentloc1 = new PointLatLng(port.MAV.cs.lat, port.MAV.cs.lng);
@@ -4468,8 +4464,6 @@ namespace MissionPlanner.GCSViews
                         // 24july2026_DrawAllPathsFlightData start
                         foreach (var port in MainV2.Comports)
                         {
-                            if (port.MAV.sysid <= 0)
-                                continue;//when no vehicle connected its running so we guarded it
                             var route = GetRoute(port);
 
                             if (route.Points.Count > numTrackLength)
@@ -4479,11 +4473,11 @@ namespace MissionPlanner.GCSViews
                                     route.Points.Count - numTrackLength);
                             }
                         }
-
                         // 24july2026_DrawAllPathsFlightData end
 
 
                         // add new route point
+
                         // commented orginal code under 24july2026_DrawAllPathsFlightData start
                         //if (MainV2.comPort.MAV.cs.lat != 0 && MainV2.comPort.MAV.cs.lng != 0)
                         //{
@@ -4494,10 +4488,7 @@ namespace MissionPlanner.GCSViews
                         // 24july2026_DrawAllPathsFlightData start
                         foreach (var port in MainV2.Comports)
                         {
-                            if (!IsValidSurfaceBoat(port))
-                                continue;
-
-                            var vehicleRoute = GetRoute(port);
+                            var route = GetRoute(port);
 
                             var currentloc2 = new PointLatLng(
                                 port.MAV.cs.lat,
@@ -4505,7 +4496,7 @@ namespace MissionPlanner.GCSViews
 
                             if (port.MAV.cs.lat != 0 && port.MAV.cs.lng != 0)
                             {
-                                vehicleRoute.Points.Add(currentloc2);
+                                route.Points.Add(currentloc2);
                             }
                         }
                         // 24july2026_DrawAllPathsFlightData end
@@ -4563,6 +4554,8 @@ namespace MissionPlanner.GCSViews
                                 }
 
                                 var existing = gMapControl1.Overlays.Where(a => a.Id == wpOverlay.overlay.Id).ToList();
+
+                                
                                 foreach (var b in existing)
                                 {
                                     gMapControl1.Overlays.Remove(b);
@@ -4923,9 +4916,7 @@ namespace MissionPlanner.GCSViews
                                 });
                         }
 
-                        // route = GetRoute(MainV2.comPort); // 24july2026_DrawAllPathsFlightData
-
-
+                        route = GetRoute(MainV2.comPort); // 24july2026_DrawAllPathsFlightData
                         if (route.Points.Count > 0) 
                         {
                             // add primary route icon
@@ -6300,6 +6291,11 @@ namespace MissionPlanner.GCSViews
             txt_messagebox.Select(txt_messagebox.Text.Length, 0);
             txt_messagebox.ScrollToCaret();
         }
+
+        //UpdateAllTrackRoutes();
+        //UpdateAllMissionOverlays();
+        //UpdateAllMAVMarkers();
+
 
         private void updateBindingSource()
         {

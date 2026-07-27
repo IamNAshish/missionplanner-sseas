@@ -9963,7 +9963,7 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
                 legend_table.AutoSize = true;
                 legend_table.AutoSizeMode = AutoSizeMode.GrowAndShrink;
                 legend_table.Dock = DockStyle.Top;
-                MessageBox.Show($"{comboBox_plans.Items.Count} plans unai");
+                //MessageBox.Show($"{comboBox_plans.Items.Count} plans unai");
                 for (int i = 0; i < comboBox_plans.Items.Count; i++)
                 {
                     string filename = comboBox_plans.Items[i].ToString();

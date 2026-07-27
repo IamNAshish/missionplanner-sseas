@@ -137,29 +137,54 @@ namespace MissionPlanner.Maps
             switch (Sysid % 6)
             {
                 case 1:
-                    img = Resources.boat1_green;                    
-                    if (IsActive)
-                    {
-                        // draw 20% larger or draw yellow ring or draw glow
-                    }
+                    img = Resources.boat1_green;
+
+                    if (IsActive)                    
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Green, -6, -6);
+                        // draw 20% larger or draw yellow ring or draw glow                    
+                    else                    
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Green, -6, -6);
+                    
                     break;
                 case 2:
                     img = Resources.boat2_purple;
+                    if (IsActive)
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Violet, -6, -6);
+                    else
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Violet, -6, -6);
+
                     break;
                 case 3:
                     img = Resources.boat;
+                    if (IsActive)
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Yellow, -6, -6);
+                    else
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Yellow, -6, -6);
                     break;
                 case 4:
                     img = Resources.boat4_blue;
+                    if (IsActive)
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Blue, -6, -6);
+                    else
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Blue, -6, -6);
+
                     break;
                 case 5:
                     img = Resources.boat5_orange;
+                    if (IsActive)
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Orange, -6, -6);
+                    else
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Orange, -6, -6);
+
                     break;
-                default:
-                    img = Resources.boat;
+                default: //6
+                    img = Resources.boat6_red;
+                    if (IsActive)
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Red, -6, -6);
+                    else
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Red, -6, -6);
                     break;
             }
-            g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 12, FontStyle.Bold), Brushes.Red, -6, -6);
 
             // 22july2026_colorBoatsFlightData end
 
