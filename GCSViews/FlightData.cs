@@ -167,6 +167,33 @@ namespace MissionPlanner.GCSViews
         GMapOverlay routes;
         GMapOverlay adsbais;
 
+
+
+        private static readonly Color[] missionColors = // 29july2026_DrawAllPlansFlightData
+        {
+            Color.Green,
+            Color.Purple,
+            Color.Gold,
+            Color.Blue,
+            Color.Orange,
+            Color.Red
+    //         Color.Magenta,
+    //Color.Black,
+    //Color.Cyan,
+    //Color.Yellow,
+    //Color.Red,
+    //Color.Blue
+        };
+        private static readonly GMarkerGoogleType[] missionMarkerTypes = // 29july2026_DrawAllPlansFlightData
+        {
+            GMarkerGoogleType.green,  // _01 (master)
+            GMarkerGoogleType.purple,  // _02 (violet ledu)
+            GMarkerGoogleType.yellow,   // _03
+            GMarkerGoogleType.blue,    // _04
+            GMarkerGoogleType.orange,  // _05
+            GMarkerGoogleType.red      // _06
+        };
+
         // 24july2026_DrawAllPathsFlightData start
         private static bool IsValidSurfaceBoat(MAVLinkInterface port)
         {
@@ -304,7 +331,7 @@ namespace MissionPlanner.GCSViews
         public FlightData()
         {
             log.Info("Ctor Start");
-
+            //MessageBox.Show("started Flightdata");
             InitializeComponent();
             //tabControlactions.SelectedTab = tabQuick; // 15july2026_task2
 
@@ -1094,14 +1121,14 @@ namespace MissionPlanner.GCSViews
                                                        //hiding as promod sir asked 06june26_task2 tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
 
 
-            
+
 
 
             // Restore vehicle tabs after Mission Planner rebuilds the tab control // 20july2026_vehicletabs
-            //if (MainV2._connectionControl != null)
-            //{
-            //    RefreshVehicleTabs(MainV2._connectionControl.VehicleList);
-            //}
+            if (MainV2._connectionControl != null)
+            {
+                RefreshVehicleTabs(MainV2._connectionControl.VehicleList);
+            }
 
         }
 
@@ -1308,7 +1335,7 @@ namespace MissionPlanner.GCSViews
 
         private void addMAVMarker(MAVState MAV)
         {
-            this.BeginInvokeIfRequired(() =>
+            this.BeginInvokeIfRequired(() => //Orginal code testtt 31july2026
             {
                 var marker = Common.getMAVMarker(MAV, routes);
 
@@ -1320,11 +1347,12 @@ namespace MissionPlanner.GCSViews
         }
 
         private void addMissionRouteMarker(GMapMarker marker)
-        {
+        {       
             if (marker == null) return;
 
             this.BeginInvokeIfRequired((Action) delegate
-            {
+            {            
+                int before = routes.Markers.Count;
                 routes.Markers.InsertSorted(marker, Comparer<GMapMarker>.Create((a, b) =>
                 {
                     var bvalue = 0;
@@ -1348,6 +1376,12 @@ namespace MissionPlanner.GCSViews
 
                     return a.GetType().Name.CompareTo(b.GetType().Name);
                 }));
+                ////MessageBox.Show($"After Count = {routes.Markers.Count}");
+                //int after = routes.Markers.Count;
+                //if (marker is GMapMarkerBoat)
+                //{
+                //    MessageBox.Show($"Boat inserted\nBefore={before}\nAfter={after}");
+                //}
             });
         }
 
@@ -1407,7 +1441,7 @@ namespace MissionPlanner.GCSViews
                 {
                     if (CustomMessageBox.Show(
                             action + " failed.\n" + sb.ToString() + "\nForce " + action +
-                            " can bypass safety checks,\nwhich can lead to the vehicle crashing\nand causing serious injuries.\n\nDo you wish to Force " +
+                            " can bypass safety checks,\nwhich can. lead to the vehicle crashing\nand causing serious injuries.\n\nDo you wish to Force " +
                             action + "?", Strings.ERROR, CustomMessageBox.MessageBoxButtons.YesNo,
                             CustomMessageBox.MessageBoxIcon.Exclamation, "Force " + action, "Cancel") ==
                         CustomMessageBox.DialogResult.Yes)
@@ -4511,8 +4545,6 @@ namespace MissionPlanner.GCSViews
                         // 24july2026_DrawAllPathsFlightData end
 
 
-
-
                         if (!this.IsHandleCreated)
                             continue;
 
@@ -4524,91 +4556,153 @@ namespace MissionPlanner.GCSViews
                             //Console.WriteLine("Doing FD WP's");
                             updateClearMissionRouteMarkers();
 
-                            var wps = MainV2.comPort.MAV.wps.Values.ToList();
-                            if (wps.Count >= 1)
-                            {
-                                var homeplla = new PointLatLngAlt(MainV2.comPort.MAV.cs.HomeLocation.Lat,
-                                    MainV2.comPort.MAV.cs.HomeLocation.Lng,
-                                    MainV2.comPort.MAV.cs.HomeLocation.Alt / CurrentState.multiplieralt, "H");
+                            
+                            foreach (var port in MainV2.Comports) // 29july2026_DrawAllPlansFlightData i.e we are adding this plan drawing code into a foor loop with a guard i.e only for surface bats
+                            { // 29july2026_DrawAllPlansFlightData
+                                if (!IsValidSurfaceBoat(port)) // 29july2026_DrawAllPlansFlightData
+                                    continue; // 29july2026_DrawAllPlansFlightData
 
-                                if (homeplla.Lat == 0 && homeplla.Lng == 0)
+
+                                //var wps = MainV2.comPort.MAV.wps.Values.ToList(); //commented orginal code under 29july2026_DrawAllPlansFlightData 
+                                var wps = port.MAV.wps.Values.ToList();// 29july2026_DrawAllPlansFlightData
+                                if (wps.Count >= 1)
                                 {
-                                    homeplla = new PointLatLngAlt(MainV2.comPort.MAV.cs.PlannedHomeLocation.Lat,
-                                        MainV2.comPort.MAV.cs.PlannedHomeLocation.Lng,
-                                        MainV2.comPort.MAV.cs.PlannedHomeLocation.Alt / CurrentState.multiplieralt, "H");
-                                }
+                                    //var homeplla = new PointLatLngAlt(MainV2.comPort.MAV.cs.HomeLocation.Lat,
+                                        //MainV2.comPort.MAV.cs.HomeLocation.Lng,
+                                        //MainV2.comPort.MAV.cs.HomeLocation.Alt / CurrentState.multiplieralt, "H");//commented orginal code under 29july2026_DrawAllPlansFlightData 
 
-                                var wpOverlay = new WPOverlay();
+                                    var homeplla = new PointLatLngAlt(port.MAV.cs.HomeLocation.Lat,
+                                        port.MAV.cs.HomeLocation.Lng,
+                                        port.MAV.cs.HomeLocation.Alt / CurrentState.multiplieralt,"H"); // 29july2026_DrawAllPlansFlightData
 
-                                {
-                                    List<Locationwp> mission_items;
-                                    mission_items = MainV2.comPort.MAV.wps.Values.Select(a => (Locationwp) a).ToList();
-                                    mission_items.RemoveAt(0);
-
-                                    if (wps.Count == 1)
+                                    if (homeplla.Lat == 0 && homeplla.Lng == 0)
                                     {
-                                        wpOverlay.CreateOverlay(homeplla,
-                                            mission_items,
-                                            0 / CurrentState.multiplieralt, 0 / CurrentState.multiplieralt,
-                                            CurrentState.multiplieralt);
+                                        homeplla = new PointLatLngAlt(MainV2.comPort.MAV.cs.PlannedHomeLocation.Lat,
+                                            MainV2.comPort.MAV.cs.PlannedHomeLocation.Lng,
+                                            MainV2.comPort.MAV.cs.PlannedHomeLocation.Alt / CurrentState.multiplieralt, "H");
                                     }
-                                    else
-                                    {
-                                        wpOverlay.CreateOverlay(homeplla,
-                                            mission_items,
-                                            0 / CurrentState.multiplieralt, 0 / CurrentState.multiplieralt,
-                                            CurrentState.multiplieralt);
 
-                                    }
-                                }
+                                    //MessageBox.Show($"SYSID={port.sysidcurrent}, WPs={port.MAV.wps.Count}");
+                                    //System.Diagnostics.Debug.WriteLine($"SYSID={port.sysidcurrent}, WPs={port.MAV.wps.Count}");
+                                    //System.Diagnostics.Debug.WriteLine($"Drawing overlay for SYSID={port.sysidcurrent}");
+                                    var wpOverlay = new WPOverlay();
 
-                                var existing = gMapControl1.Overlays.Where(a => a.Id == wpOverlay.overlay.Id).ToList();
-                                foreach (var b in existing)
-                                {
-                                    gMapControl1.Overlays.Remove(b);
-                                }
-
-                                gMapControl1.Overlays.Insert(1, wpOverlay.overlay);
-
-                                wpOverlay.overlay.ForceUpdate();
-
-                                try
-                                {
-                                    distanceBar1.ClearWPDist();
-
-                                    var i = -1;
-                                    var travdist = 0.0;
-                                    if (wpOverlay.pointlist.Count > 0)
-                                    {
-                                        var lastplla = wpOverlay.pointlist.Where(a => a != null).FirstOrDefault();
-                                        foreach (var plla in wpOverlay.pointlist)
+                                    // 29july2026_DrawAllPlansFlightData start
+                                    wpOverlay.overlay.Id = $"WPOverlay_{port.sysidcurrent}_{port.compidcurrent}";
+                                    if (port.sysidcurrent > 0)
                                         {
-                                            i++;
-                                            if (plla == null)
-                                                continue;
+                                            int colorIndex = (port.sysidcurrent - 1) % missionColors.Length;
 
-                                            var dist = lastplla.GetDistance(plla);
+                                            wpOverlay.MissionRouteColor = missionColors[colorIndex];
+                                            wpOverlay.MissionMarkerType = missionMarkerTypes[colorIndex];
+                                            //MessageBox.Show($"Port={port.sysidcurrent}  Index={colorIndex}");
+                                    }
+                                        else
+                                        {
+                                            wpOverlay.MissionRouteColor = Color.Gray;
+                                            wpOverlay.MissionMarkerType = GMarkerGoogleType.black_small;
+                                        }
+                                    // 29july2026_DrawAllPlansFlightData end
 
-                                            distanceBar1.AddWPDist((float) dist);
+                                    {
+                                        List<Locationwp> mission_items;
+                                        //mission_items = MainV2.comPort.MAV.wps.Values.Select(a => (Locationwp)a).ToList(); //commented orginal code under 29july2026_DrawAllPlansFlightData 
+                                        mission_items = port.MAV.wps.Values.Select(a => (Locationwp)a).ToList();// 29july2026_DrawAllPlansFlightData
 
-                                            if (i <= MainV2.comPort.MAV.cs.wpno)
-                                            {
-                                                travdist += dist;
-                                            }
+                                        mission_items.RemoveAt(0);
+
+                                        if (wps.Count == 1)
+                                        {
+                                            wpOverlay.CreateOverlay(homeplla,
+                                                mission_items,
+                                                0 / CurrentState.multiplieralt, 0 / CurrentState.multiplieralt,
+                                                CurrentState.multiplieralt);
+                                        }
+                                        else
+                                        {
+                                            wpOverlay.CreateOverlay(homeplla,
+                                                mission_items,
+                                                0 / CurrentState.multiplieralt, 0 / CurrentState.multiplieralt,
+                                                CurrentState.multiplieralt);
+
                                         }
                                     }
+                                    
+                                    var existing = gMapControl1.Overlays.Where(a => a.Id == wpOverlay.overlay.Id).ToList();
+                                    foreach (var b in existing)
+                                    {
+                                        gMapControl1.Overlays.Remove(b);
+                                    }
 
-                                    travdist -= MainV2.comPort.MAV.cs.wp_dist;
+                                    gMapControl1.Overlays.Insert(1, wpOverlay.overlay); // commented orginal code under // 29july2026_DrawAllPlansFlightData
+                                    //testttt gMapControl1.Overlays.Add(wpOverlay.overlay); // 29july2026_DrawAllPlansFlightData
+                                    //MessageBox.Show(
+                                    //    $"SYSID={port.sysidcurrent}\n" +
+                                    //    $"OverlayID={wpOverlay.overlay.Id}\n" +
+                                    //    $"Total Overlays={gMapControl1.Overlays.Count}\n" +
+                                    //    $"Routes={wpOverlay.overlay.Routes.Count}\n" +
+                                    //    $"Markers={wpOverlay.overlay.Markers.Count}"); 
 
-                                    if (MainV2.comPort.MAV.cs.mode.ToUpper() == "AUTO")
-                                        distanceBar1.traveleddist = (float) travdist;
 
+                                    wpOverlay.overlay.ForceUpdate();
+
+                                    try
+                                    {
+                                        distanceBar1.ClearWPDist();
+
+                                        var i = -1;
+                                        var travdist = 0.0;
+                                        if (wpOverlay.pointlist.Count > 0)
+                                        {
+                                            var lastplla = wpOverlay.pointlist.Where(a => a != null).FirstOrDefault();
+                                            foreach (var plla in wpOverlay.pointlist)
+                                            {
+                                                i++;
+                                                if (plla == null)
+                                                    continue;
+
+                                                var dist = lastplla.GetDistance(plla);
+
+                                                distanceBar1.AddWPDist((float)dist);
+
+                                                //if (i <= MainV2.comPort.MAV.cs.wpno) // commented orginal code under // 29july2026_DrawAllPlansFlightData
+                                                if (i <= port.MAV.cs.wpno) // 29july2026_DrawAllPlansFlightData
+                                                {
+                                                    travdist += dist;
+                                                }
+                                            }
+                                        }
+
+                                        //travdist -= MainV2.comPort.MAV.cs.wp_dist;// commented orginal code under // 29july2026_DrawAllPlansFlightData
+                                        travdist -= port.MAV.cs.wp_dist; // 29july2026_DrawAllPlansFlightData
+
+                                        //if (MainV2.comPort.MAV.cs.mode.ToUpper() == "AUTO") // commented orginal code under // 29july2026_DrawAllPlansFlightData
+                                        if (port.MAV.cs.mode.ToUpper() == "AUTO") // 29july2026_DrawAllPlansFlightData
+                                            distanceBar1.traveleddist = (float)travdist;
+
+
+                                        if (port == MainV2.comPort) // 29july2026_DrawAllPlansFlightData start
+                                        {
+                                            wpOverlay.MissionRouteWidth = 6;
+                                            wpOverlay.MissionDashStyle = DashStyle.Solid;
+                                        }
+                                        else
+                                        {
+                                            wpOverlay.MissionRouteWidth = 3;
+                                            wpOverlay.MissionDashStyle = DashStyle.Dash;
+                                        } // 29july2026_DrawAllPlansFlightData end
+
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        log.Error(ex);
+                                    }
                                 }
-                                catch (Exception ex)
-                                {
-                                    log.Error(ex);
-                                }
-                            }
+
+                                
+                            } // 29july2026_DrawAllPlansFlightData for loop
+
 
                             RegeneratePolygon();
 
@@ -4923,13 +5017,12 @@ namespace MissionPlanner.GCSViews
                                 });
                         }
 
-                        // route = GetRoute(MainV2.comPort); // 24july2026_DrawAllPathsFlightData
+                        route = GetRoute(MainV2.comPort); // 24july2026_DrawAllPathsFlightData dragging works if comment this
 
-
+                        //MessageBox.Show("test1:"+(route.Points.Count > 0).ToString());
                         if (route.Points.Count > 0) 
                         {
                             // add primary route icon
-
                             // draw guide mode point for only main mav
                             if (MainV2.comPort.MAV.cs.mode.ToLower() == "guided" &&
                                 MainV2.comPort.MAV.GuidedMode.x != 0)
@@ -4942,6 +5035,7 @@ namespace MissionPlanner.GCSViews
 
                             // draw all icons for all connected mavs 
                             //Ashish:i.e draw all AUVs
+                            //MessageBox.Show("i am here !!");
                             foreach (var port in MainV2.Comports.ToArray())
                             {
                                 // draw the mavs seen on this port
@@ -4952,12 +5046,15 @@ namespace MissionPlanner.GCSViews
                                         // We will draw this last
                                         continue;
                                     }
+                                    //MessageBox.Show($"About to call addMAVMarker for SYSID={MAV.sysid}");
                                     addMAVMarker(MAV);
                                 }
                             }
 
+                            //MessageBox.Show("About to call ACTIVE addMAVMarker");
                             // Draw the active aircraft
                             addMAVMarker(MainV2.comPort.MAV);
+
 
                             if (route.Points.Count == 0 || route.Points[route.Points.Count - 1].Lat != 0 &&
                                 (mapupdate.AddSeconds(3) < DateTime.Now) && CHK_autopan.Checked)
@@ -4972,6 +5069,37 @@ namespace MissionPlanner.GCSViews
                                 updateMapZoom(17);
                             }
                         }
+
+
+                        //MessageBox.Show("i am here !!");
+                        //foreach (var port in MainV2.Comports.ToArray())
+                        //{
+                        //    // draw the mavs seen on this port
+                        //    foreach (var MAV in port.MAVlist)
+                        //    {
+                        //        if (MAV == MainV2.comPort?.MAV)
+                        //        {
+                        //            // We will draw this last
+                        //            continue;
+                        //        }
+                        //        //MessageBox.Show($"About to call addMAVMarker for SYSID={MAV.sysid}");
+                        //        addMAVMarker(MAV);
+                        //    }
+                        //}
+                        //MessageBox.Show("now i am here 2!!");
+                        //MessageBox.Show("About to call ACTIVE addMAVMarker");
+                        // Draw the active aircraft
+                        //addMAVMarker(MainV2.comPort.MAV);
+                        //MessageBox.Show("now i am here 3!!");
+
+
+
+
+
+
+
+
+
 
                         prop.Update(MainV2.comPort.MAV.cs.HomeLocation, MainV2.comPort.MAV.cs.Location,
                             MainV2.comPort.MAV.cs.battery_kmleft);
@@ -5039,6 +5167,11 @@ namespace MissionPlanner.GCSViews
             }
 
             Console.WriteLine("FD Main loop exit");
+
+            string s = "";//testtt start 31july2026
+            foreach (var ov in gMapControl1.Overlays)
+            {s += $"{ov.Id}  Markers={ov.Markers.Count}  Routes={ov.Routes.Count}\n";}
+            //MessageBox.Show(s);//testtt end 31july2026
         }
 
 
@@ -5980,13 +6113,27 @@ namespace MissionPlanner.GCSViews
                 return;
 
             // Placeholder vehicle tab clicked
+            if (!tabControlactions.TabPages.Contains(tabGauges))
+                return;
+
+            if (!tabControlactions.TabPages.Contains(clicked))
+                return;
             MoveVehicleTab(clicked);
+
             //  20july2026_vehicletabs end
         }
 
         //internal bool _ignoreVehicleTabRefresh = false; // 20july2026_vehicletabs
         private void MoveVehicleTab(TabPage clicked) // 20july2026_vehicletabs
         {   //this fun swaps the gaugetab and clicked tab
+
+            //MessageBox.Show("MoveVehicleTab");
+            //if (!tabControlactions.TabPages.Contains(tabGauges) ||
+            //    !tabControlactions.TabPages.Contains(clicked))
+            //{
+            //    return;
+            //}
+
 
             _changingVehicleTab = true;
 
@@ -6008,18 +6155,37 @@ namespace MissionPlanner.GCSViews
                 clicked.Tag = tag;
 
                 // Swap positions or index
+                Debug.WriteLine(
+                    $"Gauge={gauge.Text}, GaugeIndex={gaugeIndex}, Contains={tabControlactions.TabPages.Contains(gauge)}");
+
+                Debug.WriteLine(
+                    $"Clicked={clicked.Text}, ClickedIndex={clickedIndex}, Contains={tabControlactions.TabPages.Contains(clicked)}");
                 tabControlactions.TabPages.Remove(gauge);
                 tabControlactions.TabPages.Remove(clicked);
 
                 if (gaugeIndex < clickedIndex)
                 {
+                    Debug.WriteLine($"GaugeIndex={gaugeIndex}, ClickedIndex={clickedIndex}");
+                    Debug.WriteLine($"Contains Gauge={tabControlactions.TabPages.Contains(gauge)}");
+                    Debug.WriteLine($"Contains Clicked={tabControlactions.TabPages.Contains(clicked)}");
+
                     tabControlactions.TabPages.Insert(gaugeIndex, clicked);
-                    tabControlactions.TabPages.Insert(clickedIndex, gauge);
+                    tabControlactions.TabPages.Insert(clickedIndex, gauge);//line 6093
                 }
                 else
                 {
+                    Debug.WriteLine($"GaugeIndex={gaugeIndex}, ClickedIndex={clickedIndex}");
+                    Debug.WriteLine($"Contains Gauge={tabControlactions.TabPages.Contains(gauge)}");
+                    Debug.WriteLine($"Contains Clicked={tabControlactions.TabPages.Contains(clicked)}");
+
                     tabControlactions.TabPages.Insert(clickedIndex, gauge);
                     tabControlactions.TabPages.Insert(gaugeIndex, clicked);
+                }
+
+                if (gaugeIndex < 0 || clickedIndex < 0)//testtt
+                {
+                    log.Error($"Invalid tab indices: gauge={gaugeIndex}, clicked={clickedIndex}");
+                    return;
                 }
 
 
@@ -6028,8 +6194,7 @@ namespace MissionPlanner.GCSViews
                 ///ekade update chai list ne            
                 //_ignoreVehicleTabRefresh = true;
                 VehicleSwitchInProgress = true;
-                MainV2._connectionControl.SelectVehicle((port_sysid)gauge.Tag); //line 5914
-                MessageBox.Show(tabControlactions.TabPages.Count.ToString());
+                MainV2._connectionControl.SelectVehicle((port_sysid)gauge.Tag);
                 VehicleSwitchInProgress = false;
                 //_ignoreVehicleTabRefresh = false;
                 ///
@@ -6042,16 +6207,6 @@ namespace MissionPlanner.GCSViews
                 _changingVehicleTab = false;
             }
         }
-
-
-
-
-
-
-
-
-
-
 
         // 05june26_task3_v2 start
         // 05june26_task3 //v2
@@ -9166,10 +9321,6 @@ namespace MissionPlanner.GCSViews
         // 20july2026_vehicletabs start
         internal void RefreshVehicleTabs(List<port_sysid> vehicles)
         {//this fun creats and renames the tabs as auvo auv1 as per the list of avus from cmb_sysid in ConnectionControl.cs
-
-            //MessageBox.Show("RefreshVehicleTabs");
-            //MessageBox.Show(tabGauges.Tag == null ? "Tag is NULL" : tabGauges.Tag.ToString());
-
             //remove tabs            
             for (int i = tabControlactions.TabPages.Count - 1; i >= 0; i--)
             {

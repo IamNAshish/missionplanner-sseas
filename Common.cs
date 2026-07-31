@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -73,17 +74,15 @@ namespace MissionPlanner
                     //step3
                     else if (item is GMapMarkerBoat)
                     {
+                        //MessageBox.Show($"Updating existing boat SYSID={MAV.sysid}");
                         var itemb = (GMapMarkerBoat)item;
-
                         itemb.Position = portlocation;
                         itemb.Heading = MAV.cs.yaw;
                         itemb.Cog = MAV.cs.groundcourse;
                         itemb.Target = MAV.cs.target_bearing;
                         itemb.Nav_bearing = MAV.cs.nav_bearing;
-
-                        itemb.Sysid = MAV.sysid;
+                        itemb.Sysid = MAV.sysid;                        
                         itemb.IsActive = MAV == MainV2.comPort?.MAV;
-
                         return null;
                     }
                     // 22july2026_colorBoatsFlightData end
@@ -135,12 +134,16 @@ namespace MissionPlanner
             }
             else if (MAV.aptype == MAVLink.MAV_TYPE.SURFACE_BOAT)
             {
-                //return new GMapMarkerBoat(
-                //    portlocation,
-                //    MAV.cs.yaw,
-                //    MAV.cs.groundcourse,
-                //    MAV.cs.nav_bearing,
-                //    MAV.cs.target_bearing) // commented orginal code under // 22july2026_colorBoatsFlightData
+                //testtt start
+                //MessageBox.Show($"Creating boat marker for SYSID={MAV.sysid}");               
+                //testtt end
+
+                    //return new GMapMarkerBoat(
+                    //    portlocation,
+                    //    MAV.cs.yaw,
+                    //    MAV.cs.groundcourse,
+                    //    MAV.cs.nav_bearing,
+                    //    MAV.cs.target_bearing) // commented orginal code under // 22july2026_colorBoatsFlightData
 
                 return new GMapMarkerBoat( portlocation,MAV.cs.yaw,MAV.cs.groundcourse, MAV.cs.nav_bearing,MAV.cs.target_bearing,
     MAV.sysid) // 22july2026_colorBoatsFlightData new code

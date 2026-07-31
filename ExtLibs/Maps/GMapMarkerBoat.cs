@@ -124,7 +124,7 @@ namespace MissionPlanner.Maps
 
             try
             {
-                g.RotateTransform(heading);
+                g.RotateTransform(Heading); // 22july2026_colorBoatsFlightData orginal was-> "heading" instead of "Heading"
             }
             catch
             {
@@ -135,7 +135,7 @@ namespace MissionPlanner.Maps
             // 22july2026_colorBoatsFlightData 
 
             switch (Sysid % 6)
-            {
+            {                
                 case 1:
                     img = Resources.boat1_green;
 

@@ -29,6 +29,10 @@ namespace MissionPlanner.ArduPilot
         /// </summary>
         List<PointLatLngAlt> route = new List<PointLatLngAlt>();
 
+        public float MissionRouteWidth { get; set; } = 4; // 29july2026_DrawAllPlansFlightData
+        public DashStyle MissionDashStyle { get; set; } = DashStyle.Solid; // 29july2026_DrawAllPlansFlightData
+
+
         public void CreateOverlay(PointLatLngAlt home, List<Locationwp> missionitems, double wpradius, double loiterradius, double altunitmultiplier)
         {
             overlay.Clear();
@@ -589,15 +593,15 @@ namespace MissionPlanner.ArduPilot
                     overlay.Routes.Add(homeroute);
                 }
 
-                //actual code
-                route.Stroke = new Pen(MissionRouteColor, 4);
-                route.Stroke.DashStyle = DashStyle.Custom;
-                overlay.Routes.Add(route);
+                //actual code commented under 29july2026_DrawAllPlansFlightData
+                //route.Stroke = new Pen(MissionRouteColor, 4);
+                //route.Stroke.DashStyle = DashStyle.Custom;
+                //overlay.Routes.Add(route);
 
-                //test.. Ashish
-                //route2.Stroke = new Pen(Color.Red, 4);
-                //route2.Stroke.DashStyle = DashStyle.Custom;
-                //overlay.Routes.Add(route2);
+                // 29july2026_DrawAllPlansFlightData
+                route.Stroke = new Pen(MissionRouteColor, MissionRouteWidth);
+                route.Stroke.DashStyle = MissionDashStyle;
+                overlay.Routes.Add(route);
             }
         }
     }
