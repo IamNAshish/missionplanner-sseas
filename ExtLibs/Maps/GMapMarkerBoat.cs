@@ -132,17 +132,19 @@ namespace MissionPlanner.Maps
 
 #if NET472_OR_GREATER
             var img = Resources.boat;
-            // 22july2026_colorBoatsFlightData 
-
+            // 22july2026_colorBoatsFlightData start
             switch (Sysid % 6)
             {                
                 case 1:
                     img = Resources.boat1_green;
 
-                    if (IsActive)                    
+                    if (IsActive)
+                    {
+                        
                         g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Green, -6, -6);
-                        // draw 20% larger or draw yellow ring or draw glow                    
-                    else                    
+                    }
+
+                    else
                         g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Green, -6, -6);
                     
                     break;
@@ -197,7 +199,17 @@ namespace MissionPlanner.Maps
                 var cm = new System.Drawing.Imaging.ColorMatrix { Matrix33 = 0.39f };
                 ia.SetColorMatrix(cm, System.Drawing.Imaging.ColorMatrixFlag.Default, System.Drawing.Imaging.ColorAdjustType.Bitmap);
             }
-            g.DrawImage(img, new Rectangle(-img.Width / 2, -img.Width / 2, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, ia);
+            //g.DrawImage(img, new Rectangle(-img.Width / 2, -img.Width / 2, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, ia); // commented under 22july2026_colorBoatsFlightData
+            // 22july2026_colorBoatsFlightData start
+            int w = img.Width;
+            int h = img.Height;
+            if (IsActive)
+            {  w = (int)(w * 1.25); h = (int)(h * 1.25); } //highlight active boat
+            g.DrawImage(img, new Rectangle(-w / 2, -h / 2, w, h), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, ia); 
+            // 22july2026_colorBoatsFlightData end
+
+
+
 #else
             g.DrawImageUnscaled(global::MissionPlanner.Maps.Resources.boat,
                 Size.Width / -2,

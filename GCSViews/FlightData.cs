@@ -177,12 +177,6 @@ namespace MissionPlanner.GCSViews
             Color.Blue,
             Color.Orange,
             Color.Red
-    //         Color.Magenta,
-    //Color.Black,
-    //Color.Cyan,
-    //Color.Yellow,
-    //Color.Red,
-    //Color.Blue
         };
         private static readonly GMarkerGoogleType[] missionMarkerTypes = // 29july2026_DrawAllPlansFlightData
         {
@@ -216,7 +210,7 @@ namespace MissionPlanner.GCSViews
             {
                 route = new GMapRoute(new List<PointLatLng>(), "track_" + port.ToString());
 
-                int index = (port.MAV.sysid - 1) % colors4trail.Length;  // set the color same as boat color
+                int index = Math.Max(0, port.MAV.sysid - 1) % colors4trail.Length;// set the color same as boat color
                 route.Stroke = new Pen(colors4trail[index], 2);
                 //route.Stroke = new Pen(Color.Blue, 2);                          
                 vehicleRoutes[port] = route;
@@ -331,7 +325,6 @@ namespace MissionPlanner.GCSViews
         public FlightData()
         {
             log.Info("Ctor Start");
-            //MessageBox.Show("started Flightdata");
             InitializeComponent();
             //tabControlactions.SelectedTab = tabQuick; // 15july2026_task2
 
@@ -1376,12 +1369,6 @@ namespace MissionPlanner.GCSViews
 
                     return a.GetType().Name.CompareTo(b.GetType().Name);
                 }));
-                ////MessageBox.Show($"After Count = {routes.Markers.Count}");
-                //int after = routes.Markers.Count;
-                //if (marker is GMapMarkerBoat)
-                //{
-                //    MessageBox.Show($"Boat inserted\nBefore={before}\nAfter={after}");
-                //}
             });
         }
 
@@ -4050,7 +4037,6 @@ namespace MissionPlanner.GCSViews
 
         private void mainloop()
         {
-            //MessageBox.Show("timer undii 2 !!");
             threadrun = true;
             EndPoint Remote = new IPEndPoint(IPAddress.Any, 0);
 
@@ -4424,7 +4410,6 @@ namespace MissionPlanner.GCSViews
                          tracklast.AddSeconds(Settings.Instance.GetDouble("FD_MapUpdateDelay", 0.3)) < DateTime.Now) ||
                         tracklast.AddSeconds(2) < DateTime.Now)
                     {
-                        //MessageBox.Show("timer undii !!");
                         // show disable joystick button
                         if (MainV2.joystick != null && MainV2.joystick.enabled) // 07june26_task1
                         {
@@ -4582,9 +4567,6 @@ namespace MissionPlanner.GCSViews
                                             MainV2.comPort.MAV.cs.PlannedHomeLocation.Alt / CurrentState.multiplieralt, "H");
                                     }
 
-                                    //MessageBox.Show($"SYSID={port.sysidcurrent}, WPs={port.MAV.wps.Count}");
-                                    //System.Diagnostics.Debug.WriteLine($"SYSID={port.sysidcurrent}, WPs={port.MAV.wps.Count}");
-                                    //System.Diagnostics.Debug.WriteLine($"Drawing overlay for SYSID={port.sysidcurrent}");
                                     var wpOverlay = new WPOverlay();
 
                                     // 29july2026_DrawAllPlansFlightData start
@@ -4595,7 +4577,6 @@ namespace MissionPlanner.GCSViews
 
                                             wpOverlay.MissionRouteColor = missionColors[colorIndex];
                                             wpOverlay.MissionMarkerType = missionMarkerTypes[colorIndex];
-                                            //MessageBox.Show($"Port={port.sysidcurrent}  Index={colorIndex}");
                                     }
                                         else
                                         {
@@ -4610,6 +4591,18 @@ namespace MissionPlanner.GCSViews
                                         mission_items = port.MAV.wps.Values.Select(a => (Locationwp)a).ToList();// 29july2026_DrawAllPlansFlightData
 
                                         mission_items.RemoveAt(0);
+
+                                        if (port == MainV2.comPort) // 29july2026_DrawAllPlansFlightData start
+                                        {
+                                            wpOverlay.MissionRouteWidth = 6;
+                                            wpOverlay.MissionDashStyle = DashStyle.Solid;
+                                        }
+                                        else
+                                        {
+                                            wpOverlay.MissionRouteWidth = 3;
+                                            wpOverlay.MissionDashStyle = DashStyle.Dash;
+                                        } // 29july2026_DrawAllPlansFlightData end
+
 
                                         if (wps.Count == 1)
                                         {
@@ -4635,15 +4628,8 @@ namespace MissionPlanner.GCSViews
                                     }
 
                                     gMapControl1.Overlays.Insert(1, wpOverlay.overlay); // commented orginal code under // 29july2026_DrawAllPlansFlightData
-                                    //testttt gMapControl1.Overlays.Add(wpOverlay.overlay); // 29july2026_DrawAllPlansFlightData
-                                    //MessageBox.Show(
-                                    //    $"SYSID={port.sysidcurrent}\n" +
-                                    //    $"OverlayID={wpOverlay.overlay.Id}\n" +
-                                    //    $"Total Overlays={gMapControl1.Overlays.Count}\n" +
-                                    //    $"Routes={wpOverlay.overlay.Routes.Count}\n" +
-                                    //    $"Markers={wpOverlay.overlay.Markers.Count}"); 
-
-
+                                    // gMapControl1.Overlays.Add(wpOverlay.overlay); // 29july2026_DrawAllPlansFlightData
+                                   
                                     wpOverlay.overlay.ForceUpdate();
 
                                     try
@@ -4678,19 +4664,9 @@ namespace MissionPlanner.GCSViews
 
                                         //if (MainV2.comPort.MAV.cs.mode.ToUpper() == "AUTO") // commented orginal code under // 29july2026_DrawAllPlansFlightData
                                         if (port.MAV.cs.mode.ToUpper() == "AUTO") // 29july2026_DrawAllPlansFlightData
-                                            distanceBar1.traveleddist = (float)travdist;
+                                            distanceBar1.traveleddist = (float)travdist;                                   
 
-
-                                        if (port == MainV2.comPort) // 29july2026_DrawAllPlansFlightData start
-                                        {
-                                            wpOverlay.MissionRouteWidth = 6;
-                                            wpOverlay.MissionDashStyle = DashStyle.Solid;
-                                        }
-                                        else
-                                        {
-                                            wpOverlay.MissionRouteWidth = 3;
-                                            wpOverlay.MissionDashStyle = DashStyle.Dash;
-                                        } // 29july2026_DrawAllPlansFlightData end
+                                       
 
 
                                     }
@@ -5017,9 +4993,13 @@ namespace MissionPlanner.GCSViews
                                 });
                         }
 
-                        route = GetRoute(MainV2.comPort); // 24july2026_DrawAllPathsFlightData dragging works if comment this
+                        
+                        if (MainV2.Comports.Any(p => p.BaseStream != null && p.BaseStream.IsOpen && p.MAV.sysid > 0))// exe only if veicles connected
+                        {
+                            route = GetRoute(MainV2.comPort);// 24july2026_DrawAllPathsFlightData dragging works if comment this but vehicles symbols (boats) gone.. so added the if condition 
+                        }
 
-                        //MessageBox.Show("test1:"+(route.Points.Count > 0).ToString());
+
                         if (route.Points.Count > 0) 
                         {
                             // add primary route icon
@@ -5035,7 +5015,6 @@ namespace MissionPlanner.GCSViews
 
                             // draw all icons for all connected mavs 
                             //Ashish:i.e draw all AUVs
-                            //MessageBox.Show("i am here !!");
                             foreach (var port in MainV2.Comports.ToArray())
                             {
                                 // draw the mavs seen on this port
@@ -5046,12 +5025,9 @@ namespace MissionPlanner.GCSViews
                                         // We will draw this last
                                         continue;
                                     }
-                                    //MessageBox.Show($"About to call addMAVMarker for SYSID={MAV.sysid}");
                                     addMAVMarker(MAV);
                                 }
                             }
-
-                            //MessageBox.Show("About to call ACTIVE addMAVMarker");
                             // Draw the active aircraft
                             addMAVMarker(MainV2.comPort.MAV);
 
@@ -5069,37 +5045,6 @@ namespace MissionPlanner.GCSViews
                                 updateMapZoom(17);
                             }
                         }
-
-
-                        //MessageBox.Show("i am here !!");
-                        //foreach (var port in MainV2.Comports.ToArray())
-                        //{
-                        //    // draw the mavs seen on this port
-                        //    foreach (var MAV in port.MAVlist)
-                        //    {
-                        //        if (MAV == MainV2.comPort?.MAV)
-                        //        {
-                        //            // We will draw this last
-                        //            continue;
-                        //        }
-                        //        //MessageBox.Show($"About to call addMAVMarker for SYSID={MAV.sysid}");
-                        //        addMAVMarker(MAV);
-                        //    }
-                        //}
-                        //MessageBox.Show("now i am here 2!!");
-                        //MessageBox.Show("About to call ACTIVE addMAVMarker");
-                        // Draw the active aircraft
-                        //addMAVMarker(MainV2.comPort.MAV);
-                        //MessageBox.Show("now i am here 3!!");
-
-
-
-
-
-
-
-
-
 
                         prop.Update(MainV2.comPort.MAV.cs.HomeLocation, MainV2.comPort.MAV.cs.Location,
                             MainV2.comPort.MAV.cs.battery_kmleft);
@@ -5167,11 +5112,6 @@ namespace MissionPlanner.GCSViews
             }
 
             Console.WriteLine("FD Main loop exit");
-
-            string s = "";//testtt start 31july2026
-            foreach (var ov in gMapControl1.Overlays)
-            {s += $"{ov.Id}  Markers={ov.Markers.Count}  Routes={ov.Routes.Count}\n";}
-            //MessageBox.Show(s);//testtt end 31july2026
         }
 
 
@@ -9334,7 +9274,6 @@ namespace MissionPlanner.GCSViews
             //first tab (actual gaugetab) to be renamed as vehicle 0            
             if (vehicles.Count == 0)
                 return;
-            //MessageBox.Show("name of vehicle 0:" + vehicles[0].ToString());
             tabGauges.Text = "CRAFT"+vehicles[0].sysid.ToString();
             tabGauges.Tag = vehicles[0];
 
