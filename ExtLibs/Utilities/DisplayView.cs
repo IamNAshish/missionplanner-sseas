@@ -63,6 +63,8 @@ namespace MissionPlanner.Utilities
         public Boolean displayAuxFunctionTab { get; set; }
         public Boolean displayPayloadTab { get; set; }
 
+        public Boolean displayDashboardTab {  get; set; } // 04aug2026_DashboardTab
+
         //flight plan
         public Boolean displayRallyPointsMenu { get; set; }
         public Boolean displayGeoFenceMenu { get; set; }

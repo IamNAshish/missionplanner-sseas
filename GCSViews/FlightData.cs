@@ -393,7 +393,7 @@ namespace MissionPlanner.GCSViews
                 {                 
                     lbl_Mode.BackColor = Color.Gray;
                 }
-                e.Value = $"{e.Value} Mode";
+                e.Value = $"{e.Value}"; //Mode";
             };
             lbl_Mode.DataBindings.Add(binding_mode);
         
@@ -535,12 +535,11 @@ namespace MissionPlanner.GCSViews
             heading = System.Convert.ToSingle(MainV2.comPort.MAV.cs.roll);
             pictureBox_roll.Image = RotateImage(originalVehicleImage_rearView, heading);
             //09may26_task2 end ..
-
-
+                       
 
             // Disabled: right-click context menu on left-side tabs Customize and Multiline opt in right click.
             // can be enable later by restoring these ContextMenuStrip assignments.
-            
+
             //this.tabControlactions.ContextMenuStrip = null; //13may26_task1_1 commented to enable right click for now 
             this.SubMainRight.Panel2.ContextMenuStrip = null;
 
@@ -1073,6 +1072,9 @@ namespace MissionPlanner.GCSViews
             TabListDisplay.Add(tabAuxFunction.Name, MainV2.DisplayConfiguration.displayAuxFunctionTab);
 
             TabListDisplay.Add(tabPayload.Name, MainV2.DisplayConfiguration.displayPayloadTab);
+         
+            TabListDisplay.Add(tabDashboard.Name, MainV2.DisplayConfiguration.displayDashboardTab); // 04aug2026_DashboardTab
+          
         }
 
         private void loadTabControlActions()
@@ -1113,7 +1115,7 @@ namespace MissionPlanner.GCSViews
                                                        // 	// 10june26_task1  commented this tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
                                                        //hiding as promod sir asked 06june26_task2 tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
 
-
+            
 
 
 
@@ -1143,6 +1145,7 @@ namespace MissionPlanner.GCSViews
             //we want to at least have one tabpage
             if (tabControlactions.TabPages.Count == 0)
             {
+                tabControlactions.TabPages.Add(tabDashboard); // 04aug2026_DashoardTab
                 tabControlactions.TabPages.Add(tabGauges);
                 tabControlactions.SelectedIndex = 0;
             }
@@ -5108,7 +5111,8 @@ namespace MissionPlanner.GCSViews
                 {
                     BeginInvoke((Action) updateTransponder);
                     transponderUpdate = DateTime.Now;
-                }
+                }               
+               
             }
 
             Console.WriteLine("FD Main loop exit");
@@ -6049,7 +6053,7 @@ namespace MissionPlanner.GCSViews
                 return;
 
             // Ignore normal tabs
-            if (clicked == tabQuick || clicked == tabGauges)
+            if (clicked == tabDashboard  /* 04aug2026_DashboardTab */ || clicked == tabGauges) 
                 return;
 
             // Placeholder vehicle tab clicked
@@ -6067,14 +6071,7 @@ namespace MissionPlanner.GCSViews
         private void MoveVehicleTab(TabPage clicked) // 20july2026_vehicletabs
         {   //this fun swaps the gaugetab and clicked tab
 
-            //MessageBox.Show("MoveVehicleTab");
-            //if (!tabControlactions.TabPages.Contains(tabGauges) ||
-            //    !tabControlactions.TabPages.Contains(clicked))
-            //{
-            //    return;
-            //}
-
-
+    
             _changingVehicleTab = true;
 
             try
@@ -9264,11 +9261,16 @@ namespace MissionPlanner.GCSViews
             //remove tabs            
             for (int i = tabControlactions.TabPages.Count - 1; i >= 0; i--)
             {
-
-                if (tabControlactions.TabPages[i] != tabGauges )//&& tabControlactions.TabPages[i] != tabQuick)
+                if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard)
                 {
                     tabControlactions.TabPages.RemoveAt(i);
                 }
+            }
+
+            // 04aug2026_DashboardTab ensure Dashboard exists // later should add this just like other tabs
+            if (!tabControlactions.TabPages.Contains(tabDashboard))
+            {
+                tabControlactions.TabPages.Insert(0, tabDashboard);
             }
 
             //first tab (actual gaugetab) to be renamed as vehicle 0            
@@ -9289,9 +9291,172 @@ namespace MissionPlanner.GCSViews
 
                 tabControlactions.TabPages.Add(page);
             }
-            
+
+
+        }// 20july2026_vehicletabs end
+
+
+        /// <summary>
+        /// // 04aug2026_DashboardTab Dashboad GUI start
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void but_ArmAll_Click(object sender, EventArgs e) //04aug2026_DashboardTab
+
+        {
+            foreach (var port in MainV2.Comports)
+            {
+                if (!IsValidSurfaceBoat(port))
+                    continue;
+
+                ArmVehicle(port, true);
+            }
 
         }
-        // 20july2026_vehicletabs end
+        private void but_DisarmAll_Click(object sender, EventArgs e)//04aug2026_DashboardTab
+        {
+            foreach (var port in MainV2.Comports)
+            {
+                if (!IsValidSurfaceBoat(port))
+                    continue;
+
+                ArmVehicle(port, false);
+            }
+        }
+        private bool ArmVehicle(MAVLinkInterface port, bool arm) //04aug2026_DashboardTab
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+
+                var sub = port.SubscribeToPacketType(
+                    MAVLink.MAVLINK_MSG_ID.STATUSTEXT,
+                    message =>
+                    {
+                        sb.AppendLine(
+                            Encoding.ASCII.GetString(
+                                ((MAVLink.mavlink_statustext_t)message.data).text)
+                                .TrimEnd('\0'));
+                        return true;
+                    },
+                    (byte)port.sysidcurrent,
+                    (byte)port.compidcurrent);
+
+                bool ans = port.doARM(arm);
+
+                port.UnSubscribeToPacketType(sub);
+
+                return ans;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void dashboardTimer_Tick(object sender, EventArgs e) // 04aug2026_DashboardTab
+        {
+            if (tabControlactions.SelectedTab == tabDashboard)
+            { // dashboad unte andlo ani update chey
+                UpdateDashboard();
+            }
+        }
+        private void UpdateDashboard() //04aug2026_DashboardTab
+        { //04aug2026_DashboardTab this fun will update everything in tabDashboard 
+            try
+            {
+                dashboardTimer.Stop();
+                // connection labels
+                int connectedVehicles = 0;
+                int armed = 0;
+                foreach (var port in MainV2.Comports)
+                {
+                    if (!IsValidSurfaceBoat(port))
+                        continue;
+
+                    if (port.BaseStream != null && port.BaseStream.IsOpen)
+                        connectedVehicles++;
+                    if (port.MAV.cs.armed)
+                        armed++;
+
+                }
+                    lblConnectedVehicles.Text = $"Connected Vehicles : {connectedVehicles}";
+
+         
+                if (MainV2.comPort != null && connectedVehicles != 0)
+                {
+                    lblActiveVehicle.Text =     $"Active Vehicle     : CRAFT{MainV2.comPort.MAV.sysid}";
+                    lblArmedVehicles.Text =     $"Armed Vehicles     : {armed}";                                        
+                }
+                else 
+                { 
+                    lblActiveVehicle.Text =     $"Active Vehicle     : NA";
+                    lblArmedVehicles.Text =     $"Armed Vehicles     : NA";
+                }
+
+
+                dataGridViewDashboard.Rows.Clear();
+                int row = 0;
+                    foreach (var port in MainV2.Comports)
+                    {
+                        if (!IsValidSurfaceBoat(port))
+                            continue;
+
+                        string gps_string;
+                        Color gpsColor;
+                        switch (port.MAV.cs.gpsstatus)
+                        {
+                            case 0: gps_string = "No GPS"; gpsColor = Color.FromArgb(200, 0, 0); break;
+                            case 1: gps_string = "No Fix"; gpsColor = Color.FromArgb(200, 0, 0); break;
+                            case 2: gps_string = "2D Fix"; gpsColor = Color.FromArgb(255, 182, 0); break;
+                            case 3: gps_string = "3D Fix"; gpsColor = Color.LimeGreen; break;
+                            case 4: gps_string = "DGPS"; gpsColor = Color.LimeGreen; break;
+                            case 5: gps_string = "RTK Float"; gpsColor = Color.FromArgb(127, 111, 248); break;
+                            case 6: gps_string = "RTK Fixed"; gpsColor = Color.FromArgb(127, 111, 248); break;
+                            default: gps_string = "Unknown"; gpsColor = Color.Gray; break;
+                        }
+
+                        dataGridViewDashboard.Rows.Add($"CRAFT{port.MAV.sysid}",
+                            port.BaseStream.IsOpen ? "Connected" : "Disconnected",
+                            port.MAV.cs.mode,
+                            port.MAV.cs.battery_remaining > 90 ? $"\U0001f7e2{port.MAV.cs.battery_remaining}%" : (port.MAV.cs.battery_remaining < 40 ? $"🔴{port.MAV.cs.battery_remaining}%" : $"🟡{port.MAV.cs.battery_remaining}%"),//$"{port.MAV.cs.battery_remaining}%",
+                            gps_string,//port.MAV.cs.gpsstatus,
+                            $"{port.MAV.cs.wpno}",
+                            port.MAV.cs.armed ? "Disarm" : "Arm"//for arm button
+                            );
+                        //dataGridViewDashboard.Rows[row].Cells["colArm"].Value =port.MAV.cs.armed ? "Disarm" : "Arm"; //arm button
+                        dataGridViewDashboard.Rows[row].Tag = port; //identify the vehicle
+                        var armCell = dataGridViewDashboard.Rows[row].Cells["colArm"];
+                        armCell.Style.ForeColor = Color.Blue;
+                        armCell.Style.Font = new Font(dataGridViewDashboard.Font, FontStyle.Underline);
+
+                        dataGridViewDashboard.Rows[row].Cells["colStatus"].Style.ForeColor = port.BaseStream.IsOpen ? Color.Lime : Color.Red;
+                        dataGridViewDashboard.Rows[row].Cells["colGps"].Style.BackColor = gpsColor;
+                        row++;
+                    } 
+            }
+
+            finally{ dashboardTimer.Start(); }
+        }
+
+        private async void dataGridViewDashboard_CellClick(object sender,DataGridViewCellEventArgs e) // 04aug2026_DashboardTab
+        {           
+            if (e.RowIndex < 0)
+                return;
+
+            if (dataGridViewDashboard.Columns[e.ColumnIndex].Name != "colArm")
+                return;
+
+            var port = (MAVLinkInterface)dataGridViewDashboard.Rows[e.RowIndex].Tag;
+            MessageBox.Show(port.ToString());
+            await Task.Run(() =>
+            {
+                ArmVehicle(port, !port.MAV.cs.armed);
+            });
+        }
+
+        // 04aug2026_DashboardTab Dashboad GUI end
+
+
     }
 }

@@ -2316,7 +2316,6 @@ namespace MissionPlanner.GCSViews
                     if (fbd.ShowDialog() == DialogResult.OK)
                     {
                         string selectedPath = fbd.SelectedPath;
-
                         LoadWaypointFiles(selectedPath);
                     }
                 }

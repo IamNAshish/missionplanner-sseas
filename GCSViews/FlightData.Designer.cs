@@ -268,6 +268,13 @@ namespace MissionPlanner.GCSViews
             this.groundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setBatteryCellCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabDashboard = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.but_ArmAll = new System.Windows.Forms.Button();
+            this.dataGridViewDashboard = new MissionPlanner.Controls.MyDataGridView();
+            this.lblArmedVehicles = new System.Windows.Forms.Label();
+            this.lblActiveVehicle = new System.Windows.Forms.Label();
+            this.lblConnectedVehicles = new System.Windows.Forms.Label();
             this.panel_persistent = new System.Windows.Forms.Panel();
             this.tabPagePreFlight = new System.Windows.Forms.TabPage();
             this.checkListControl1 = new MissionPlanner.Controls.PreFlight.CheckListControl();
@@ -279,6 +286,14 @@ namespace MissionPlanner.GCSViews
             this.bindingSourceStatusTab = new System.Windows.Forms.BindingSource(this.components);
             this.timer_gauge = new System.Windows.Forms.Timer(this.components);
             this.modifyandSetAlt = new MissionPlanner.Controls.ModifyandSet();
+            this.dashboardTimer = new System.Windows.Forms.Timer(this.components);
+            this.colCRAFT = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colBattery = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colGPS = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colMissionWPs = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colArm = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.MainH)).BeginInit();
             this.MainH.Panel1.SuspendLayout();
             this.MainH.Panel2.SuspendLayout();
@@ -336,6 +351,8 @@ namespace MissionPlanner.GCSViews
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_yaw)).BeginInit();
             this.tabPage_hud1.SuspendLayout();
             this.contextMenuStripHud.SuspendLayout();
+            this.tabDashboard.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDashboard)).BeginInit();
             this.tabPagePreFlight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).BeginInit();
             this.SuspendLayout();
@@ -812,6 +829,7 @@ namespace MissionPlanner.GCSViews
             this.tabControlactions.Controls.Add(this.tablogbrowse);
             this.tabControlactions.Controls.Add(this.tabPage_Dynamics);
             this.tabControlactions.Controls.Add(this.tabPage_hud1);
+            this.tabControlactions.Controls.Add(this.tabDashboard);
             resources.ApplyResources(this.tabControlactions, "tabControlactions");
             this.tabControlactions.Name = "tabControlactions";
             this.tabControlactions.SelectedIndex = 0;
@@ -3950,7 +3968,7 @@ namespace MissionPlanner.GCSViews
             this.hud1.gpshdop = 0F;
             this.hud1.gpshdop2 = 0F;
             this.hud1.groundalt = 0F;
-            this.hud1.groundColor1 = System.Drawing.Color.DarkGray;
+            this.hud1.groundColor1 = System.Drawing.Color.Black;
             this.hud1.groundColor2 = System.Drawing.Color.Black;
             this.hud1.groundcourse = 0F;
             this.hud1.groundspeed = 0F;
@@ -3973,8 +3991,8 @@ namespace MissionPlanner.GCSViews
             this.hud1.roll = 0F;
             this.hud1.Russian = false;
             this.hud1.safetyactive = false;
-            this.hud1.skyColor1 = System.Drawing.Color.LightGray;
-            this.hud1.skyColor2 = System.Drawing.Color.Gainsboro;
+            this.hud1.skyColor1 = System.Drawing.Color.Black;
+            this.hud1.skyColor2 = System.Drawing.Color.Black;
             this.hud1.speedunit = null;
             this.hud1.SSA = 0F;
             this.hud1.status = false;
@@ -4109,6 +4127,62 @@ namespace MissionPlanner.GCSViews
             resources.ApplyResources(this.showIconsToolStripMenuItem, "showIconsToolStripMenuItem");
             this.showIconsToolStripMenuItem.Click += new System.EventHandler(this.showIconsToolStripMenuItem_Click);
             // 
+            // tabDashboard
+            // 
+            this.tabDashboard.Controls.Add(this.button1);
+            this.tabDashboard.Controls.Add(this.but_ArmAll);
+            this.tabDashboard.Controls.Add(this.dataGridViewDashboard);
+            this.tabDashboard.Controls.Add(this.lblArmedVehicles);
+            this.tabDashboard.Controls.Add(this.lblActiveVehicle);
+            this.tabDashboard.Controls.Add(this.lblConnectedVehicles);
+            resources.ApplyResources(this.tabDashboard, "tabDashboard");
+            this.tabDashboard.Name = "tabDashboard";
+            this.tabDashboard.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            resources.ApplyResources(this.button1, "button1");
+            this.button1.Name = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.but_DisarmAll_Click);
+            // 
+            // but_ArmAll
+            // 
+            resources.ApplyResources(this.but_ArmAll, "but_ArmAll");
+            this.but_ArmAll.Name = "but_ArmAll";
+            this.but_ArmAll.UseVisualStyleBackColor = true;
+            this.but_ArmAll.Click += new System.EventHandler(this.but_ArmAll_Click);
+            // 
+            // dataGridViewDashboard
+            // 
+            this.dataGridViewDashboard.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewDashboard.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colCRAFT,
+            this.colStatus,
+            this.colMode,
+            this.colBattery,
+            this.colGPS,
+            this.colMissionWPs,
+            this.colArm});
+            resources.ApplyResources(this.dataGridViewDashboard, "dataGridViewDashboard");
+            this.dataGridViewDashboard.Name = "dataGridViewDashboard";
+            this.dataGridViewDashboard.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDashboard_CellClick);
+            // 
+            // lblArmedVehicles
+            // 
+            resources.ApplyResources(this.lblArmedVehicles, "lblArmedVehicles");
+            this.lblArmedVehicles.Name = "lblArmedVehicles";
+            // 
+            // lblActiveVehicle
+            // 
+            resources.ApplyResources(this.lblActiveVehicle, "lblActiveVehicle");
+            this.lblActiveVehicle.Name = "lblActiveVehicle";
+            // 
+            // lblConnectedVehicles
+            // 
+            resources.ApplyResources(this.lblConnectedVehicles, "lblConnectedVehicles");
+            this.lblConnectedVehicles.Name = "lblConnectedVehicles";
+            // 
             // panel_persistent
             // 
             resources.ApplyResources(this.panel_persistent, "panel_persistent");
@@ -4185,6 +4259,47 @@ namespace MissionPlanner.GCSViews
             0,
             0});
             this.modifyandSetAlt.Click += new System.EventHandler(this.modifyandSetAlt_Click);
+            // 
+            // dashboardTimer
+            // 
+            this.dashboardTimer.Enabled = true;
+            this.dashboardTimer.Interval = 1000;
+            this.dashboardTimer.Tick += new System.EventHandler(this.dashboardTimer_Tick);
+            // 
+            // colCRAFT
+            // 
+            resources.ApplyResources(this.colCRAFT, "colCRAFT");
+            this.colCRAFT.Name = "colCRAFT";
+            // 
+            // colStatus
+            // 
+            resources.ApplyResources(this.colStatus, "colStatus");
+            this.colStatus.Name = "colStatus";
+            // 
+            // colMode
+            // 
+            resources.ApplyResources(this.colMode, "colMode");
+            this.colMode.Name = "colMode";
+            // 
+            // colBattery
+            // 
+            resources.ApplyResources(this.colBattery, "colBattery");
+            this.colBattery.Name = "colBattery";
+            // 
+            // colGPS
+            // 
+            resources.ApplyResources(this.colGPS, "colGPS");
+            this.colGPS.Name = "colGPS";
+            // 
+            // colMissionWPs
+            // 
+            resources.ApplyResources(this.colMissionWPs, "colMissionWPs");
+            this.colMissionWPs.Name = "colMissionWPs";
+            // 
+            // colArm
+            // 
+            resources.ApplyResources(this.colArm, "colArm");
+            this.colArm.Name = "colArm";
             // 
             // FlightData
             // 
@@ -4267,6 +4382,9 @@ namespace MissionPlanner.GCSViews
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_yaw)).EndInit();
             this.tabPage_hud1.ResumeLayout(false);
             this.contextMenuStripHud.ResumeLayout(false);
+            this.tabDashboard.ResumeLayout(false);
+            this.tabDashboard.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDashboard)).EndInit();
             this.tabPagePreFlight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).EndInit();
             this.ResumeLayout(false);
@@ -4539,6 +4657,21 @@ private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
         private Label lblGPS;
         private Label lbl_disttowp;
         private Label lbl_signalStrength;
+        private TabPage tabDashboard;
+        private Label lblConnectedVehicles;
+        private Label lblActiveVehicle;
+        private Label lblArmedVehicles;
+        private Controls.MyDataGridView dataGridViewDashboard;
+        private Button but_ArmAll;
+        private Button button1;
+        private Timer dashboardTimer;
+        private DataGridViewTextBoxColumn colCRAFT;
+        private DataGridViewTextBoxColumn colStatus;
+        private DataGridViewTextBoxColumn colMode;
+        private DataGridViewTextBoxColumn colBattery;
+        private DataGridViewTextBoxColumn colGPS;
+        private DataGridViewTextBoxColumn colMissionWPs;
+        private DataGridViewTextBoxColumn colArm;
         //private Label label_batp_onGauge;
     }
 }
