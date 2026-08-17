@@ -649,7 +649,7 @@
 </value>
   </data>
   <data name="toolStripConnectionControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 47</value>
+    <value>200, 47</value>
   </data>
   <data name="MenuConnect.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -699,6 +699,56 @@
     <value>BottomCenter</value>
   </data>
   <data name="MenuConnect.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageAboveText</value>
+  </data>
+  <data name="toolStripButton_addConnection.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+        SUVORK5CYII=
+</value>
+  </data>
+  <data name="toolStripButton_addConnection.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripButton_addConnection.Size" type="System.Drawing.Size, System.Drawing">
+    <value>63, 47</value>
+  </data>
+  <data name="toolStripButton_addConnection.Text" xml:space="preserve">
+    <value>CONNECT</value>
+  </data>
+  <data name="toolStripButton_addConnection.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>BottomCenter</value>
+  </data>
+  <data name="toolStripButton_addConnection.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
     <value>ImageAboveText</value>
   </data>
   <data name="lblLogo.Font" type="System.Drawing.Font, System.Drawing">
@@ -789,7 +839,7 @@
     <value>status1</value>
   </data>
   <data name="&gt;&gt;status1.Type" xml:space="preserve">
-    <value>MissionPlanner.Controls.Status, MissionPlanner, Version=1.3.9659.25902, Culture=neutral, PublicKeyToken=null</value>
+    <value>MissionPlanner.Controls.Status, MissionPlanner, Version=1.3.9719.28257, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;status1.Parent" xml:space="preserve">
     <value>panel1</value>
@@ -962,12 +1012,18 @@
     <value>toolStripConnectionControl</value>
   </data>
   <data name="&gt;&gt;toolStripConnectionControl.Type" xml:space="preserve">
-    <value>MissionPlanner.Controls.ToolStripConnectionControl, MissionPlanner, Version=1.3.9659.25902, Culture=neutral, PublicKeyToken=null</value>
+    <value>MissionPlanner.Controls.ToolStripConnectionControl, MissionPlanner, Version=1.3.9719.28257, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;MenuConnect.Name" xml:space="preserve">
     <value>MenuConnect</value>
   </data>
   <data name="&gt;&gt;MenuConnect.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButton_addConnection.Name" xml:space="preserve">
+    <value>toolStripButton_addConnection</value>
+  </data>
+  <data name="&gt;&gt;toolStripButton_addConnection.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;lblLogo.Name" xml:space="preserve">

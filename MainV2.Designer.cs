@@ -52,6 +52,7 @@ namespace MissionPlanner
             this.MenuHelp = new System.Windows.Forms.ToolStripButton();
             this.toolStripConnectionControl = new MissionPlanner.Controls.ToolStripConnectionControl();
             this.MenuConnect = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton_addConnection = new System.Windows.Forms.ToolStripButton();
             this.lblLogo = new System.Windows.Forms.ToolStripLabel();
             this.menu = new MissionPlanner.Controls.MyButton();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -78,6 +79,7 @@ namespace MissionPlanner
             this.MenuHelp,
             this.toolStripConnectionControl,
             this.MenuConnect,
+            this.toolStripButton_addConnection,
             this.lblLogo});
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.ShowItemToolTips = true;
@@ -206,6 +208,18 @@ namespace MissionPlanner
             this.MenuConnect.Name = "MenuConnect";
             this.MenuConnect.Click += new System.EventHandler(this.MenuConnect_Click);
             // 
+            // toolStripButton_addConnection
+            // 
+            this.toolStripButton_addConnection.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton_addConnection.ForeColor = System.Drawing.SystemColors.ControlLight;
+            resources.ApplyResources(this.toolStripButton_addConnection, "toolStripButton_addConnection");
+            this.toolStripButton_addConnection.Margin = new System.Windows.Forms.Padding(0);
+            this.toolStripButton_addConnection.Name = "toolStripButton_addConnection";
+            this.toolStripButton_addConnection.Click += new System.EventHandler(this.connectionOptionsToolStripMenuItem_Click);
+            this.toolStripButton_addConnection.ToolTipText = "Add AUV";
+            this.toolStripButton_addConnection.Text = "";
+            this.toolStripButton_addConnection.Visible= true;
+            // 
             // lblLogo
             // 
             this.lblLogo.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -218,8 +232,13 @@ namespace MissionPlanner
             // 
             // menu
             // 
+            this.menu.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.menu.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.menu.ColorMouseDown = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.menu.ColorMouseOver = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             resources.ApplyResources(this.menu, "menu");
             this.menu.Name = "menu";
+            this.menu.TextColor = System.Drawing.Color.White;
             this.menu.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
             this.menu.UseVisualStyleBackColor = true;
             this.menu.MouseEnter += new System.EventHandler(this.menu_MouseEnter);
@@ -280,5 +299,6 @@ namespace MissionPlanner
         public System.Windows.Forms.ToolStripButton MenuHelp;
         public System.Windows.Forms.ToolStripLabel lblLogo;
         public Controls.Status status1;
+        public System.Windows.Forms.ToolStripButton toolStripButton_addConnection;
     }
 }

@@ -93,6 +93,7 @@ namespace MissionPlanner
             public abstract Image disconnect { get; }
             public abstract Image bg { get; }
             public abstract Image wizard { get; }
+            public abstract Image addConnectionImg { get; } // 11aug2026_task1
         }
 
 
@@ -227,6 +228,16 @@ namespace MissionPlanner
                         return Image.FromFile($"{running_directory}light_wizard_icon.png");
                     else
                         return global::MissionPlanner.Properties.Resources.wizardicon;
+                }
+            }
+            public override Image addConnectionImg
+            {
+                get
+                {
+                    if (File.Exists($"{running_directory}addConnection.png"))
+                        return Image.FromFile($"{running_directory}addConnection.png");
+                    else
+                        return global::MissionPlanner.Properties.Resources.addConnection;
                 }
             }
         }
@@ -364,6 +375,17 @@ namespace MissionPlanner
                         return Image.FromFile($"{running_directory}dark_wizard_icon.png");
                     else
                         return global::MissionPlanner.Properties.Resources.wizardicon;
+                }
+            }
+
+            public override Image addConnectionImg
+            { 
+                get
+                {
+                    if (File.Exists($"{running_directory}addConnection.png"))
+                        return Image.FromFile($"{running_directory}addConnection.png");
+                    else
+                        return global::MissionPlanner.Properties.Resources.addConnection;
                 }
             }
         }
@@ -1292,6 +1314,8 @@ namespace MissionPlanner
             MenuConfigTune.Image = displayicons.config_tuning;
             MenuConnect.Image = displayicons.connect;
             MenuHelp.Image = displayicons.help;
+
+            toolStripButton_addConnection.Image = displayicons.addConnectionImg; // 11aug2026_task1
 
 
             MenuFlightData.ForeColor = ThemeManager.TextColor;
@@ -2704,7 +2728,7 @@ namespace MissionPlanner
         {
             if ((DateTime.UtcNow - connectButtonUpdate).Milliseconds > 500)
             {
-                //                        Console.WriteLine(DateTime.Now.Millisecond);
+                //Console.WriteLine(DateTime.Now.Millisecond);
                 if (comPort.BaseStream.IsOpen)
                 {
                     if (this.MenuConnect.Image == null || (string) this.MenuConnect.Image.Tag != "Disconnect")
@@ -2717,6 +2741,7 @@ namespace MissionPlanner
                             _connectionControl.IsConnected(true);
                         });
                     }
+                    //toolStripButton_addConnection.Visible = true; // 11aug2026_task1
                 }
                 else
                 {
@@ -2739,6 +2764,7 @@ namespace MissionPlanner
                     {
                         this.BeginInvoke((MethodInvoker) delegate { _connectionControl.IsConnected(true); });
                     }
+                    //toolStripButton_addConnection.Visible = false; // 11aug2026_task1
                 }
 
                 connectButtonUpdate = DateTime.UtcNow;

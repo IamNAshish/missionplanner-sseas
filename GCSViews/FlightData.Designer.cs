@@ -79,30 +79,22 @@ namespace MissionPlanner.GCSViews
             this.quickView3 = new MissionPlanner.Controls.QuickView();
             this.quickView2 = new MissionPlanner.Controls.QuickView();
             this.quickView1 = new MissionPlanner.Controls.QuickView();
-            this.tabActions = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.BUT_SendMSG = new MissionPlanner.Controls.MyButton();
-            this.BUT_abortland = new MissionPlanner.Controls.MyButton();
-            this.modifyandSetLoiterRad = new MissionPlanner.Controls.ModifyandSet();
-            this.BUT_clear_track = new MissionPlanner.Controls.MyButton();
-            this.CMB_action = new System.Windows.Forms.ComboBox();
-            this.BUTactiondo = new MissionPlanner.Controls.MyButton();
-            this.BUT_resumemis = new MissionPlanner.Controls.MyButton();
-            this.modifyandSetSpeed = new MissionPlanner.Controls.ModifyandSet();
-            this.BUT_mountmode = new MissionPlanner.Controls.MyButton();
-            this.BUT_joystick = new MissionPlanner.Controls.MyButton();
-            this.BUT_RAWSensor = new MissionPlanner.Controls.MyButton();
-            this.BUT_Homealt = new MissionPlanner.Controls.MyButton();
-            this.BUTrestartmission = new MissionPlanner.Controls.MyButton();
-            this.CMB_mountmode = new System.Windows.Forms.ComboBox();
-            this.BUT_quickrtl = new MissionPlanner.Controls.MyButton();
-            this.BUT_quickmanual = new MissionPlanner.Controls.MyButton();
-            this.BUT_quickauto = new MissionPlanner.Controls.MyButton();
-            this.tabPagemessages = new System.Windows.Forms.TabPage();
-            this.tabActionsSimple = new System.Windows.Forms.TabPage();
-            this.myButton1 = new MissionPlanner.Controls.MyButton();
-            this.myButton2 = new MissionPlanner.Controls.MyButton();
-            this.myButton3 = new MissionPlanner.Controls.MyButton();
+            this.tabDashboard = new System.Windows.Forms.TabPage();
+            this.dataGridViewDashboard = new MissionPlanner.Controls.MyDataGridView();
+            this.colCRAFT = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colBattery = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colGPS = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colMissionWPs = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colArm = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.lblConnectedVehicles = new System.Windows.Forms.Label();
+            this.lblActiveVehicle = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.lblArmedVehicles = new System.Windows.Forms.Label();
+            this.but_ArmAll = new System.Windows.Forms.Button();
+            this.dashboardMsgPanel = new System.Windows.Forms.Panel();
             this.tabGauges = new System.Windows.Forms.TabPage();
             this.txt_messagebox = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel_gaugeData = new System.Windows.Forms.TableLayoutPanel();
@@ -132,6 +124,30 @@ namespace MissionPlanner.GCSViews
             this.Galt = new AGaugeApp.AGauge();
             this.Gspeed = new AGaugeApp.AGauge();
             this.G_batp = new AGaugeApp.AGauge();
+            this.tabActions = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.BUT_SendMSG = new MissionPlanner.Controls.MyButton();
+            this.BUT_abortland = new MissionPlanner.Controls.MyButton();
+            this.modifyandSetLoiterRad = new MissionPlanner.Controls.ModifyandSet();
+            this.BUT_clear_track = new MissionPlanner.Controls.MyButton();
+            this.CMB_action = new System.Windows.Forms.ComboBox();
+            this.BUTactiondo = new MissionPlanner.Controls.MyButton();
+            this.BUT_resumemis = new MissionPlanner.Controls.MyButton();
+            this.modifyandSetSpeed = new MissionPlanner.Controls.ModifyandSet();
+            this.BUT_mountmode = new MissionPlanner.Controls.MyButton();
+            this.BUT_joystick = new MissionPlanner.Controls.MyButton();
+            this.BUT_RAWSensor = new MissionPlanner.Controls.MyButton();
+            this.BUT_Homealt = new MissionPlanner.Controls.MyButton();
+            this.BUTrestartmission = new MissionPlanner.Controls.MyButton();
+            this.CMB_mountmode = new System.Windows.Forms.ComboBox();
+            this.BUT_quickrtl = new MissionPlanner.Controls.MyButton();
+            this.BUT_quickmanual = new MissionPlanner.Controls.MyButton();
+            this.BUT_quickauto = new MissionPlanner.Controls.MyButton();
+            this.tabPagemessages = new System.Windows.Forms.TabPage();
+            this.tabActionsSimple = new System.Windows.Forms.TabPage();
+            this.myButton1 = new MissionPlanner.Controls.MyButton();
+            this.myButton2 = new MissionPlanner.Controls.MyButton();
+            this.myButton3 = new MissionPlanner.Controls.MyButton();
             this.tabTransponder = new System.Windows.Forms.TabPage();
             this.NACp_tb = new System.Windows.Forms.TextBox();
             this.NIC_tb = new System.Windows.Forms.TextBox();
@@ -268,13 +284,6 @@ namespace MissionPlanner.GCSViews
             this.groundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setBatteryCellCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabDashboard = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
-            this.but_ArmAll = new System.Windows.Forms.Button();
-            this.dataGridViewDashboard = new MissionPlanner.Controls.MyDataGridView();
-            this.lblArmedVehicles = new System.Windows.Forms.Label();
-            this.lblActiveVehicle = new System.Windows.Forms.Label();
-            this.lblConnectedVehicles = new System.Windows.Forms.Label();
             this.panel_persistent = new System.Windows.Forms.Panel();
             this.tabPagePreFlight = new System.Windows.Forms.TabPage();
             this.checkListControl1 = new MissionPlanner.Controls.PreFlight.CheckListControl();
@@ -285,15 +294,8 @@ namespace MissionPlanner.GCSViews
             this.Messagetabtimer = new System.Windows.Forms.Timer(this.components);
             this.bindingSourceStatusTab = new System.Windows.Forms.BindingSource(this.components);
             this.timer_gauge = new System.Windows.Forms.Timer(this.components);
-            this.modifyandSetAlt = new MissionPlanner.Controls.ModifyandSet();
             this.dashboardTimer = new System.Windows.Forms.Timer(this.components);
-            this.colCRAFT = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colBattery = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colGPS = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colMissionWPs = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colArm = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.modifyandSetAlt = new MissionPlanner.Controls.ModifyandSet();
             ((System.ComponentModel.ISupportInitialize)(this.MainH)).BeginInit();
             this.MainH.Panel1.SuspendLayout();
             this.MainH.Panel2.SuspendLayout();
@@ -317,12 +319,15 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanelQuick.SuspendLayout();
             this.contextMenuStripQuickView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceQuickTab)).BeginInit();
-            this.tabActions.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.tabActionsSimple.SuspendLayout();
+            this.tabDashboard.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDashboard)).BeginInit();
+            this.tableLayoutPanel4.SuspendLayout();
             this.tabGauges.SuspendLayout();
             this.tableLayoutPanel_gaugeData.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).BeginInit();
+            this.tabActions.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.tabActionsSimple.SuspendLayout();
             this.tabTransponder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Squawk_nud)).BeginInit();
             this.tabServo.SuspendLayout();
@@ -351,8 +356,6 @@ namespace MissionPlanner.GCSViews
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_yaw)).BeginInit();
             this.tabPage_hud1.SuspendLayout();
             this.contextMenuStripHud.SuspendLayout();
-            this.tabDashboard.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDashboard)).BeginInit();
             this.tabPagePreFlight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).BeginInit();
             this.SuspendLayout();
@@ -815,10 +818,11 @@ namespace MissionPlanner.GCSViews
             // 
             this.tabControlactions.ContextMenuStrip = this.contextMenuStripactionstab;
             this.tabControlactions.Controls.Add(this.tabQuick);
+            this.tabControlactions.Controls.Add(this.tabDashboard);
+            this.tabControlactions.Controls.Add(this.tabGauges);
             this.tabControlactions.Controls.Add(this.tabActions);
             this.tabControlactions.Controls.Add(this.tabPagemessages);
             this.tabControlactions.Controls.Add(this.tabActionsSimple);
-            this.tabControlactions.Controls.Add(this.tabGauges);
             this.tabControlactions.Controls.Add(this.tabTransponder);
             this.tabControlactions.Controls.Add(this.tabStatus);
             this.tabControlactions.Controls.Add(this.tabServo);
@@ -829,7 +833,6 @@ namespace MissionPlanner.GCSViews
             this.tabControlactions.Controls.Add(this.tablogbrowse);
             this.tabControlactions.Controls.Add(this.tabPage_Dynamics);
             this.tabControlactions.Controls.Add(this.tabPage_hud1);
-            this.tabControlactions.Controls.Add(this.tabDashboard);
             resources.ApplyResources(this.tabControlactions, "tabControlactions");
             this.tabControlactions.Name = "tabControlactions";
             this.tabControlactions.SelectedIndex = 0;
@@ -959,361 +962,109 @@ namespace MissionPlanner.GCSViews
             this.toolTip1.SetToolTip(this.quickView1, resources.GetString("quickView1.ToolTip"));
             this.quickView1.DoubleClick += new System.EventHandler(this.quickView_DoubleClick);
             // 
-            // tabActions
+            // tabDashboard
             // 
-            this.tabActions.Controls.Add(this.tableLayoutPanel1);
-            resources.ApplyResources(this.tabActions, "tabActions");
-            this.tabActions.Name = "tabActions";
-            this.tabActions.UseVisualStyleBackColor = true;
+            resources.ApplyResources(this.tabDashboard, "tabDashboard");
+            this.tabDashboard.Controls.Add(this.dataGridViewDashboard);
+            this.tabDashboard.Controls.Add(this.tableLayoutPanel4);
+            this.tabDashboard.Controls.Add(this.dashboardMsgPanel);
+            this.tabDashboard.Name = "tabDashboard";
+            this.tabDashboard.UseVisualStyleBackColor = true;
             // 
-            // tableLayoutPanel1
+            // dataGridViewDashboard
             // 
-            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.BUT_SendMSG, 2, 4);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_abortland, 4, 4);
-            this.tableLayoutPanel1.Controls.Add(this.modifyandSetLoiterRad, 4, 2);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_clear_track, 4, 3);
-            this.tableLayoutPanel1.Controls.Add(this.CMB_action, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.BUTactiondo, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_resumemis, 3, 4);
-            this.tableLayoutPanel1.Controls.Add(this.modifyandSetSpeed, 4, 0);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_mountmode, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_joystick, 2, 3);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_RAWSensor, 3, 2);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_Homealt, 3, 0);
-            this.tableLayoutPanel1.Controls.Add(this.BUTrestartmission, 3, 1);
-            this.tableLayoutPanel1.Controls.Add(this.CMB_mountmode, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_quickrtl, 2, 2);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_quickmanual, 2, 1);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_quickauto, 2, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.dataGridViewDashboard.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dataGridViewDashboard.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+            this.dataGridViewDashboard.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewDashboard.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colCRAFT,
+            this.colStatus,
+            this.colMode,
+            this.colBattery,
+            this.colGPS,
+            this.colMissionWPs,
+            this.colArm});
+            resources.ApplyResources(this.dataGridViewDashboard, "dataGridViewDashboard");
+            this.dataGridViewDashboard.Name = "dataGridViewDashboard";
             // 
-            // BUT_SendMSG
+            // colCRAFT
             // 
-            this.BUT_SendMSG.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_SendMSG.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_SendMSG.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_SendMSG.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_SendMSG.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_SendMSG, "BUT_SendMSG");
-            this.BUT_SendMSG.Name = "BUT_SendMSG";
-            this.BUT_SendMSG.TextColor = System.Drawing.Color.White;
-            this.BUT_SendMSG.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_SendMSG, resources.GetString("BUT_SendMSG.ToolTip"));
-            this.BUT_SendMSG.UseVisualStyleBackColor = true;
-            this.BUT_SendMSG.Click += new System.EventHandler(this.BUT_SendMSG_Click);
+            resources.ApplyResources(this.colCRAFT, "colCRAFT");
+            this.colCRAFT.Name = "colCRAFT";
             // 
-            // BUT_abortland
+            // colStatus
             // 
-            this.BUT_abortland.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_abortland.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_abortland.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_abortland.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_abortland.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_abortland, "BUT_abortland");
-            this.BUT_abortland.Name = "BUT_abortland";
-            this.BUT_abortland.TextColor = System.Drawing.Color.White;
-            this.BUT_abortland.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_abortland, resources.GetString("BUT_abortland.ToolTip"));
-            this.BUT_abortland.UseVisualStyleBackColor = true;
-            this.BUT_abortland.Click += new System.EventHandler(this.BUT_abortland_Click);
+            resources.ApplyResources(this.colStatus, "colStatus");
+            this.colStatus.Name = "colStatus";
             // 
-            // modifyandSetLoiterRad
+            // colMode
             // 
-            resources.ApplyResources(this.modifyandSetLoiterRad, "modifyandSetLoiterRad");
-            this.modifyandSetLoiterRad.ButtonText = "Set Loiter Rad";
-            this.modifyandSetLoiterRad.DecimalPlaces = 0;
-            this.modifyandSetLoiterRad.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.modifyandSetLoiterRad.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.modifyandSetLoiterRad.Minimum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            -2147483648});
-            this.modifyandSetLoiterRad.Name = "modifyandSetLoiterRad";
-            this.modifyandSetLoiterRad.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.modifyandSetLoiterRad.Click += new System.EventHandler(this.modifyandSetLoiterRad_Click);
+            resources.ApplyResources(this.colMode, "colMode");
+            this.colMode.Name = "colMode";
             // 
-            // BUT_clear_track
+            // colBattery
             // 
-            this.BUT_clear_track.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_clear_track.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_clear_track.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_clear_track.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_clear_track.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_clear_track, "BUT_clear_track");
-            this.BUT_clear_track.Name = "BUT_clear_track";
-            this.BUT_clear_track.TextColor = System.Drawing.Color.White;
-            this.BUT_clear_track.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_clear_track, resources.GetString("BUT_clear_track.ToolTip"));
-            this.BUT_clear_track.UseVisualStyleBackColor = true;
-            this.BUT_clear_track.Click += new System.EventHandler(this.BUT_clear_track_Click);
+            resources.ApplyResources(this.colBattery, "colBattery");
+            this.colBattery.Name = "colBattery";
             // 
-            // CMB_action
+            // colGPS
             // 
-            resources.ApplyResources(this.CMB_action, "CMB_action");
-            this.CMB_action.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CMB_action.DropDownWidth = 250;
-            this.CMB_action.FormattingEnabled = true;
-            this.CMB_action.Name = "CMB_action";
+            resources.ApplyResources(this.colGPS, "colGPS");
+            this.colGPS.Name = "colGPS";
             // 
-            // BUTactiondo
+            // colMissionWPs
             // 
-            this.BUTactiondo.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUTactiondo.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUTactiondo.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUTactiondo.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUTactiondo.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUTactiondo, "BUTactiondo");
-            this.BUTactiondo.Name = "BUTactiondo";
-            this.BUTactiondo.TextColor = System.Drawing.Color.White;
-            this.BUTactiondo.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUTactiondo, resources.GetString("BUTactiondo.ToolTip"));
-            this.BUTactiondo.UseVisualStyleBackColor = true;
-            this.BUTactiondo.Click += new System.EventHandler(this.BUTactiondo_Click);
+            resources.ApplyResources(this.colMissionWPs, "colMissionWPs");
+            this.colMissionWPs.Name = "colMissionWPs";
             // 
-            // BUT_resumemis
+            // colArm
             // 
-            this.BUT_resumemis.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_resumemis.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_resumemis.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_resumemis.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_resumemis.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_resumemis, "BUT_resumemis");
-            this.BUT_resumemis.Name = "BUT_resumemis";
-            this.BUT_resumemis.TextColor = System.Drawing.Color.White;
-            this.BUT_resumemis.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.BUT_resumemis.UseVisualStyleBackColor = true;
-            this.BUT_resumemis.Click += new System.EventHandler(this.BUT_resumemis_Click);
+            resources.ApplyResources(this.colArm, "colArm");
+            this.colArm.Name = "colArm";
             // 
-            // modifyandSetSpeed
+            // tableLayoutPanel4
             // 
-            resources.ApplyResources(this.modifyandSetSpeed, "modifyandSetSpeed");
-            this.modifyandSetSpeed.ButtonText = "Change Speed";
-            this.modifyandSetSpeed.DecimalPlaces = 1;
-            this.modifyandSetSpeed.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.modifyandSetSpeed.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.modifyandSetSpeed.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.modifyandSetSpeed.Name = "modifyandSetSpeed";
-            this.modifyandSetSpeed.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.modifyandSetSpeed.Click += new System.EventHandler(this.modifyandSetSpeed_Click);
-            this.modifyandSetSpeed.ParentChanged += new System.EventHandler(this.modifyandSetSpeed_ParentChanged);
+            resources.ApplyResources(this.tableLayoutPanel4, "tableLayoutPanel4");
+            this.tableLayoutPanel4.Controls.Add(this.lblConnectedVehicles, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.lblActiveVehicle, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.button1, 1, 1);
+            this.tableLayoutPanel4.Controls.Add(this.lblArmedVehicles, 0, 2);
+            this.tableLayoutPanel4.Controls.Add(this.but_ArmAll, 1, 0);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             // 
-            // BUT_mountmode
+            // lblConnectedVehicles
             // 
-            this.BUT_mountmode.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_mountmode.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_mountmode.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_mountmode.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_mountmode.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_mountmode, "BUT_mountmode");
-            this.BUT_mountmode.Name = "BUT_mountmode";
-            this.BUT_mountmode.TextColor = System.Drawing.Color.White;
-            this.BUT_mountmode.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_mountmode, resources.GetString("BUT_mountmode.ToolTip"));
-            this.BUT_mountmode.UseVisualStyleBackColor = true;
-            this.BUT_mountmode.Click += new System.EventHandler(this.BUT_mountmode_Click);
+            resources.ApplyResources(this.lblConnectedVehicles, "lblConnectedVehicles");
+            this.lblConnectedVehicles.Name = "lblConnectedVehicles";
             // 
-            // BUT_joystick
+            // lblActiveVehicle
             // 
-            this.BUT_joystick.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_joystick.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_joystick.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_joystick.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_joystick.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_joystick, "BUT_joystick");
-            this.BUT_joystick.Name = "BUT_joystick";
-            this.BUT_joystick.TextColor = System.Drawing.Color.White;
-            this.BUT_joystick.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_joystick, resources.GetString("BUT_joystick.ToolTip"));
-            this.BUT_joystick.UseVisualStyleBackColor = true;
-            this.BUT_joystick.Click += new System.EventHandler(this.BUT_joystick_Click);
+            resources.ApplyResources(this.lblActiveVehicle, "lblActiveVehicle");
+            this.lblActiveVehicle.Name = "lblActiveVehicle";
             // 
-            // BUT_RAWSensor
+            // button1
             // 
-            this.BUT_RAWSensor.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_RAWSensor.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_RAWSensor.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_RAWSensor.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_RAWSensor.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_RAWSensor, "BUT_RAWSensor");
-            this.BUT_RAWSensor.Name = "BUT_RAWSensor";
-            this.BUT_RAWSensor.TextColor = System.Drawing.Color.White;
-            this.BUT_RAWSensor.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_RAWSensor, resources.GetString("BUT_RAWSensor.ToolTip"));
-            this.BUT_RAWSensor.UseVisualStyleBackColor = true;
-            this.BUT_RAWSensor.Click += new System.EventHandler(this.BUT_RAWSensor_Click);
+            resources.ApplyResources(this.button1, "button1");
+            this.button1.Name = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.but_DisarmAll_Click);
             // 
-            // BUT_Homealt
+            // lblArmedVehicles
             // 
-            this.BUT_Homealt.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_Homealt.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_Homealt.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_Homealt.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_Homealt.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_Homealt, "BUT_Homealt");
-            this.BUT_Homealt.Name = "BUT_Homealt";
-            this.BUT_Homealt.TextColor = System.Drawing.Color.White;
-            this.BUT_Homealt.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_Homealt, resources.GetString("BUT_Homealt.ToolTip"));
-            this.BUT_Homealt.UseVisualStyleBackColor = true;
-            this.BUT_Homealt.Click += new System.EventHandler(this.BUT_Homealt_Click);
+            resources.ApplyResources(this.lblArmedVehicles, "lblArmedVehicles");
+            this.lblArmedVehicles.Name = "lblArmedVehicles";
             // 
-            // BUTrestartmission
+            // but_ArmAll
             // 
-            this.BUTrestartmission.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUTrestartmission.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUTrestartmission.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUTrestartmission.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUTrestartmission.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUTrestartmission, "BUTrestartmission");
-            this.BUTrestartmission.Name = "BUTrestartmission";
-            this.BUTrestartmission.TextColor = System.Drawing.Color.White;
-            this.BUTrestartmission.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUTrestartmission, resources.GetString("BUTrestartmission.ToolTip"));
-            this.BUTrestartmission.UseVisualStyleBackColor = true;
-            this.BUTrestartmission.Click += new System.EventHandler(this.BUTrestartmission_Click);
+            resources.ApplyResources(this.but_ArmAll, "but_ArmAll");
+            this.but_ArmAll.Name = "but_ArmAll";
+            this.but_ArmAll.UseVisualStyleBackColor = true;
+            this.but_ArmAll.Click += new System.EventHandler(this.but_ArmAll_Click);
             // 
-            // CMB_mountmode
+            // dashboardMsgPanel
             // 
-            resources.ApplyResources(this.CMB_mountmode, "CMB_mountmode");
-            this.CMB_mountmode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CMB_mountmode.DropDownWidth = 150;
-            this.CMB_mountmode.FormattingEnabled = true;
-            this.CMB_mountmode.Name = "CMB_mountmode";
-            // 
-            // BUT_quickrtl
-            // 
-            this.BUT_quickrtl.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_quickrtl.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_quickrtl.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_quickrtl.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_quickrtl.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_quickrtl, "BUT_quickrtl");
-            this.BUT_quickrtl.Name = "BUT_quickrtl";
-            this.BUT_quickrtl.TextColor = System.Drawing.Color.White;
-            this.BUT_quickrtl.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_quickrtl, resources.GetString("BUT_quickrtl.ToolTip"));
-            this.BUT_quickrtl.UseVisualStyleBackColor = true;
-            this.BUT_quickrtl.Click += new System.EventHandler(this.BUT_quickrtl_Click);
-            // 
-            // BUT_quickmanual
-            // 
-            this.BUT_quickmanual.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_quickmanual.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_quickmanual.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_quickmanual.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_quickmanual.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_quickmanual, "BUT_quickmanual");
-            this.BUT_quickmanual.Name = "BUT_quickmanual";
-            this.BUT_quickmanual.TextColor = System.Drawing.Color.White;
-            this.BUT_quickmanual.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_quickmanual, resources.GetString("BUT_quickmanual.ToolTip"));
-            this.BUT_quickmanual.UseVisualStyleBackColor = true;
-            this.BUT_quickmanual.Click += new System.EventHandler(this.BUT_quickmanual_Click);
-            // 
-            // BUT_quickauto
-            // 
-            this.BUT_quickauto.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_quickauto.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.BUT_quickauto.ColorMouseDown = System.Drawing.Color.Empty;
-            this.BUT_quickauto.ColorMouseOver = System.Drawing.Color.Empty;
-            this.BUT_quickauto.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.BUT_quickauto, "BUT_quickauto");
-            this.BUT_quickauto.Name = "BUT_quickauto";
-            this.BUT_quickauto.TextColor = System.Drawing.Color.White;
-            this.BUT_quickauto.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.BUT_quickauto, resources.GetString("BUT_quickauto.ToolTip"));
-            this.BUT_quickauto.UseVisualStyleBackColor = true;
-            this.BUT_quickauto.Click += new System.EventHandler(this.BUT_quickauto_Click);
-            // 
-            // tabPagemessages
-            // 
-            resources.ApplyResources(this.tabPagemessages, "tabPagemessages");
-            this.tabPagemessages.Name = "tabPagemessages";
-            this.tabPagemessages.UseVisualStyleBackColor = true;
-            // 
-            // tabActionsSimple
-            // 
-            this.tabActionsSimple.Controls.Add(this.myButton1);
-            this.tabActionsSimple.Controls.Add(this.myButton2);
-            this.tabActionsSimple.Controls.Add(this.myButton3);
-            resources.ApplyResources(this.tabActionsSimple, "tabActionsSimple");
-            this.tabActionsSimple.Name = "tabActionsSimple";
-            this.tabActionsSimple.UseVisualStyleBackColor = true;
-            // 
-            // myButton1
-            // 
-            this.myButton1.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.myButton1.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.myButton1.ColorMouseDown = System.Drawing.Color.Empty;
-            this.myButton1.ColorMouseOver = System.Drawing.Color.Empty;
-            this.myButton1.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.myButton1, "myButton1");
-            this.myButton1.Name = "myButton1";
-            this.myButton1.TextColor = System.Drawing.Color.White;
-            this.myButton1.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.myButton1, resources.GetString("myButton1.ToolTip"));
-            this.myButton1.UseVisualStyleBackColor = true;
-            this.myButton1.Click += new System.EventHandler(this.BUT_quickmanual_Click);
-            // 
-            // myButton2
-            // 
-            this.myButton2.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.myButton2.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.myButton2.ColorMouseDown = System.Drawing.Color.Empty;
-            this.myButton2.ColorMouseOver = System.Drawing.Color.Empty;
-            this.myButton2.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.myButton2, "myButton2");
-            this.myButton2.Name = "myButton2";
-            this.myButton2.TextColor = System.Drawing.Color.White;
-            this.myButton2.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.myButton2, resources.GetString("myButton2.ToolTip"));
-            this.myButton2.UseVisualStyleBackColor = true;
-            this.myButton2.Click += new System.EventHandler(this.BUT_quickrtl_Click);
-            // 
-            // myButton3
-            // 
-            this.myButton3.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.myButton3.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
-            this.myButton3.ColorMouseDown = System.Drawing.Color.Empty;
-            this.myButton3.ColorMouseOver = System.Drawing.Color.Empty;
-            this.myButton3.ColorNotEnabled = System.Drawing.Color.Empty;
-            resources.ApplyResources(this.myButton3, "myButton3");
-            this.myButton3.Name = "myButton3";
-            this.myButton3.TextColor = System.Drawing.Color.White;
-            this.myButton3.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
-            this.toolTip1.SetToolTip(this.myButton3, resources.GetString("myButton3.ToolTip"));
-            this.myButton3.UseVisualStyleBackColor = true;
-            this.myButton3.Click += new System.EventHandler(this.BUT_quickauto_Click);
+            resources.ApplyResources(this.dashboardMsgPanel, "dashboardMsgPanel");
+            this.dashboardMsgPanel.Name = "dashboardMsgPanel";
             // 
             // tabGauges
             // 
@@ -2873,6 +2624,362 @@ namespace MissionPlanner.GCSViews
             this.G_batp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown);
             this.G_batp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp);
             // 
+            // tabActions
+            // 
+            this.tabActions.Controls.Add(this.tableLayoutPanel1);
+            resources.ApplyResources(this.tabActions, "tabActions");
+            this.tabActions.Name = "tabActions";
+            this.tabActions.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.BUT_SendMSG, 2, 4);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_abortland, 4, 4);
+            this.tableLayoutPanel1.Controls.Add(this.modifyandSetLoiterRad, 4, 2);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_clear_track, 4, 3);
+            this.tableLayoutPanel1.Controls.Add(this.CMB_action, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.BUTactiondo, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_resumemis, 3, 4);
+            this.tableLayoutPanel1.Controls.Add(this.modifyandSetSpeed, 4, 0);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_mountmode, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_joystick, 2, 3);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_RAWSensor, 3, 2);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_Homealt, 3, 0);
+            this.tableLayoutPanel1.Controls.Add(this.BUTrestartmission, 3, 1);
+            this.tableLayoutPanel1.Controls.Add(this.CMB_mountmode, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_quickrtl, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_quickmanual, 2, 1);
+            this.tableLayoutPanel1.Controls.Add(this.BUT_quickauto, 2, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // BUT_SendMSG
+            // 
+            this.BUT_SendMSG.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_SendMSG.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_SendMSG.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_SendMSG.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_SendMSG.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_SendMSG, "BUT_SendMSG");
+            this.BUT_SendMSG.Name = "BUT_SendMSG";
+            this.BUT_SendMSG.TextColor = System.Drawing.Color.White;
+            this.BUT_SendMSG.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_SendMSG, resources.GetString("BUT_SendMSG.ToolTip"));
+            this.BUT_SendMSG.UseVisualStyleBackColor = true;
+            this.BUT_SendMSG.Click += new System.EventHandler(this.BUT_SendMSG_Click);
+            // 
+            // BUT_abortland
+            // 
+            this.BUT_abortland.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_abortland.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_abortland.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_abortland.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_abortland.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_abortland, "BUT_abortland");
+            this.BUT_abortland.Name = "BUT_abortland";
+            this.BUT_abortland.TextColor = System.Drawing.Color.White;
+            this.BUT_abortland.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_abortland, resources.GetString("BUT_abortland.ToolTip"));
+            this.BUT_abortland.UseVisualStyleBackColor = true;
+            this.BUT_abortland.Click += new System.EventHandler(this.BUT_abortland_Click);
+            // 
+            // modifyandSetLoiterRad
+            // 
+            resources.ApplyResources(this.modifyandSetLoiterRad, "modifyandSetLoiterRad");
+            this.modifyandSetLoiterRad.ButtonText = "Set Loiter Rad";
+            this.modifyandSetLoiterRad.DecimalPlaces = 0;
+            this.modifyandSetLoiterRad.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.modifyandSetLoiterRad.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.modifyandSetLoiterRad.Minimum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            -2147483648});
+            this.modifyandSetLoiterRad.Name = "modifyandSetLoiterRad";
+            this.modifyandSetLoiterRad.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.modifyandSetLoiterRad.Click += new System.EventHandler(this.modifyandSetLoiterRad_Click);
+            // 
+            // BUT_clear_track
+            // 
+            this.BUT_clear_track.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_clear_track.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_clear_track.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_clear_track.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_clear_track.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_clear_track, "BUT_clear_track");
+            this.BUT_clear_track.Name = "BUT_clear_track";
+            this.BUT_clear_track.TextColor = System.Drawing.Color.White;
+            this.BUT_clear_track.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_clear_track, resources.GetString("BUT_clear_track.ToolTip"));
+            this.BUT_clear_track.UseVisualStyleBackColor = true;
+            this.BUT_clear_track.Click += new System.EventHandler(this.BUT_clear_track_Click);
+            // 
+            // CMB_action
+            // 
+            resources.ApplyResources(this.CMB_action, "CMB_action");
+            this.CMB_action.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CMB_action.DropDownWidth = 250;
+            this.CMB_action.FormattingEnabled = true;
+            this.CMB_action.Name = "CMB_action";
+            // 
+            // BUTactiondo
+            // 
+            this.BUTactiondo.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUTactiondo.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUTactiondo.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUTactiondo.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUTactiondo.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUTactiondo, "BUTactiondo");
+            this.BUTactiondo.Name = "BUTactiondo";
+            this.BUTactiondo.TextColor = System.Drawing.Color.White;
+            this.BUTactiondo.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUTactiondo, resources.GetString("BUTactiondo.ToolTip"));
+            this.BUTactiondo.UseVisualStyleBackColor = true;
+            this.BUTactiondo.Click += new System.EventHandler(this.BUTactiondo_Click);
+            // 
+            // BUT_resumemis
+            // 
+            this.BUT_resumemis.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_resumemis.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_resumemis.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_resumemis.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_resumemis.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_resumemis, "BUT_resumemis");
+            this.BUT_resumemis.Name = "BUT_resumemis";
+            this.BUT_resumemis.TextColor = System.Drawing.Color.White;
+            this.BUT_resumemis.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.BUT_resumemis.UseVisualStyleBackColor = true;
+            this.BUT_resumemis.Click += new System.EventHandler(this.BUT_resumemis_Click);
+            // 
+            // modifyandSetSpeed
+            // 
+            resources.ApplyResources(this.modifyandSetSpeed, "modifyandSetSpeed");
+            this.modifyandSetSpeed.ButtonText = "Change Speed";
+            this.modifyandSetSpeed.DecimalPlaces = 1;
+            this.modifyandSetSpeed.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.modifyandSetSpeed.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.modifyandSetSpeed.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.modifyandSetSpeed.Name = "modifyandSetSpeed";
+            this.modifyandSetSpeed.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.modifyandSetSpeed.Click += new System.EventHandler(this.modifyandSetSpeed_Click);
+            this.modifyandSetSpeed.ParentChanged += new System.EventHandler(this.modifyandSetSpeed_ParentChanged);
+            // 
+            // BUT_mountmode
+            // 
+            this.BUT_mountmode.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_mountmode.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_mountmode.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_mountmode.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_mountmode.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_mountmode, "BUT_mountmode");
+            this.BUT_mountmode.Name = "BUT_mountmode";
+            this.BUT_mountmode.TextColor = System.Drawing.Color.White;
+            this.BUT_mountmode.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_mountmode, resources.GetString("BUT_mountmode.ToolTip"));
+            this.BUT_mountmode.UseVisualStyleBackColor = true;
+            this.BUT_mountmode.Click += new System.EventHandler(this.BUT_mountmode_Click);
+            // 
+            // BUT_joystick
+            // 
+            this.BUT_joystick.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_joystick.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_joystick.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_joystick.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_joystick.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_joystick, "BUT_joystick");
+            this.BUT_joystick.Name = "BUT_joystick";
+            this.BUT_joystick.TextColor = System.Drawing.Color.White;
+            this.BUT_joystick.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_joystick, resources.GetString("BUT_joystick.ToolTip"));
+            this.BUT_joystick.UseVisualStyleBackColor = true;
+            this.BUT_joystick.Click += new System.EventHandler(this.BUT_joystick_Click);
+            // 
+            // BUT_RAWSensor
+            // 
+            this.BUT_RAWSensor.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_RAWSensor.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_RAWSensor.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_RAWSensor.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_RAWSensor.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_RAWSensor, "BUT_RAWSensor");
+            this.BUT_RAWSensor.Name = "BUT_RAWSensor";
+            this.BUT_RAWSensor.TextColor = System.Drawing.Color.White;
+            this.BUT_RAWSensor.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_RAWSensor, resources.GetString("BUT_RAWSensor.ToolTip"));
+            this.BUT_RAWSensor.UseVisualStyleBackColor = true;
+            this.BUT_RAWSensor.Click += new System.EventHandler(this.BUT_RAWSensor_Click);
+            // 
+            // BUT_Homealt
+            // 
+            this.BUT_Homealt.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_Homealt.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_Homealt.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_Homealt.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_Homealt.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_Homealt, "BUT_Homealt");
+            this.BUT_Homealt.Name = "BUT_Homealt";
+            this.BUT_Homealt.TextColor = System.Drawing.Color.White;
+            this.BUT_Homealt.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_Homealt, resources.GetString("BUT_Homealt.ToolTip"));
+            this.BUT_Homealt.UseVisualStyleBackColor = true;
+            this.BUT_Homealt.Click += new System.EventHandler(this.BUT_Homealt_Click);
+            // 
+            // BUTrestartmission
+            // 
+            this.BUTrestartmission.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUTrestartmission.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUTrestartmission.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUTrestartmission.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUTrestartmission.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUTrestartmission, "BUTrestartmission");
+            this.BUTrestartmission.Name = "BUTrestartmission";
+            this.BUTrestartmission.TextColor = System.Drawing.Color.White;
+            this.BUTrestartmission.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUTrestartmission, resources.GetString("BUTrestartmission.ToolTip"));
+            this.BUTrestartmission.UseVisualStyleBackColor = true;
+            this.BUTrestartmission.Click += new System.EventHandler(this.BUTrestartmission_Click);
+            // 
+            // CMB_mountmode
+            // 
+            resources.ApplyResources(this.CMB_mountmode, "CMB_mountmode");
+            this.CMB_mountmode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CMB_mountmode.DropDownWidth = 150;
+            this.CMB_mountmode.FormattingEnabled = true;
+            this.CMB_mountmode.Name = "CMB_mountmode";
+            // 
+            // BUT_quickrtl
+            // 
+            this.BUT_quickrtl.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_quickrtl.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_quickrtl.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_quickrtl.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_quickrtl.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_quickrtl, "BUT_quickrtl");
+            this.BUT_quickrtl.Name = "BUT_quickrtl";
+            this.BUT_quickrtl.TextColor = System.Drawing.Color.White;
+            this.BUT_quickrtl.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_quickrtl, resources.GetString("BUT_quickrtl.ToolTip"));
+            this.BUT_quickrtl.UseVisualStyleBackColor = true;
+            this.BUT_quickrtl.Click += new System.EventHandler(this.BUT_quickrtl_Click);
+            // 
+            // BUT_quickmanual
+            // 
+            this.BUT_quickmanual.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_quickmanual.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_quickmanual.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_quickmanual.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_quickmanual.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_quickmanual, "BUT_quickmanual");
+            this.BUT_quickmanual.Name = "BUT_quickmanual";
+            this.BUT_quickmanual.TextColor = System.Drawing.Color.White;
+            this.BUT_quickmanual.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_quickmanual, resources.GetString("BUT_quickmanual.ToolTip"));
+            this.BUT_quickmanual.UseVisualStyleBackColor = true;
+            this.BUT_quickmanual.Click += new System.EventHandler(this.BUT_quickmanual_Click);
+            // 
+            // BUT_quickauto
+            // 
+            this.BUT_quickauto.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_quickauto.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_quickauto.ColorMouseDown = System.Drawing.Color.Empty;
+            this.BUT_quickauto.ColorMouseOver = System.Drawing.Color.Empty;
+            this.BUT_quickauto.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.BUT_quickauto, "BUT_quickauto");
+            this.BUT_quickauto.Name = "BUT_quickauto";
+            this.BUT_quickauto.TextColor = System.Drawing.Color.White;
+            this.BUT_quickauto.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.BUT_quickauto, resources.GetString("BUT_quickauto.ToolTip"));
+            this.BUT_quickauto.UseVisualStyleBackColor = true;
+            this.BUT_quickauto.Click += new System.EventHandler(this.BUT_quickauto_Click);
+            // 
+            // tabPagemessages
+            // 
+            resources.ApplyResources(this.tabPagemessages, "tabPagemessages");
+            this.tabPagemessages.Name = "tabPagemessages";
+            this.tabPagemessages.UseVisualStyleBackColor = true;
+            // 
+            // tabActionsSimple
+            // 
+            this.tabActionsSimple.Controls.Add(this.myButton1);
+            this.tabActionsSimple.Controls.Add(this.myButton2);
+            this.tabActionsSimple.Controls.Add(this.myButton3);
+            resources.ApplyResources(this.tabActionsSimple, "tabActionsSimple");
+            this.tabActionsSimple.Name = "tabActionsSimple";
+            this.tabActionsSimple.UseVisualStyleBackColor = true;
+            // 
+            // myButton1
+            // 
+            this.myButton1.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.myButton1.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.myButton1.ColorMouseDown = System.Drawing.Color.Empty;
+            this.myButton1.ColorMouseOver = System.Drawing.Color.Empty;
+            this.myButton1.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.myButton1, "myButton1");
+            this.myButton1.Name = "myButton1";
+            this.myButton1.TextColor = System.Drawing.Color.White;
+            this.myButton1.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.myButton1, resources.GetString("myButton1.ToolTip"));
+            this.myButton1.UseVisualStyleBackColor = true;
+            this.myButton1.Click += new System.EventHandler(this.BUT_quickmanual_Click);
+            // 
+            // myButton2
+            // 
+            this.myButton2.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.myButton2.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.myButton2.ColorMouseDown = System.Drawing.Color.Empty;
+            this.myButton2.ColorMouseOver = System.Drawing.Color.Empty;
+            this.myButton2.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.myButton2, "myButton2");
+            this.myButton2.Name = "myButton2";
+            this.myButton2.TextColor = System.Drawing.Color.White;
+            this.myButton2.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.myButton2, resources.GetString("myButton2.ToolTip"));
+            this.myButton2.UseVisualStyleBackColor = true;
+            this.myButton2.Click += new System.EventHandler(this.BUT_quickrtl_Click);
+            // 
+            // myButton3
+            // 
+            this.myButton3.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.myButton3.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.myButton3.ColorMouseDown = System.Drawing.Color.Empty;
+            this.myButton3.ColorMouseOver = System.Drawing.Color.Empty;
+            this.myButton3.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.myButton3, "myButton3");
+            this.myButton3.Name = "myButton3";
+            this.myButton3.TextColor = System.Drawing.Color.White;
+            this.myButton3.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
+            this.toolTip1.SetToolTip(this.myButton3, resources.GetString("myButton3.ToolTip"));
+            this.myButton3.UseVisualStyleBackColor = true;
+            this.myButton3.Click += new System.EventHandler(this.BUT_quickauto_Click);
+            // 
             // tabTransponder
             // 
             resources.ApplyResources(this.tabTransponder, "tabTransponder");
@@ -4127,62 +4234,6 @@ namespace MissionPlanner.GCSViews
             resources.ApplyResources(this.showIconsToolStripMenuItem, "showIconsToolStripMenuItem");
             this.showIconsToolStripMenuItem.Click += new System.EventHandler(this.showIconsToolStripMenuItem_Click);
             // 
-            // tabDashboard
-            // 
-            this.tabDashboard.Controls.Add(this.button1);
-            this.tabDashboard.Controls.Add(this.but_ArmAll);
-            this.tabDashboard.Controls.Add(this.dataGridViewDashboard);
-            this.tabDashboard.Controls.Add(this.lblArmedVehicles);
-            this.tabDashboard.Controls.Add(this.lblActiveVehicle);
-            this.tabDashboard.Controls.Add(this.lblConnectedVehicles);
-            resources.ApplyResources(this.tabDashboard, "tabDashboard");
-            this.tabDashboard.Name = "tabDashboard";
-            this.tabDashboard.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            resources.ApplyResources(this.button1, "button1");
-            this.button1.Name = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.but_DisarmAll_Click);
-            // 
-            // but_ArmAll
-            // 
-            resources.ApplyResources(this.but_ArmAll, "but_ArmAll");
-            this.but_ArmAll.Name = "but_ArmAll";
-            this.but_ArmAll.UseVisualStyleBackColor = true;
-            this.but_ArmAll.Click += new System.EventHandler(this.but_ArmAll_Click);
-            // 
-            // dataGridViewDashboard
-            // 
-            this.dataGridViewDashboard.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewDashboard.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.colCRAFT,
-            this.colStatus,
-            this.colMode,
-            this.colBattery,
-            this.colGPS,
-            this.colMissionWPs,
-            this.colArm});
-            resources.ApplyResources(this.dataGridViewDashboard, "dataGridViewDashboard");
-            this.dataGridViewDashboard.Name = "dataGridViewDashboard";
-            this.dataGridViewDashboard.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDashboard_CellClick);
-            // 
-            // lblArmedVehicles
-            // 
-            resources.ApplyResources(this.lblArmedVehicles, "lblArmedVehicles");
-            this.lblArmedVehicles.Name = "lblArmedVehicles";
-            // 
-            // lblActiveVehicle
-            // 
-            resources.ApplyResources(this.lblActiveVehicle, "lblActiveVehicle");
-            this.lblActiveVehicle.Name = "lblActiveVehicle";
-            // 
-            // lblConnectedVehicles
-            // 
-            resources.ApplyResources(this.lblConnectedVehicles, "lblConnectedVehicles");
-            this.lblConnectedVehicles.Name = "lblConnectedVehicles";
-            // 
             // panel_persistent
             // 
             resources.ApplyResources(this.panel_persistent, "panel_persistent");
@@ -4232,6 +4283,12 @@ namespace MissionPlanner.GCSViews
             this.timer_gauge.Interval = 1000;
             this.timer_gauge.Tick += new System.EventHandler(this.timer_gauge_Tick);
             // 
+            // dashboardTimer
+            // 
+            this.dashboardTimer.Enabled = true;
+            this.dashboardTimer.Interval = 1000;
+            this.dashboardTimer.Tick += new System.EventHandler(this.dashboardTimer_Tick);
+            // 
             // modifyandSetAlt
             // 
             resources.ApplyResources(this.modifyandSetAlt, "modifyandSetAlt");
@@ -4259,47 +4316,6 @@ namespace MissionPlanner.GCSViews
             0,
             0});
             this.modifyandSetAlt.Click += new System.EventHandler(this.modifyandSetAlt_Click);
-            // 
-            // dashboardTimer
-            // 
-            this.dashboardTimer.Enabled = true;
-            this.dashboardTimer.Interval = 1000;
-            this.dashboardTimer.Tick += new System.EventHandler(this.dashboardTimer_Tick);
-            // 
-            // colCRAFT
-            // 
-            resources.ApplyResources(this.colCRAFT, "colCRAFT");
-            this.colCRAFT.Name = "colCRAFT";
-            // 
-            // colStatus
-            // 
-            resources.ApplyResources(this.colStatus, "colStatus");
-            this.colStatus.Name = "colStatus";
-            // 
-            // colMode
-            // 
-            resources.ApplyResources(this.colMode, "colMode");
-            this.colMode.Name = "colMode";
-            // 
-            // colBattery
-            // 
-            resources.ApplyResources(this.colBattery, "colBattery");
-            this.colBattery.Name = "colBattery";
-            // 
-            // colGPS
-            // 
-            resources.ApplyResources(this.colGPS, "colGPS");
-            this.colGPS.Name = "colGPS";
-            // 
-            // colMissionWPs
-            // 
-            resources.ApplyResources(this.colMissionWPs, "colMissionWPs");
-            this.colMissionWPs.Name = "colMissionWPs";
-            // 
-            // colArm
-            // 
-            resources.ApplyResources(this.colArm, "colArm");
-            this.colArm.Name = "colArm";
             // 
             // FlightData
             // 
@@ -4337,15 +4353,19 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanelQuick.ResumeLayout(false);
             this.contextMenuStripQuickView.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceQuickTab)).EndInit();
-            this.tabActions.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.tabActionsSimple.ResumeLayout(false);
+            this.tabDashboard.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDashboard)).EndInit();
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.tableLayoutPanel4.PerformLayout();
             this.tabGauges.ResumeLayout(false);
             this.tabGauges.PerformLayout();
             this.tableLayoutPanel_gaugeData.ResumeLayout(false);
             this.tableLayoutPanel_gaugeData.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).EndInit();
+            this.tabActions.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.tabActionsSimple.ResumeLayout(false);
             this.tabTransponder.ResumeLayout(false);
             this.tabTransponder.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Squawk_nud)).EndInit();
@@ -4382,18 +4402,15 @@ namespace MissionPlanner.GCSViews
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_yaw)).EndInit();
             this.tabPage_hud1.ResumeLayout(false);
             this.contextMenuStripHud.ResumeLayout(false);
-            this.tabDashboard.ResumeLayout(false);
-            this.tabDashboard.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDashboard)).EndInit();
             this.tabPagePreFlight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).EndInit();
             this.ResumeLayout(false);
 
-}
+        }
 
 
 
-private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.BindingSource bindingSource1;
 private System.Windows.Forms.Timer ZedGraphTimer;
 private System.Windows.Forms.SplitContainer MainH;
 private System.Windows.Forms.SplitContainer SubMainRight;
@@ -4452,6 +4469,7 @@ private System.Windows.Forms.ToolStripMenuItem loadFileToolStripMenuItem;
 private System.Windows.Forms.ToolStripMenuItem PointCameraCoordsToolStripMenuItem1;
 private System.Windows.Forms.ToolStripMenuItem onOffCameraOverlapToolStripMenuItem;
 private System.Windows.Forms.ContextMenuStrip contextMenuStripQuickView;
+
 private System.Windows.Forms.ToolStripMenuItem setViewCountToolStripMenuItem;
 private System.Windows.Forms.ToolStripMenuItem setGStreamerSourceToolStripMenuItem;
 private System.Windows.Forms.ToolStripMenuItem setEKFHomeHereToolStripMenuItem;
@@ -4661,10 +4679,12 @@ private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
         private Label lblConnectedVehicles;
         private Label lblActiveVehicle;
         private Label lblArmedVehicles;
-        private Controls.MyDataGridView dataGridViewDashboard;
         private Button but_ArmAll;
         private Button button1;
         private Timer dashboardTimer;
+        private Panel dashboardMsgPanel;
+        private TableLayoutPanel tableLayoutPanel4;
+        private Controls.MyDataGridView dataGridViewDashboard;
         private DataGridViewTextBoxColumn colCRAFT;
         private DataGridViewTextBoxColumn colStatus;
         private DataGridViewTextBoxColumn colMode;

@@ -268,7 +268,7 @@ namespace MissionPlanner.GCSViews
             HighLatency_Disable,
             Toggle_Safety_Switch,
             Do_Parachute,
-            Engine_Start,
+            Engine_Start,   
             Engine_Stop,
             Terminate_Flight,
             Format_SD_Card,
@@ -326,6 +326,21 @@ namespace MissionPlanner.GCSViews
         {
             log.Info("Ctor Start");
             InitializeComponent();
+
+
+            // 04aug2026_DashboardTab start // message box in dashboard start 
+            if (txt_messagebox.Parent != dashboardMsgPanel)
+            {
+                txt_messagebox.Parent?.Controls.Remove(txt_messagebox);
+
+                txt_messagebox.Dock = DockStyle.Fill;
+                dashboardMsgPanel.Controls.Add(txt_messagebox);
+
+                txt_messagebox.Visible = true;
+            }
+            // 04aug2026_DashboardTab end // message box in dashboard end
+
+
             //tabControlactions.SelectedTab = tabQuick; // 15july2026_task2
 
 
@@ -6056,7 +6071,7 @@ namespace MissionPlanner.GCSViews
             if (clicked == tabDashboard  /* 04aug2026_DashboardTab */ || clicked == tabGauges) 
                 return;
 
-            // Placeholder vehicle tab clicked
+            // Placeholder vehicle tab clicked i.e auv1, auv2 (non gauge auv tab) clicked
             if (!tabControlactions.TabPages.Contains(tabGauges))
                 return;
 
@@ -6070,8 +6085,7 @@ namespace MissionPlanner.GCSViews
         //internal bool _ignoreVehicleTabRefresh = false; // 20july2026_vehicletabs
         private void MoveVehicleTab(TabPage clicked) // 20july2026_vehicletabs
         {   //this fun swaps the gaugetab and clicked tab
-
-    
+            
             _changingVehicleTab = true;
 
             try
@@ -6107,7 +6121,7 @@ namespace MissionPlanner.GCSViews
                     Debug.WriteLine($"Contains Clicked={tabControlactions.TabPages.Contains(clicked)}");
 
                     tabControlactions.TabPages.Insert(gaugeIndex, clicked);
-                    tabControlactions.TabPages.Insert(clickedIndex, gauge);//line 6093
+                    tabControlactions.TabPages.Insert(clickedIndex, gauge);
                 }
                 else
                 {
@@ -9212,9 +9226,7 @@ namespace MissionPlanner.GCSViews
             messagePopup.Text = "Messages";
             messagePopup.Size = new Size(500, 300);
             messagePopup.StartPosition = FormStartPosition.CenterScreen; // 03july2026_task2 CenterParent
-
-
-
+                
             //icon pedam
             var bmp = global::MissionPlanner.Properties.Resources.terminal_ico;
             if (bmp != null)
@@ -9235,8 +9247,6 @@ namespace MissionPlanner.GCSViews
 
             txt_messagebox.Dock = DockStyle.Fill;
             messagePopup.Controls.Add(txt_messagebox);
-
-
 
 
             messagePopup.Show(this);
@@ -9361,6 +9371,8 @@ namespace MissionPlanner.GCSViews
                 UpdateDashboard();
             }
         }
+
+
         private void UpdateDashboard() //04aug2026_DashboardTab
         { //04aug2026_DashboardTab this fun will update everything in tabDashboard 
             try
@@ -9433,6 +9445,7 @@ namespace MissionPlanner.GCSViews
                         dataGridViewDashboard.Rows[row].Cells["colStatus"].Style.ForeColor = port.BaseStream.IsOpen ? Color.Lime : Color.Red;
                         dataGridViewDashboard.Rows[row].Cells["colGps"].Style.BackColor = gpsColor;
                         row++;
+                        
                     } 
             }
 
