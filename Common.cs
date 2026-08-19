@@ -3,6 +3,7 @@ using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using log4net;
 using MissionPlanner.ArduPilot;
+using MissionPlanner.Comms;
 using MissionPlanner.Maps;
 using MissionPlanner.Utilities;
 using System;
@@ -76,6 +77,26 @@ namespace MissionPlanner
                     {
                         //MessageBox.Show($"Updating existing boat SYSID={MAV.sysid}");
                         var itemb = (GMapMarkerBoat)item;
+
+                        // 18aug2026_task1_IP start
+                        string ipLastOctet = "NO IP";
+                        var port = MainV2.Comports.FirstOrDefault(p => p.MAV == MAV);
+                        if (port != null)
+                        {
+                            var udp = port.BaseStream as UdpSerialConnect;
+
+                            if (udp?.RemoteIpEndPoint?.Address != null)
+                            {
+                                var bytes = udp.RemoteIpEndPoint.Address.GetAddressBytes();
+
+                                if (bytes.Length == 4)
+                                    ipLastOctet = bytes[3].ToString();
+                            }
+                        }
+                        itemb.IpLastOctet = ipLastOctet;
+                        // 18aug2026_task1_IP end
+
+
                         itemb.Position = portlocation;
                         itemb.Heading = MAV.cs.yaw;
                         itemb.Cog = MAV.cs.groundcourse;
@@ -138,12 +159,37 @@ namespace MissionPlanner
                 //MessageBox.Show($"Creating boat marker for SYSID={MAV.sysid}");               
                 //testtt end
 
-                    //return new GMapMarkerBoat(
-                    //    portlocation,
-                    //    MAV.cs.yaw,
-                    //    MAV.cs.groundcourse,
-                    //    MAV.cs.nav_bearing,
-                    //    MAV.cs.target_bearing) // commented orginal code under // 22july2026_colorBoatsFlightData
+                //return new GMapMarkerBoat(
+                //    portlocation,
+                //    MAV.cs.yaw,
+                //    MAV.cs.groundcourse,
+                //    MAV.cs.nav_bearing,
+                //    MAV.cs.target_bearing) // commented orginal code under // 22july2026_colorBoatsFlightData
+
+                // 18aug2026_task1_ip start
+                string ipLastOctet = "NO IP";
+
+                var port = MainV2.Comports.FirstOrDefault(p => p.MAV == MAV);
+
+                if (port != null)
+                {
+                    var udp = port.BaseStream as UdpSerialConnect;
+
+                    if (udp?.RemoteIpEndPoint?.Address != null)
+                    {
+                        var bytes = udp.RemoteIpEndPoint.Address.GetAddressBytes();
+
+                        if (bytes.Length == 4)
+                            ipLastOctet = bytes[3].ToString();
+                    }
+                }
+                //GMapMarkerBoat.IpLastOctet = ipLastOctet;
+                
+                // 18aug2026_task1_ip end
+
+
+
+
 
                 return new GMapMarkerBoat( portlocation,MAV.cs.yaw,MAV.cs.groundcourse, MAV.cs.nav_bearing,MAV.cs.target_bearing,
     MAV.sysid) // 22july2026_colorBoatsFlightData new code
@@ -153,6 +199,7 @@ namespace MissionPlanner
                     ToolTipMode = String.IsNullOrEmpty(Settings.Instance["mapicondesc"]) ?
                                   MarkerTooltipMode.Never :
                                   MarkerTooltipMode.Always,
+                    IpLastOctet = ipLastOctet, // 18aug2026_task1_ip
                     Tag = MAV
                 };
             }

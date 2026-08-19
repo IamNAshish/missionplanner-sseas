@@ -216,16 +216,13 @@ namespace MissionPlanner
             this.toolStripButton_addConnection.Margin = new System.Windows.Forms.Padding(0);
             this.toolStripButton_addConnection.Name = "toolStripButton_addConnection";
             this.toolStripButton_addConnection.Click += new System.EventHandler(this.connectionOptionsToolStripMenuItem_Click);
-            this.toolStripButton_addConnection.ToolTipText = "Add AUV";
-            this.toolStripButton_addConnection.Text = "";
-            this.toolStripButton_addConnection.Visible= true;
             // 
             // lblLogo
             // 
             this.lblLogo.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.lblLogo.BackColor = System.Drawing.Color.Transparent;
             resources.ApplyResources(this.lblLogo, "lblLogo");
-            this.lblLogo.ForeColor = System.Drawing.Color.White;
+            this.lblLogo.ForeColor = System.Drawing.Color.SteelBlue;
             this.lblLogo.Margin = new System.Windows.Forms.Padding(0);
             this.lblLogo.Name = "lblLogo";
             this.lblLogo.Click += new System.EventHandler(this.lblLogo_click);

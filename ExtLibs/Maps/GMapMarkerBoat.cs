@@ -1,5 +1,6 @@
 ﻿using GMap.NET;
 using GMap.NET.WindowsForms;
+using MissionPlanner.Comms;
 using MissionPlanner.Utilities;
 using System;
 using System.Drawing;
@@ -15,6 +16,8 @@ namespace MissionPlanner.Maps
         static readonly System.Drawing.Size SizeSt =
             new System.Drawing.Size(global::MissionPlanner.Maps.Resources.boat.Width,
                 global::MissionPlanner.Maps.Resources.boat.Height);
+
+        public string IpLastOctet { get; set; } = null; // 18aug2026_task1_IP
 
         // commented orginal code under // 22july2026_colorBoatsFlightData start
         //float heading = 0;
@@ -131,63 +134,66 @@ namespace MissionPlanner.Maps
             }
 
 #if NET472_OR_GREATER
+
             var img = Resources.boat;
+
+            //string vehicleLabel = $"{Sysid}"; // commented under 18aug2026_task1_IP
+            string vehicleLabel = IpLastOctet != null ? $"\n{Sysid}({IpLastOctet})" : $"\n{Sysid}";// 18aug2026_task1_IP
+            
             // 22july2026_colorBoatsFlightData start
+            
             switch (Sysid % 6)
             {                
                 case 1:
                     img = Resources.boat1_green;
-
                     if (IsActive)
-                    {
-                        
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Green, -6, -6);
+                    {                        
+                        g.DrawString(vehicleLabel/*Sysid.ToString()*/, new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold), Brushes.Green, -6, -0);
                     }
 
                     else
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Green, -6, -6);
+                        g.DrawString(vehicleLabel/*Sysid.ToString()*/, new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold), Brushes.Green, -6, 0);
                     
                     break;
                 case 2:
                     img = Resources.boat2_purple;
                     if (IsActive)
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Violet, -6, -6);
+                        g.DrawString(vehicleLabel/*Sysid.ToString()*/, new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold), Brushes.Violet, -6, 0);
                     else
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Violet, -6, -6);
+                        g.DrawString(vehicleLabel/*Sysid.ToString()*/, new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold), Brushes.Violet, -6, -0);
 
                     break;
                 case 3:
                     img = Resources.boat;
                     if (IsActive)
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Yellow, -6, -6);
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold), Brushes.Yellow, -6, -6);
                     else
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Yellow, -6, -6);
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold), Brushes.Yellow, -6, -6);
                     break;
                 case 4:
                     img = Resources.boat4_blue;
                     if (IsActive)
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Blue, -6, -6);
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold), Brushes.Blue, -6, -6);
                     else
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Blue, -6, -6);
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold), Brushes.Blue, -6, -6);
 
                     break;
                 case 5:
                     img = Resources.boat5_orange;
                     if (IsActive)
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Orange, -6, -6);
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold), Brushes.Orange, -6, -6);
                     else
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Orange, -6, -6);
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold), Brushes.Orange, -6, -6);
 
                     break;
                 default: //6
                     img = Resources.boat6_red;
                     if (IsActive)
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 200, FontStyle.Bold), Brushes.Red, -6, -6);
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold), Brushes.Red, -6, -6);
                     else
-                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 100, FontStyle.Bold), Brushes.Red, -6, -6);
+                        g.DrawString(Sysid.ToString(), new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold), Brushes.Red, -6, -6);
                     break;
             }
-
             // 22july2026_colorBoatsFlightData end
 
 

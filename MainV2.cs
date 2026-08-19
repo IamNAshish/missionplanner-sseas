@@ -2737,7 +2737,7 @@ namespace MissionPlanner
                         {
                             this.MenuConnect.Image = displayicons.disconnect;
                             this.MenuConnect.Image.Tag = "Disconnect";
-                            this.MenuConnect.Text = Strings.DISCONNECTc;
+                            this.MenuConnect.Text = "";//Strings.DISCONNECTc;
                             _connectionControl.IsConnected(true);
                         });
                     }
@@ -2751,7 +2751,7 @@ namespace MissionPlanner
                         {
                             this.MenuConnect.Image = displayicons.connect;
                             this.MenuConnect.Image.Tag = "Connect";
-                            this.MenuConnect.Text = Strings.CONNECTc;
+                            this.MenuConnect.Text = ""; //Strings.CONNECTc;
                             _connectionControl.IsConnected(false);
                             if (_connectionStats != null)
                             {

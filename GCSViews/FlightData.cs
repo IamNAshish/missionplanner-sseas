@@ -8,6 +8,7 @@ using GMap.NET.WindowsForms.Markers;
 using log4net;
 using Microsoft.Scripting.Utils;
 using MissionPlanner.ArduPilot;
+using MissionPlanner.Comms;
 using MissionPlanner.Controls;
 using MissionPlanner.GeoRef;
 using MissionPlanner.Joystick;
@@ -1344,14 +1345,43 @@ namespace MissionPlanner.GCSViews
             BeginInvoke((Action) delegate { photosoverlay.Markers.Add(marker); });
         }
 
+        
         private void addMAVMarker(MAVState MAV)
         {
+            // 18aug2026_task1_IP start
+            var port = MainV2.Comports.FirstOrDefault(p => p.MAV == MAV);
+
+            string ipLastOctet = "NO IP";
+
+            if (port != null)
+            {
+                var udp = port.BaseStream as UdpSerialConnect;
+
+                if (udp?.RemoteIpEndPoint?.Address != null)
+                {
+                    var bytes = udp.RemoteIpEndPoint.Address.GetAddressBytes();
+
+                    if (bytes.Length == 4)
+                        ipLastOctet = bytes[3].ToString();
+                }
+            }
+            // 18aug2026_task1_IP end
+
+
+
             this.BeginInvokeIfRequired(() => //Orginal code testtt 31july2026
             {
                 var marker = Common.getMAVMarker(MAV, routes);
 
                 if (marker == null || marker.Position.Lat == 0 && marker.Position.Lng == 0)
                     return;
+
+                // 18aug2026_task1_IP start
+                if (marker is GMapMarkerBoat boatMarker) 
+                {
+                    boatMarker.IpLastOctet = ipLastOctet;
+                }
+                // 18aug2026_task1_IP end
 
                 addMissionRouteMarker(marker);
             });
@@ -9103,13 +9133,27 @@ namespace MissionPlanner.GCSViews
         {
             if(e.Button == MouseButtons.Right) //right click
             {
-                if (g_speed_popout)
-                    return;
+                
+             if (g_speed_popout)
+                     return;
 
                 string max = "60";
                 if (DialogResult.OK == InputBox.Show("Enter Max Speed", "Enter Max Speed", ref max))
                 {
-                    float maxVal = float.Parse(max);
+                    if (!float.TryParse(max, out float maxVal))
+                    {
+                        CustomMessageBox.Show("Please enter a valid number for Max Speed.", "Invalid Max Speed");
+                        Gspeed_MouseUp(null, null);
+                        return;
+                    }
+
+                    if (maxVal <= 0)
+                    {
+                        CustomMessageBox.Show("Max Speed must be greater than 0.", "Invalid Max Speed");
+                        Gspeed_MouseUp(null, null);
+                        return;
+                    }
+                    maxVal = float.Parse(max);
                     Gspeed.MaxValue = maxVal;//float.Parse(max);
                     Settings.Instance["GspeedMAX"] = maxVal.ToString();
                     //Gspeed.MaxValue.ToString();
@@ -9131,9 +9175,9 @@ namespace MissionPlanner.GCSViews
                     {0f,0.6f* maxVal,0.9f* maxVal,
                  0f,0f};
                 }
-            }
-    
-                 
+            } 
+
+
         }
 
         private void G_RPM_MouseUp(object sender, MouseEventArgs e)
@@ -9263,7 +9307,43 @@ namespace MissionPlanner.GCSViews
 
 
 
-        
+
+
+        private string GetVehicleIpLastOctet(MAVLinkInterface port) // 18aug2026_task1_IP
+        {
+            var udp = port.BaseStream as UdpSerialConnect;
+
+            if (udp?.RemoteIpEndPoint?.Address == null)
+                return null;
+
+            var bytes = udp.RemoteIpEndPoint.Address.GetAddressBytes();
+
+            if (bytes.Length != 4 || bytes[0] == 0)
+                return null;
+
+            return bytes[3].ToString();
+        }
+
+        private string GetVehicleIpLastOctet2(MAVState MAV)
+        {
+            var port = MainV2.Comports.FirstOrDefault(p => p.MAV == MAV);
+
+            if (port == null)
+                return null;
+
+            var udp = port.BaseStream as UdpSerialConnect;
+
+            if (udp?.RemoteIpEndPoint?.Address == null)
+                return null;
+
+            var bytes = udp.RemoteIpEndPoint.Address.GetAddressBytes();
+
+            if (bytes.Length == 4)
+                return bytes[3].ToString();
+
+            return null;
+        }
+
 
         // 20july2026_vehicletabs start
         internal void RefreshVehicleTabs(List<port_sysid> vehicles)
@@ -9286,7 +9366,15 @@ namespace MissionPlanner.GCSViews
             //first tab (actual gaugetab) to be renamed as vehicle 0            
             if (vehicles.Count == 0)
                 return;
-            tabGauges.Text = "CRAFT"+vehicles[0].sysid.ToString();
+
+            //tabGauges.Text = "CRAFT"+vehicles[0].sysid.ToString(); // commented under 18aug2026_task1_IP
+            // 18aug2026_task1_IP start
+            var firstPort = MainV2.Comports.FirstOrDefault(
+            p => p.MAV.sysid == vehicles[0].sysid);
+            string firstIpLastOctet = firstPort != null? "("+GetVehicleIpLastOctet(firstPort)+")": null;
+            tabGauges.Text = $"CRAFT{vehicles[0].sysid} {firstIpLastOctet}";
+            // 18aug2026_task1_IP end
+
             tabGauges.Tag = vehicles[0];
 
             port_sysid current =(port_sysid)MainV2._connectionControl.cmb_sysid.SelectedItem;
@@ -9296,7 +9384,15 @@ namespace MissionPlanner.GCSViews
             for (int i = 1; i < vehicles.Count; i++)
             {
                 TabPage page = new TabPage();
-                page.Text = "CRAFT" + vehicles[i].sysid.ToString();
+
+                //page.Text = "CRAFT" + vehicles[i].sysid.ToString(); //commented under 18aug2026_task1_IP
+                
+                // 18aug2026_task1_IP start
+                var port = MainV2.Comports.FirstOrDefault(p => p.MAV.sysid == vehicles[i].sysid);
+                string ipLastOctet = port != null ? "("+GetVehicleIpLastOctet(port)+")": "NULL";
+                page.Text = $"CRAFT{vehicles[i].sysid} {ipLastOctet}";
+                // 18aug2026_task1_IP end
+
                 page.Tag = vehicles[i];
 
                 tabControlactions.TabPages.Add(page);
@@ -9381,11 +9477,13 @@ namespace MissionPlanner.GCSViews
                 // connection labels
                 int connectedVehicles = 0;
                 int armed = 0;
+                //string ip = "";
                 foreach (var port in MainV2.Comports)
                 {
                     if (!IsValidSurfaceBoat(port))
                         continue;
 
+                   
                     if (port.BaseStream != null && port.BaseStream.IsOpen)
                         connectedVehicles++;
                     if (port.MAV.cs.armed)
@@ -9414,6 +9512,18 @@ namespace MissionPlanner.GCSViews
                         if (!IsValidSurfaceBoat(port))
                             continue;
 
+                        // 18aug2026_task1_IP start
+                        //var udp = port.BaseStream as UdpSerialConnect;
+                        //string ipLastOctet = "NO IP";
+                        //if (udp?.RemoteIpEndPoint?.Address != null)
+                        //{
+                        //    var ip = udp.RemoteIpEndPoint.Address.ToString();
+                        //    // Get final octet
+                        //    ipLastOctet = ip.Split('.').Last();
+                        //}
+                        string ipLastOctet = port != null ? "("+GetVehicleIpLastOctet(port)+")" : "NO IP";
+                        // 18aug2026_task1_IP end
+
                         string gps_string;
                         Color gpsColor;
                         switch (port.MAV.cs.gpsstatus)
@@ -9428,7 +9538,7 @@ namespace MissionPlanner.GCSViews
                             default: gps_string = "Unknown"; gpsColor = Color.Gray; break;
                         }
 
-                        dataGridViewDashboard.Rows.Add($"CRAFT{port.MAV.sysid}",
+                        dataGridViewDashboard.Rows.Add($"CRAFT{port.MAV.sysid} {ipLastOctet}",//$"CRAFT{port.MAV.sysid}",
                             port.BaseStream.IsOpen ? "Connected" : "Disconnected",
                             port.MAV.cs.mode,
                             port.MAV.cs.battery_remaining > 90 ? $"\U0001f7e2{port.MAV.cs.battery_remaining}%" : (port.MAV.cs.battery_remaining < 40 ? $"🔴{port.MAV.cs.battery_remaining}%" : $"🟡{port.MAV.cs.battery_remaining}%"),//$"{port.MAV.cs.battery_remaining}%",
@@ -9450,6 +9560,59 @@ namespace MissionPlanner.GCSViews
             }
 
             finally{ dashboardTimer.Start(); }
+        }
+
+
+        private void setMaxSpeedToolStripMenuItem_Click(object sender, EventArgs e) //17aug2026_task1
+        {
+            string max = "60";
+
+            if (DialogResult.OK == InputBox.Show("Enter Max Speed", "Enter Max Speed", ref max))
+            {
+                if (!float.TryParse(max, out float maxVal))
+                {
+                    CustomMessageBox.Show(
+                        "Please enter a valid number for Max Speed.","Invalid Max Speed");
+
+                    setMaxSpeedToolStripMenuItem_Click(null, null);
+                    return;
+                }
+
+                if (maxVal <= 0)
+                {
+                    CustomMessageBox.Show("Max Speed must be greater than 0.","Invalid Max Speed");
+
+                    setMaxSpeedToolStripMenuItem_Click(null, null);
+                    return;
+                }
+
+                Gspeed.MaxValue = maxVal;
+                Settings.Instance["GspeedMAX"] = maxVal.ToString();
+
+                Gspeed.ScaleLinesMajorStepValue =
+                    Math.Max(10f, 0.1f * maxVal);
+
+                // 03june26_task3 this will not work as color enable is set to false in flightsata.cs
+                Gspeed.RangesEndValue = new float[]
+                {0.6f * maxVal,0.9f * maxVal,1f * maxVal,0f,0f};
+
+                Gspeed.RangesStartValue = new float[]
+                {0f,0.6f * maxVal,0.9f * maxVal,0f,0f};
+            }
+        }
+
+        private void setCruiseSspeedToolStripMenuItem_Click(object sender, EventArgs e) // 17aug2026_task1
+        {
+            int a = 0;
+            try {
+                if (DialogResult.OK == InputBox.Show("Enter Max Speed", "Enter Max Speed", ref a))
+                {
+                    float cruiseSpeed = a;
+                    MessageBox.Show($"Cruise speed set to {cruiseSpeed} knots", "Speed Setting");
+                }
+            }
+            catch {}
+            
         }
 
         private async void dataGridViewDashboard_CellClick(object sender,DataGridViewCellEventArgs e) // 04aug2026_DashboardTab
