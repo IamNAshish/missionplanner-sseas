@@ -5,7 +5,7 @@
 ; #define MyAppName "Mission Planner"
 #define MyAppName "SaifSeas Mission Planner"
 #define MyAppVersion "1.0.0"
-#define MyAppPublisher "Aashish"
+#define MyAppPublisher "saifseas"
 #define MyAppExeName "MissionPlanner.exe"
 ; #define MyAppExeName "SaifSeasMP.exe" this will only work if our app in bin has that name
 

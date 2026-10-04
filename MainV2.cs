@@ -4945,7 +4945,15 @@ namespace MissionPlanner
 
         private void connectionOptionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ConnectionOptions().Show(this);
+            new ConnectionOptions().Show(this); // commmented under 10sep2026_display
+            // 10sep2026_display start
+            //var form = new ConnectionOptions();
+
+            //form.StartPosition = FormStartPosition.CenterParent;
+            //form.WindowState = FormWindowState.Normal;
+
+            //form.Show(this);
+            // 10sep2026_display end
         }
 
 

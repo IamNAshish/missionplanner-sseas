@@ -7,6 +7,7 @@ using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using log4net;
 using Microsoft.Scripting.Utils;
+using Microsoft.VisualBasic;
 using MissionPlanner.ArduPilot;
 using MissionPlanner.Comms;
 using MissionPlanner.Controls;
@@ -26,6 +27,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -36,11 +39,11 @@ using WebCamService;
 using ZedGraph;
 using static MissionPlanner.Controls.ConnectionControl;
 using static Stimulsoft.Report.Func;
+using static Stimulsoft.Report.StiOptions.Engine;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
 using TableLayoutPanelCellPosition = System.Windows.Forms.TableLayoutPanelCellPosition;
 using UnauthorizedAccessException = System.UnauthorizedAccessException;
-
 
 // written by michael oborne
 
@@ -747,7 +750,7 @@ namespace MissionPlanner.GCSViews
 
             // Register double-click handlers programmatically
             this.G_waterflowTemp.DoubleClick += G_waterflowTemp_DoubleClick;
-            this.G_waterflow.DoubleClick += G_waterflow_DoubleClick;
+            // 10sep2026_cmt  this.G_waterflow.DoubleClick += G_waterflow_DoubleClick;
             this.G_silencerTemp.DoubleClick += G_silencerTemp_DoubleClick;
             this.G_engineTemp.DoubleClick += G_engineTemp_DoubleClick;
             this.Gheading.DoubleClick += Gheading_DoubleClick;
@@ -1128,10 +1131,10 @@ namespace MissionPlanner.GCSViews
             }
             //tabControlactions.SelectedTab = tabQuick;
             tabControlactions.SelectedTab = tabGauges; // 15july2026_task2
-                                                       // 	// 10june26_task1  commented this tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
-                                                       //hiding as promod sir asked 06june26_task2 tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
+              // 	// 10june26_task1  commented this tabControlactions.TabPages.Add(tabPage_hud1); //07may26_task4 trying to move hud1 to this tab
+                                                                                                       //hiding as promod sir asked 06june26_task2 tabControlactions.TabPages.Add(tabPage_Dynamics); //07may26_task4 
 
-            
+
 
 
 
@@ -1163,6 +1166,7 @@ namespace MissionPlanner.GCSViews
             {
                 tabControlactions.TabPages.Add(tabDashboard); // 04aug2026_DashoardTab
                 tabControlactions.TabPages.Add(tabGauges);
+                //tabControlactions.TabPages.Add(tabQuick);// test_addingQuicktab_29sep2026
                 tabControlactions.SelectedIndex = 0;
             }
 
@@ -3074,6 +3078,36 @@ namespace MissionPlanner.GCSViews
             }
         }
 
+        // test_addingQuicktab_29sep2026_2 start
+        bool tabQuickVisible=false;
+        private void addQuicktabToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!tabControlactions.TabPages.Contains(tabQuick))
+            {
+                //password code
+                // Lock screen before any main GUI windows are shown.
+                // Uses Settings.Instance["lock_pin"] (default "1234") and requires exactly 4 digits.
+                if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
+                {
+                    Settings.Instance["lock_pin"] = "1234";
+                }
+                using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
+                {
+                    var result = lockScreen.ShowDialog();
+                    if (result != DialogResult.OK)
+                    {
+                        return;
+                    }
+                }
+                /////lock end 
+               
+                tabControlactions.Controls.Add(tabQuick);
+                tabQuickVisible = true;
+            }
+            
+        }
+        // test_addingQuicktab_29sep2026_2 end
+
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (CurrentGMapMarker == null || !(CurrentGMapMarker is GMapMarkerPOI))
@@ -4087,21 +4121,13 @@ namespace MissionPlanner.GCSViews
         {
             threadrun = true;
             EndPoint Remote = new IPEndPoint(IPAddress.Any, 0);
-
             DateTime tracklast = DateTime.Now.AddSeconds(0);
-
             DateTime tunning = DateTime.Now.AddSeconds(0);
-
             DateTime mapupdate = DateTime.Now.AddSeconds(0);
-
             DateTime vidrec = DateTime.Now.AddSeconds(0);
-
             DateTime waypoints = DateTime.Now.AddSeconds(0);
-
             DateTime updatescreen = DateTime.Now;
-
             DateTime transponderUpdate = DateTime.Now;
-
             DateTime tsreal = DateTime.Now;
             double taketime = 0;
             double timeerror = 0;
@@ -6098,7 +6124,7 @@ namespace MissionPlanner.GCSViews
                 return;
 
             // Ignore normal tabs
-            if (clicked == tabDashboard  /* 04aug2026_DashboardTab */ || clicked == tabGauges) 
+            if (clicked == tabDashboard  /* 04aug2026_DashboardTab */ || clicked == tabGauges || clicked == tabQuick /* test_addingQuicktab_29sep2026 */) 
                 return;
 
             // Placeholder vehicle tab clicked i.e auv1, auv2 (non gauge auv tab) clicked
@@ -6248,7 +6274,7 @@ namespace MissionPlanner.GCSViews
             }
 
             // 06july2026_task1_commented List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, hud1, tableLayoutPanel_gaugeData };
-            List<Control> gauges = new List<Control> { G_engineTemp, G_silencerTemp, Galt, Gheading, G_waterflow, G_waterflowTemp, hud1, tableLayoutPanel_gaugeData }; // 06july2026_task1
+            List<Control> gauges = new List<Control> { G_engineTemp, G_silencerTemp, Galt, Gheading, /* 10sep2026_cmt G_waterflow,*/  Gspeed/*10sep_test G_waterflowTemp*/, hud1, G_SATCOM_curr, tableLayoutPanel_gaugeData }; // 06july2026_task1
 
             // 10june26_task1_commented int minGaugeSize = 150;
 
@@ -6278,10 +6304,11 @@ namespace MissionPlanner.GCSViews
             G_batp.Location = Galt.Location;  //alt gauge[0,0]
             G_batp.Height = G_engineTemp.Height / 2;
             G_batp.Width = G_engineTemp.Width / 2;
-
-            Gspeed.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y); ////alt gauge[0,1]
-            Gspeed.Height = G_batp.Height;
-            Gspeed.Width = G_batp.Width;
+                        
+            G_waterflowTemp.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y); ////alt gauge[0,1]
+            G_waterflowTemp.Height = G_batp.Height;
+            G_waterflowTemp.Width = G_batp.Width;
+            
 
             G_RPM.Location = new Point(Galt.Location.X, Galt.Location.Y + G_batp.Height); ////alt gauge[1,0]
             G_RPM.Height = G_batp.Height;
@@ -7907,6 +7934,88 @@ namespace MissionPlanner.GCSViews
 
         private void gimbalVideoMiniToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Task_camera_30sep2026 start
+            using (Form popup = new Form())
+            {
+                popup.Text = "Camera IP Address";
+                popup.Size = new Size(350, 160);
+                popup.StartPosition = FormStartPosition.CenterParent;
+                popup.FormBorderStyle = FormBorderStyle.FixedDialog;
+                popup.MaximizeBox = false;
+                popup.MinimizeBox = false;
+
+                System.Windows.Forms.Label label = new System.Windows.Forms.Label();
+                label.Text = "Enter Camera IP Address:";
+                label.Location = new Point(20, 20);
+                label.AutoSize = true;
+
+                TextBox textBox = new TextBox();
+                textBox.Location = new Point(20, 50);
+                textBox.Size = new Size(290, 25);
+                textBox.Text = "192.168.144.1";
+
+                Button okButton = new Button();
+                okButton.Text = "OK";
+                okButton.Location = new Point(150, 85);
+                okButton.Size = new Size(75, 30);
+                okButton.DialogResult = DialogResult.OK;
+
+                Button cancelButton = new Button();
+                cancelButton.Text = "Cancel";
+                cancelButton.Location = new Point(235, 85);
+                cancelButton.Size = new Size(75, 30);
+                cancelButton.DialogResult = DialogResult.Cancel;
+
+                popup.Controls.Add(label);
+                popup.Controls.Add(textBox);
+                popup.Controls.Add(okButton);
+                popup.Controls.Add(cancelButton);
+
+                popup.AcceptButton = okButton;
+                popup.CancelButton = cancelButton;
+
+                if (popup.ShowDialog(this) == DialogResult.OK)
+                {
+                    string ipAddress = textBox.Text.Trim();
+
+                    if (string.IsNullOrWhiteSpace(ipAddress))
+                    {
+                        MessageBox.Show(
+                            "Please enter an IP address.",
+                            "Camera",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+
+                        return;
+                    }
+
+                    if (!ipAddress.StartsWith("http://") && !ipAddress.StartsWith("https://"))
+                    {
+                        ipAddress = "http://" + ipAddress;
+                    }
+
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = ipAddress,
+                            UseShellExecute = true
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            "Unable to open the camera address.\n\n" + ex.Message,
+                            "Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
+                }
+            }
+            return;
+            // Task_camera_30sep2026 end
+
+            
             //if the gimbal video is in its own window, close it
             var containingForm = gimbalVideoControl.Parent as Form;
 
@@ -7999,6 +8108,7 @@ namespace MissionPlanner.GCSViews
         private bool g_alt_popout = false;
         private bool g_fuel_popout = false;
         private bool g_hud1_popout = false;
+        private bool G_SATCOM_curr_popout = false;
         private class GaugeSelectionItem //04june26_task2
         {
             public string Name { get; set; }
@@ -8026,10 +8136,11 @@ namespace MissionPlanner.GCSViews
                 new GaugeSelectionItem { Name = "RPM", Gauge = G_RPM, PopoutAction = () => G_RPM_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "Engine Temp", Gauge = G_engineTemp, PopoutAction = () => G_engineTemp_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "Silencer Temp", Gauge = G_silencerTemp, PopoutAction = () => G_silencerTemp_DoubleClick(null, null) },
-                new GaugeSelectionItem { Name = "Water Flow", Gauge = G_waterflow, PopoutAction = () => G_waterflow_DoubleClick(null, null) },
+                // 10sep2026_cmt new GaugeSelectionItem { Name = "Water Flow", Gauge = G_waterflow, PopoutAction = () => G_waterflow_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "Water Flow Temp", Gauge = G_waterflowTemp, PopoutAction = () => G_waterflowTemp_DoubleClick(null, null) },
                 new GaugeSelectionItem { Name = "Fuel", Gauge = G_fuel, PopoutAction = () => G_fuel_DoubleClick(null, null) },
-                new GaugeSelectionItem { Name = "Roll/Pitch", Gauge = hud1, PopoutAction = () => hud1_DoubleClick(null, null) } // 10june26_task1
+                new GaugeSelectionItem { Name = "Roll/Pitch", Gauge = hud1, PopoutAction = () => hud1_DoubleClick(null, null) }, // 10june26_task1
+                new GaugeSelectionItem { Name = "G_SATCOM curr", Gauge = G_SATCOM_curr, PopoutAction = () => G_batp_DoubleClick(null, null) },
             };
 
             Form prompt = new Form();
@@ -8058,10 +8169,11 @@ namespace MissionPlanner.GCSViews
                 else if (item.Gauge == G_RPM) isPoppedOut = g_rpm_popout;
                 else if (item.Gauge == G_engineTemp) isPoppedOut = g_enginetemp_popout;
                 else if (item.Gauge == G_silencerTemp) isPoppedOut = g_silencertemp_popout;
-                else if (item.Gauge == G_waterflow) isPoppedOut = g_waterflow_popout;
+                // 10sep2026_cmt else if (item.Gauge == G_waterflow) isPoppedOut = g_waterflow_popout;
                 else if (item.Gauge == G_waterflowTemp) isPoppedOut = g_waterflowtemp_popout;
                 else if (item.Gauge == G_fuel) isPoppedOut = g_fuel_popout;
                 else if (item.Gauge == hud1) isPoppedOut = g_hud1_popout; // 10june26_task1
+                else if (item.Gauge == G_SATCOM_curr) isPoppedOut = G_SATCOM_curr_popout;
 
                 if (isPoppedOut)
                 {
@@ -8229,9 +8341,10 @@ namespace MissionPlanner.GCSViews
                 else if (gauge == G_RPM) g_rpm_popout = state;
                 else if (gauge == G_engineTemp) g_enginetemp_popout = state;
                 else if (gauge == G_silencerTemp) g_silencertemp_popout = state;
-                else if (gauge == G_waterflow) g_waterflow_popout = state;
+                // 10sep2026_cmt else if (gauge == G_waterflow) g_waterflow_popout = state;
                 else if (gauge == G_waterflowTemp) g_waterflowtemp_popout = state;
                 else if (gauge == hud1) g_hud1_popout = state; // 10june26_task1
+                else if (gauge == G_SATCOM_curr) G_SATCOM_curr_popout = state;
             };
 
             List<Control> clonedGauges = new List<Control>();
@@ -8307,7 +8420,7 @@ namespace MissionPlanner.GCSViews
 
         private void G_waterflow_DoubleClick(object sender, EventArgs e)
         {
-            PopoutGaugeCloned(g_waterflow_popout, val => g_waterflow_popout = val, G_waterflow, "Water Flow", new Size(250, 250));
+            // 10sep2026_cmt PopoutGaugeCloned(g_waterflow_popout, val => g_waterflow_popout = val, G_waterflow, "Water Flow", new Size(250, 250));
         }
 
         private void G_silencerTemp_DoubleClick(object sender, EventArgs e)
@@ -8334,6 +8447,11 @@ namespace MissionPlanner.GCSViews
             PopoutGaugeCloned_Circular(g_fuel_popout, val => g_fuel_popout = val, G_fuel, "Fuel", new Size(250, 250));
         }
 
+        
+            private void G_SATCOM_curr_DoubleClick(object sender, EventArgs e)
+        {
+            PopoutGaugeCloned(G_SATCOM_curr_popout, val => G_SATCOM_curr_popout = val, G_SATCOM_curr, "SATCOM curr", new Size(250, 250));
+        }
 
         private void PopoutGauge(bool currentState, Action<bool> setState, Control gauge, string title, Size size)
         {
@@ -8918,6 +9036,7 @@ namespace MissionPlanner.GCSViews
             int mav_G_fuel_custom_number = 0;
             int mav_lbl_LeakSts_custom_number = 0;
             int mav_lbl_EngineSts_custom_number = 0;
+            int mav_G_SATCOM_curr_number = 0;
 
             object thisBoxed = MainV2.comPort.MAV.cs;
             Type test = thisBoxed.GetType();
@@ -8993,9 +9112,11 @@ namespace MissionPlanner.GCSViews
                             else if (name == "MAV_WF")//water flow
                             {
                                 mav_G_waterflow_custom_number = n;
-                                this.G_waterflow.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_waterflow_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
-                                this.G_waterflow.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflow_custom_number, true));//bindingSourceGaugesTab
-                                this.G_waterflow.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflow_custom_number, true));//bindingSourceGaugesTab
+                                // 10sep2026_cmt start
+                                // this.G_waterflow.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_waterflow_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                //this.G_waterflow.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflow_custom_number, true));//bindingSourceGaugesTab
+                                //this.G_waterflow.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflow_custom_number, true));//bindingSourceGaugesTab
+                                //10sep2026_cmt end
                             }
                             else if (name == "MAV_FUEL")//fuel
                             {
@@ -9052,6 +9173,13 @@ namespace MissionPlanner.GCSViews
                                 this.lbl_EngineSts.DataBindings.Add(binding2);
                             }
 
+                            else if (name == "MAV_SATC") //G_SATCOM_curr
+                            {
+                                mav_G_SATCOM_curr_number = n;
+                                this.G_SATCOM_curr.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_SATCOM_curr_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                this.G_SATCOM_curr.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_SATCOM_curr_number, true));//bindingSourceGaugesTab
+                                this.G_SATCOM_curr.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_SATCOM_curr_number, true));//bindingSourceGaugesTab
+                            }
 
                         }
                         catch { 
@@ -9215,7 +9343,7 @@ namespace MissionPlanner.GCSViews
 
             Control gauge = (Control)sender;
 
-            //gauge.Tag = gauge.Location;//with this that aguge stores its loc in its own memory called tag
+            //gauge.Tag = gauge.Location;//with this that agauge stores its loc in its own memory called tag
 
             prevX = gauge.Location.X;
             prevY = gauge.Location.Y;
@@ -9243,7 +9371,7 @@ namespace MissionPlanner.GCSViews
 
             // 11june2026_problemSol1 start //or just call tabPage1_Resize();            
                 G_batp.Location = Galt.Location;
-                Gspeed.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y);
+                G_waterflowTemp.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y);
                 G_RPM.Location = new Point(Galt.Location.X, Galt.Location.Y + G_batp.Height);
                 G_fuel.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y + G_batp.Height);
             // 11june2026_problemSol1 end 
@@ -9351,7 +9479,9 @@ namespace MissionPlanner.GCSViews
             //remove tabs            
             for (int i = tabControlactions.TabPages.Count - 1; i >= 0; i--)
             {
-                if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard)
+                  // test_addingQuicktab_29sep2026 orginal code -> if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard )
+                    
+                if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard && tabControlactions.TabPages[i] != tabQuick /* test_addingQuicktab_29sep2026 */)
                 {
                     tabControlactions.TabPages.RemoveAt(i);
                 }
@@ -9362,6 +9492,14 @@ namespace MissionPlanner.GCSViews
             {
                 tabControlactions.TabPages.Insert(0, tabDashboard);
             }
+
+            //test_addingQuicktab_29sep2026 start
+            if (!tabControlactions.TabPages.Contains(tabQuick) && tabQuickVisible)
+            {
+                tabControlactions.TabPages.Insert(1, tabQuick);
+            }
+            //test_addingQuicktab_29sep2026 end
+
 
             //first tab (actual gaugetab) to be renamed as vehicle 0            
             if (vehicles.Count == 0)
@@ -9544,7 +9682,8 @@ namespace MissionPlanner.GCSViews
                             port.MAV.cs.battery_remaining > 90 ? $"\U0001f7e2{port.MAV.cs.battery_remaining}%" : (port.MAV.cs.battery_remaining < 40 ? $"🔴{port.MAV.cs.battery_remaining}%" : $"🟡{port.MAV.cs.battery_remaining}%"),//$"{port.MAV.cs.battery_remaining}%",
                             gps_string,//port.MAV.cs.gpsstatus,
                             $"{port.MAV.cs.wpno}",
-                            port.MAV.cs.armed ? "Disarm" : "Arm"//for arm button
+                            port.MAV.cs.armed ? "Disarm" : "Arm",//for arm button
+                            "Ping"
                             );
                         //dataGridViewDashboard.Rows[row].Cells["colArm"].Value =port.MAV.cs.armed ? "Disarm" : "Arm"; //arm button
                         dataGridViewDashboard.Rows[row].Tag = port; //identify the vehicle
@@ -9562,6 +9701,95 @@ namespace MissionPlanner.GCSViews
             finally{ dashboardTimer.Start(); }
         }
 
+
+        private async void dataGridViewDashboard_CellClick(object sender, DataGridViewCellEventArgs e) // 04aug2026_DashboardTab
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            var port = (MAVLinkInterface)dataGridViewDashboard.Rows[e.RowIndex].Tag;
+            try
+            {
+                // Arm / Disarm
+                if (dataGridViewDashboard.Columns[e.ColumnIndex].Name == "colArm")
+                {
+                    await Task.Run(() =>
+                    {
+                        ArmVehicle(port, !port.MAV.cs.armed);
+                    });
+
+                    return;
+                }
+
+                // Ping
+                if (dataGridViewDashboard.Columns[e.ColumnIndex].Name == "colPing")
+                {
+                    var udp = port.BaseStream as UdpSerialConnect;
+
+                    if (udp == null)
+                    {
+                        MessageBox.Show($"CRAFT{port.MAV.sysid}: UDP connection not available.");
+                        return;
+                    }
+
+                    IPAddress ipAddress = null;
+
+                    if (udp.RemoteIpEndPoint != null &&
+                        udp.RemoteIpEndPoint.Address != null &&
+                        !udp.RemoteIpEndPoint.Address.Equals(IPAddress.Any))
+                    {
+                        ipAddress = udp.RemoteIpEndPoint.Address;
+                    }
+
+                    if (ipAddress == null)
+                    {
+                        MessageBox.Show($"CRAFT{port.MAV.sysid}: Vehicle IP address not available.");
+                        return;
+                    }
+
+                    try
+                    {
+                        using (var ping = new Ping())
+                        {
+                            PingReply reply = await ping.SendPingAsync(ipAddress, 2000);
+
+                            if (reply.Status == IPStatus.Success)
+                            {
+                                MessageBox.Show(
+                                    $"CRAFT{port.MAV.sysid}\n" +
+                                    $"IP: {ipAddress}\n" +
+                                    $"Ping: {reply.RoundtripTime} ms"
+                                );
+                            }
+                            else
+                            {
+                                MessageBox.Show(
+                                    $"CRAFT{port.MAV.sysid}\n" +
+                                    $"IP: {ipAddress}\n" +
+                                    $"Ping failed: {reply.Status}"
+                                );
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            $"CRAFT{port.MAV.sysid}\n" +
+                            $"IP: {ipAddress}\n" +
+                            $"Ping error:\n{ex.Message}"
+                        );
+                    }
+
+                    return;
+                }
+            }
+            catch (Exception a)
+            {
+
+            }
+        }
+
+        // 04aug2026_DashboardTab Dashboad GUI end
 
         private void setMaxSpeedToolStripMenuItem_Click(object sender, EventArgs e) //17aug2026_task1
         {
@@ -9615,23 +9843,7 @@ namespace MissionPlanner.GCSViews
             
         }
 
-        private async void dataGridViewDashboard_CellClick(object sender,DataGridViewCellEventArgs e) // 04aug2026_DashboardTab
-        {           
-            if (e.RowIndex < 0)
-                return;
-
-            if (dataGridViewDashboard.Columns[e.ColumnIndex].Name != "colArm")
-                return;
-
-            var port = (MAVLinkInterface)dataGridViewDashboard.Rows[e.RowIndex].Tag;
-            MessageBox.Show(port.ToString());
-            await Task.Run(() =>
-            {
-                ArmVehicle(port, !port.MAV.cs.armed);
-            });
-        }
-
-        // 04aug2026_DashboardTab Dashboad GUI end
+        
 
 
     }

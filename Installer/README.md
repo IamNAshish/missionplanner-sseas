@@ -66,3 +66,7 @@ When releasing a new version:
 ## Repository
 
 This installer script is maintained alongside the source code so installer changes are version-controlled with the application.
+
+
+## potential errors
+it may say file not found when we try to generate output again without closing inno script and deleting output; in that case just close and repopen the script
