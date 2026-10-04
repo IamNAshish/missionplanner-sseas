@@ -292,6 +292,7 @@ namespace MissionPlanner.GCSViews
             this.panel_persistent = new System.Windows.Forms.Panel();
             this.tabPagePreFlight = new System.Windows.Forms.TabPage();
             this.checkListControl1 = new MissionPlanner.Controls.PreFlight.CheckListControl();
+            this.tabMapView = new System.Windows.Forms.TabPage();
             this.ZedGraphTimer = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openScriptDialog = new System.Windows.Forms.OpenFileDialog();
@@ -363,6 +364,7 @@ namespace MissionPlanner.GCSViews
             this.tabPage_hud1.SuspendLayout();
             this.contextMenuStripHud.SuspendLayout();
             this.tabPagePreFlight.SuspendLayout();
+            this.tabMapView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).BeginInit();
             this.SuspendLayout();
             // 
@@ -846,6 +848,7 @@ namespace MissionPlanner.GCSViews
             this.tabControlactions.Controls.Add(this.tablogbrowse);
             this.tabControlactions.Controls.Add(this.tabPage_Dynamics);
             this.tabControlactions.Controls.Add(this.tabPage_hud1);
+            this.tabControlactions.Controls.Add(this.tabMapView);
             resources.ApplyResources(this.tabControlactions, "tabControlactions");
             this.tabControlactions.Name = "tabControlactions";
             this.tabControlactions.SelectedIndex = 0;
@@ -4295,6 +4298,12 @@ namespace MissionPlanner.GCSViews
             resources.ApplyResources(this.checkListControl1, "checkListControl1");
             this.checkListControl1.Name = "checkListControl1";
             // 
+            // tabMapView
+            // 
+            this.tabMapView.Name = "tabMapView";
+            this.tabMapView.Text = "Map";
+            this.tabMapView.UseVisualStyleBackColor = true;
+            // 
             // ZedGraphTimer
             // 
             this.ZedGraphTimer.Tick += new System.EventHandler(this.ZedGraphTimer_Tick);
@@ -4448,6 +4457,7 @@ namespace MissionPlanner.GCSViews
             this.tabPage_hud1.ResumeLayout(false);
             this.contextMenuStripHud.ResumeLayout(false);
             this.tabPagePreFlight.ResumeLayout(false);
+            this.tabMapView.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).EndInit();
             this.ResumeLayout(false);
 
@@ -4570,6 +4580,7 @@ private Controls.MyButton myButton2;
 private Controls.MyButton myButton3;
 public TabPage tabPagePreFlight;
 private Controls.PreFlight.CheckListControl checkListControl1;
+public TabPage tabMapView;
 public TabPage tabGauges;
 private AGaugeApp.AGauge G_batp; // 01june26_task1
 private Controls.HSI Gheading;

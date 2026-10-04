@@ -331,6 +331,17 @@ namespace MissionPlanner.GCSViews
             log.Info("Ctor Start");
             InitializeComponent();
 
+            // 04oct2026_MapTab: Move the entire left-panel map area (tableMap) into the new "Map" tab
+            // in the right panel so it is accessible as a tab alongside tabGauges, tabDashboard, etc.
+            // MainH.Panel1 is collapsed since its content now lives in tabMapView.
+            if (MainH.Panel1.Controls.Contains(tableMap))
+            {
+                MainH.Panel1.Controls.Remove(tableMap);
+                tableMap.Dock = DockStyle.Fill;
+                tabMapView.Controls.Add(tableMap);
+            }
+            MainH.Panel1Collapsed = true;
+
 
             // 04aug2026_DashboardTab start // message box in dashboard start 
             if (txt_messagebox.Parent != dashboardMsgPanel)
@@ -1167,6 +1178,7 @@ namespace MissionPlanner.GCSViews
                 tabControlactions.TabPages.Add(tabDashboard); // 04aug2026_DashoardTab
                 tabControlactions.TabPages.Add(tabGauges);
                 //tabControlactions.TabPages.Add(tabQuick);// test_addingQuicktab_29sep2026
+                tabControlactions.TabPages.Add(tabMapView);
                 tabControlactions.SelectedIndex = 0;
             }
 
@@ -4018,7 +4030,7 @@ namespace MissionPlanner.GCSViews
             if (!_leftPanelUserCollapsed && !controlsEmpty && !panelVisible)
                 MainH.Panel1Collapsed = false;
 
-            MainH.Panel1Collapsed = false;  //default dont hide even if have contents  // 07may26_task5
+            MainH.Panel1Collapsed = true;  // 04oct2026_MapTab: left panel is always collapsed since tableMap moved to tabMapView
 
             UpdateLeftPanelToggleUi();
         }
@@ -4095,21 +4107,19 @@ namespace MissionPlanner.GCSViews
             if (_butToggleLeftPanel == null || MainH == null)
                 return;
 
-            bool collapsed = MainH.Panel1Collapsed;
-            _butToggleLeftPanel.Text = collapsed ? ">" : "<";
-            _butToggleLeftPanel.Visible = true;
+            // 04oct2026_MapTab: The left panel (MainH.Panel1) is always collapsed because
+            // tableMap has been moved to tabMapView. Hide the toggle button accordingly.
+            _butToggleLeftPanel.Visible = false;
 
             try
             {
                 if (toolTip1 != null)
-                    toolTip1.SetToolTip(_butToggleLeftPanel, collapsed ? "Show HUD/Actions" : "Hide HUD/Actions");
+                    toolTip1.SetToolTip(_butToggleLeftPanel, "Map is now in the Map tab on the right panel");
             }
             catch
             {
                 // ignore tooltip errors during init/dispose
             }
-
-            _butToggleLeftPanel.BringToFront();
         }
 
         private void loadFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6030,25 +6040,10 @@ namespace MissionPlanner.GCSViews
 
         private void SwapHud1AndMap()
         {
-            if (this.huddropout)
-                return;
-
-            MainH.Panel2.SuspendLayout();
-
-            if (this.SubMainRight.Panel1.Controls.Contains(hud1))
-            {
-                Settings.Instance["HudSwap"] = "true";
-                MainH.Panel2.Controls.Add(hud1);
-                SubMainRight.Panel1.Controls.Add(tableMap);
-            }
-            else
-            {
-                Settings.Instance["HudSwap"] = "false";
-                MainH.Panel2.Controls.Add(tableMap);
-                SubMainRight.Panel1.Controls.Add(hud1);
-            }
-
-            MainH.Panel2.ResumeLayout();
+            // 04oct2026_MapTab: SwapHud1AndMap is disabled because tableMap has been moved to
+            // tabMapView (the "Map" tab in the right panel). The map and HUD are now in separate tabs.
+            // This swap functionality is no longer applicable in the current layout.
+            return;
         }
 
         private void swapWithMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6124,7 +6119,7 @@ namespace MissionPlanner.GCSViews
                 return;
 
             // Ignore normal tabs
-            if (clicked == tabDashboard  /* 04aug2026_DashboardTab */ || clicked == tabGauges || clicked == tabQuick /* test_addingQuicktab_29sep2026 */) 
+            if (clicked == tabDashboard  /* 04aug2026_DashboardTab */ || clicked == tabGauges || clicked == tabQuick /* test_addingQuicktab_29sep2026 */ || clicked == tabMapView) 
                 return;
 
             // Placeholder vehicle tab clicked i.e auv1, auv2 (non gauge auv tab) clicked
@@ -9481,7 +9476,8 @@ namespace MissionPlanner.GCSViews
             {
                   // test_addingQuicktab_29sep2026 orginal code -> if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard )
                     
-                if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard && tabControlactions.TabPages[i] != tabQuick /* test_addingQuicktab_29sep2026 */)
+                if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard && tabControlactions.TabPages[i] != tabQuick /* test_addingQuicktab_29sep2026 */ 
+                    && tabControlactions.TabPages[i] != tabMapView)
                 {
                     tabControlactions.TabPages.RemoveAt(i);
                 }
@@ -9492,6 +9488,13 @@ namespace MissionPlanner.GCSViews
             {
                 tabControlactions.TabPages.Insert(0, tabDashboard);
             }
+
+            if (!tabControlactions.TabPages.Contains(tabMapView))
+            {
+                tabControlactions.TabPages.Insert(1, tabMapView);
+            }
+
+
 
             //test_addingQuicktab_29sep2026 start
             if (!tabControlactions.TabPages.Contains(tabQuick) && tabQuickVisible)
@@ -9620,7 +9623,6 @@ namespace MissionPlanner.GCSViews
                 {
                     if (!IsValidSurfaceBoat(port))
                         continue;
-
                    
                     if (port.BaseStream != null && port.BaseStream.IsOpen)
                         connectedVehicles++;
