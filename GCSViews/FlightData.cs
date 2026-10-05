@@ -1104,7 +1104,7 @@ namespace MissionPlanner.GCSViews
             TabListDisplay.Add(tabPayload.Name, MainV2.DisplayConfiguration.displayPayloadTab);
          
             TabListDisplay.Add(tabDashboard.Name, MainV2.DisplayConfiguration.displayDashboardTab); // 04aug2026_DashboardTab
-          
+           
         }
 
         private void loadTabControlActions()
@@ -1179,6 +1179,7 @@ namespace MissionPlanner.GCSViews
                 tabControlactions.TabPages.Add(tabGauges);
                 //tabControlactions.TabPages.Add(tabQuick);// test_addingQuicktab_29sep2026
                 tabControlactions.TabPages.Add(tabMapView);
+                tabControlactions.TabPages.Add(tabCamera);
                 tabControlactions.SelectedIndex = 0;
             }
 
@@ -6119,7 +6120,8 @@ namespace MissionPlanner.GCSViews
                 return;
 
             // Ignore normal tabs
-            if (clicked == tabDashboard  /* 04aug2026_DashboardTab */ || clicked == tabGauges || clicked == tabQuick /* test_addingQuicktab_29sep2026 */ || clicked == tabMapView) 
+            if (clicked == tabDashboard  /* 04aug2026_DashboardTab */ || clicked == tabGauges || clicked == tabQuick /* test_addingQuicktab_29sep2026 */ || clicked == tabMapView
+                ||  clicked==tabCamera /* 05oct2026_CameraTab*/) 
                 return;
 
             // Placeholder vehicle tab clicked i.e auv1, auv2 (non gauge auv tab) clicked
@@ -7989,52 +7991,116 @@ namespace MissionPlanner.GCSViews
                         ipAddress = "http://" + ipAddress;
                     }
 
-                    try
-                    {
-                        Process.Start(new ProcessStartInfo
-                        {
-                            FileName = ipAddress,
-                            UseShellExecute = true
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(
-                            "Unable to open the camera address.\n\n" + ex.Message,
-                            "Error",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
-                    }
+                    //code to open in browser
+                    //    try
+                    //    {
+                    //        Process.Start(new ProcessStartInfo
+                    //        {
+                    //            FileName = ipAddress, UseShellExecute = true
+                    //        });
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        MessageBox.Show(
+                    //            "Unable to open the camera address.\n\n" + ex.Message,
+                    //            "Error",
+                    //            MessageBoxButtons.OK,
+                    //            MessageBoxIcon.Error);
+                    //    }
+                    OpenCameraTab(ipAddress);// 05oct2026_cameraTab start 
                 }
+                
             }
             return;
             // Task_camera_30sep2026 end
 
-            
-            //if the gimbal video is in its own window, close it
-            var containingForm = gimbalVideoControl.Parent as Form;
+            //this code is old one commented for opening cam in small window on map commented for
+            // commented under Task_camera_30sep2026 start
+            ////if the gimbal video is in its own window, close it
+            //var containingForm = gimbalVideoControl.Parent as Form;
 
-            // Fill the panel with the map
-            gMapControl1.Dock = DockStyle.Fill;
-            gMapControl1.Visible = true;
-            gMapControl1.SendToBack(); // Behind the map overlay controls
+            //// Fill the panel with the map
+            //gMapControl1.Dock = DockStyle.Fill;
+            //gMapControl1.Visible = true;
+            //gMapControl1.SendToBack(); // Behind the map overlay controls
 
-            // Add the gimbal video control to the mini video panel
-            splitContainer1.Panel2.Controls.Add(gimbalVideoControl);
-            gimbalVideoControl.Dock = DockStyle.None;
-            gimbalVideoControl.BringToFront();
-            gimbalVideoControl.Visible = true;
+            //// Add the gimbal video control to the mini video panel
+            //splitContainer1.Panel2.Controls.Add(gimbalVideoControl);
+            //gimbalVideoControl.Dock = DockStyle.None;
+            //gimbalVideoControl.BringToFront();
+            //gimbalVideoControl.Visible = true;
 
-            // Call resize to correctly position the mini video
-            splitContainer1_Panel2_Resize(null, null);
+            //// Call resize to correctly position the mini video
+            //splitContainer1_Panel2_Resize(null, null);
 
-            // Reconfigure context menu controls
-            gimbalVideoShowMiniMap.Visible = false;
-            gimbalVideoSwapPosition.Visible = true;
-            gimbalVideoClose.Visible = true;
+            //// Reconfigure context menu controls
+            //gimbalVideoShowMiniMap.Visible = false;
+            //gimbalVideoSwapPosition.Visible = true;
+            //gimbalVideoClose.Visible = true;
 
-            containingForm?.Close();
+            //containingForm?.Close();
+
+            //  commneted under Task_camera_30sep2026 ends
         }
+
+
+        //private void OpenCameraTab(string ipAddress) // 05oct2026_cameraTab
+        private void OpenCameraTab(string ipAddress)
+        {
+            WebBrowser cameraBrowser = tabCamera.Controls
+                .OfType<WebBrowser>()
+                .FirstOrDefault();
+
+            if (cameraBrowser == null)
+            {
+                cameraBrowser = new WebBrowser
+                {
+                    Dock = DockStyle.Fill,
+                    ScriptErrorsSuppressed = false
+                };
+
+                tabCamera.Controls.Add(cameraBrowser);
+            }
+
+            if (!tabControlactions.TabPages.Contains(tabCamera))
+            {
+                tabControlactions.TabPages.Insert(1, tabCamera);
+            }
+
+            tabControlactions.SelectedTab = tabCamera;
+
+            cameraBrowser.Navigate(ipAddress);
+        }
+        //{
+        //    WebBrowser cameraBrowser = tabCamera.Controls.OfType<WebBrowser>().FirstOrDefault();
+
+        //    if (cameraBrowser == null)
+        //    {
+        //        cameraBrowser = new WebBrowser
+        //        {
+        //            Dock = DockStyle.Fill,
+        //            ScriptErrorsSuppressed = true
+        //        };
+
+        //        tabCamera.Controls.Add(cameraBrowser);
+        //    }
+
+        //    cameraBrowser.Navigate(ipAddress);
+        //    MessageBox.Show("Navigating to: " + ipAddress);
+
+        //    if (!tabControlactions.TabPages.Contains(tabCamera))
+        //    {
+        //        tabControlactions.TabPages.Insert(1, tabCamera);
+        //    }
+
+        //    tabControlactions.SelectedTab = tabCamera;
+        //}
+
+
+
+
+
+
 
         private void gimbalVideoPopOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -9477,7 +9543,8 @@ namespace MissionPlanner.GCSViews
                   // test_addingQuicktab_29sep2026 orginal code -> if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard )
                     
                 if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard && tabControlactions.TabPages[i] != tabQuick /* test_addingQuicktab_29sep2026 */ 
-                    && tabControlactions.TabPages[i] != tabMapView)
+                    && tabControlactions.TabPages[i] != tabMapView
+                    && tabControlactions.TabPages[i] != tabCamera /* 05oct2026_CameraTab */)
                 {
                     tabControlactions.TabPages.RemoveAt(i);
                 }
@@ -9494,6 +9561,10 @@ namespace MissionPlanner.GCSViews
                 tabControlactions.TabPages.Insert(1, tabMapView);
             }
 
+            if (!tabControlactions.TabPages.Contains(tabCamera)) // 05oct2026_cameraTab
+            {
+                tabControlactions.TabPages.Insert(2, tabCamera);
+            }
 
 
             //test_addingQuicktab_29sep2026 start

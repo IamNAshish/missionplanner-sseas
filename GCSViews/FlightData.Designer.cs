@@ -289,10 +289,10 @@ namespace MissionPlanner.GCSViews
             this.groundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setBatteryCellCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabMapView = new System.Windows.Forms.TabPage();
             this.panel_persistent = new System.Windows.Forms.Panel();
             this.tabPagePreFlight = new System.Windows.Forms.TabPage();
             this.checkListControl1 = new MissionPlanner.Controls.PreFlight.CheckListControl();
-            this.tabMapView = new System.Windows.Forms.TabPage();
             this.ZedGraphTimer = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openScriptDialog = new System.Windows.Forms.OpenFileDialog();
@@ -302,6 +302,7 @@ namespace MissionPlanner.GCSViews
             this.timer_gauge = new System.Windows.Forms.Timer(this.components);
             this.dashboardTimer = new System.Windows.Forms.Timer(this.components);
             this.modifyandSetAlt = new MissionPlanner.Controls.ModifyandSet();
+            this.tabCamera = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.MainH)).BeginInit();
             this.MainH.Panel1.SuspendLayout();
             this.MainH.Panel2.SuspendLayout();
@@ -364,7 +365,6 @@ namespace MissionPlanner.GCSViews
             this.tabPage_hud1.SuspendLayout();
             this.contextMenuStripHud.SuspendLayout();
             this.tabPagePreFlight.SuspendLayout();
-            this.tabMapView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).BeginInit();
             this.SuspendLayout();
             // 
@@ -849,6 +849,7 @@ namespace MissionPlanner.GCSViews
             this.tabControlactions.Controls.Add(this.tabPage_Dynamics);
             this.tabControlactions.Controls.Add(this.tabPage_hud1);
             this.tabControlactions.Controls.Add(this.tabMapView);
+            this.tabControlactions.Controls.Add(this.tabCamera);
             resources.ApplyResources(this.tabControlactions, "tabControlactions");
             this.tabControlactions.Name = "tabControlactions";
             this.tabControlactions.SelectedIndex = 0;
@@ -4281,6 +4282,12 @@ namespace MissionPlanner.GCSViews
             resources.ApplyResources(this.showIconsToolStripMenuItem, "showIconsToolStripMenuItem");
             this.showIconsToolStripMenuItem.Click += new System.EventHandler(this.showIconsToolStripMenuItem_Click);
             // 
+            // tabMapView
+            // 
+            resources.ApplyResources(this.tabMapView, "tabMapView");
+            this.tabMapView.Name = "tabMapView";
+            this.tabMapView.UseVisualStyleBackColor = true;
+            // 
             // panel_persistent
             // 
             resources.ApplyResources(this.panel_persistent, "panel_persistent");
@@ -4297,12 +4304,6 @@ namespace MissionPlanner.GCSViews
             // 
             resources.ApplyResources(this.checkListControl1, "checkListControl1");
             this.checkListControl1.Name = "checkListControl1";
-            // 
-            // tabMapView
-            // 
-            this.tabMapView.Name = "tabMapView";
-            this.tabMapView.Text = "Map";
-            this.tabMapView.UseVisualStyleBackColor = true;
             // 
             // ZedGraphTimer
             // 
@@ -4369,6 +4370,12 @@ namespace MissionPlanner.GCSViews
             0,
             0});
             this.modifyandSetAlt.Click += new System.EventHandler(this.modifyandSetAlt_Click);
+            // 
+            // tabCamera
+            // 
+            resources.ApplyResources(this.tabCamera, "tabCamera");
+            this.tabCamera.Name = "tabCamera";
+            this.tabCamera.UseVisualStyleBackColor = true;
             // 
             // FlightData
             // 
@@ -4457,7 +4464,6 @@ namespace MissionPlanner.GCSViews
             this.tabPage_hud1.ResumeLayout(false);
             this.contextMenuStripHud.ResumeLayout(false);
             this.tabPagePreFlight.ResumeLayout(false);
-            this.tabMapView.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceStatusTab)).EndInit();
             this.ResumeLayout(false);
 
@@ -4755,6 +4761,7 @@ private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
         private DataGridViewButtonColumn colPing;
         private ToolStripMenuItem addQuicktabToolStripMenuItem;
         private AGaugeApp.AGauge G_SATCOM_curr;
+        private TabPage tabCamera;
         //private Label label_batp_onGauge;
     }
 }
