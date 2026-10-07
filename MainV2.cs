@@ -685,7 +685,16 @@ namespace MissionPlanner
         {
 
             InitializeComponent();
-          
+            
+           //07oct2026_maxScreen start
+            this.WindowState = FormWindowState.Maximized;
+            //this.Resize += Form1_Resize;
+            //Prevent the user from resizing the window borders
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            //Disable the Maximize/ Restore button entirely 
+            this.MaximizeBox = false;
+            
+           //07oct2026_maxScreen end
 
             // 29june26_task1 start..
             //webServer = new SimpleWebServer();
@@ -1193,6 +1202,19 @@ namespace MissionPlanner
             SaveConfig();
         }
 
+
+        private void Form1_Resize(object sender, EventArgs e) //07oct2026_maxScreen
+        {
+            // If the user tries to restore it to the medium/normal size,
+            // immediately force it back to maximized.
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                this.WindowState = FormWindowState.Maximized;
+            }
+        }
+        
+
+
         void cmb_sysid_Click(object sender, EventArgs e)
         {
             MainV2._connectionControl.UpdateSysIDS();
@@ -1589,6 +1611,7 @@ namespace MissionPlanner
         public void doDisconnect(MAVLinkInterface comPort)
         {
             log.Info("We are disconnecting");
+
             try
             {
                 if (speechEngine != null) // cancel all pending speech
@@ -1657,6 +1680,7 @@ namespace MissionPlanner
 
         private void ConvertCurrentTlog() // 13july2026_task1
         {
+            MessageBox.Show("saving tlog as excel");
             try
             {
                 if (string.IsNullOrWhiteSpace(CurrentTlogFilename))
@@ -4748,11 +4772,29 @@ namespace MissionPlanner
             public string dbcc_name;
         }
 
-
+        // 07oct2026_maxScreen : this func is to disable draging the window
         protected override void WndProc(ref Message m)
         {
+            // Constants for window management
+            const int WM_SYSCOMMAND = 0x0112;
+            const int SC_MOVE = 0xF010;
+            const int SC_RESTORE = 0xF120;
+
             switch (m.Msg)
             {
+                case WM_SYSCOMMAND:
+                    int command = m.WParam.ToInt32() & 0xFFF0;
+
+                    // If the window is Maximized, block dragging (SC_MOVE) and Restoring (SC_RESTORE)
+                    if (this.WindowState == FormWindowState.Maximized)
+                    {
+                        if (command == SC_MOVE || command == SC_RESTORE)
+                        {
+                            return; // Ignore the command entirely, freezing the window in full screen
+                        }
+                    }
+                    break;
+
                 case WM_CREATE:
                     try
                     {
@@ -4763,7 +4805,6 @@ namespace MissionPlanner
 
                         // frmMy is the form that will receive device-change messages.
 
-
                         size = Marshal.SizeOf(devBroadcastDeviceInterface);
                         devBroadcastDeviceInterface.dbcc_size = size;
                         devBroadcastDeviceInterface.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
@@ -4771,7 +4812,6 @@ namespace MissionPlanner
                         devBroadcastDeviceInterface.dbcc_classguid = GUID_DEVINTERFACE_USB_DEVICE.ToByteArray();
                         devBroadcastDeviceInterfaceBuffer = Marshal.AllocHGlobal(size);
                         Marshal.StructureToPtr(devBroadcastDeviceInterface, devBroadcastDeviceInterfaceBuffer, true);
-
 
                         deviceNotificationHandle = NativeMethods.RegisterDeviceNotification(this.Handle,
                             devBroadcastDeviceInterfaceBuffer, DEVICE_NOTIFY_WINDOW_HANDLE);
@@ -4781,12 +4821,11 @@ namespace MissionPlanner
                     catch
                     {
                     }
-
                     break;
 
                 case WM_DEVICECHANGE:
                     // The WParam value identifies what is occurring.
-                    WM_DEVICECHANGE_enum n = (WM_DEVICECHANGE_enum) m.WParam;
+                    WM_DEVICECHANGE_enum n = (WM_DEVICECHANGE_enum)m.WParam;
                     var l = m.LParam;
                     if (n == WM_DEVICECHANGE_enum.DBT_DEVICEREMOVEPENDING)
                     {
@@ -4801,7 +4840,7 @@ namespace MissionPlanner
                     if (n == WM_DEVICECHANGE_enum.DBT_DEVICEARRIVAL ||
                         n == WM_DEVICECHANGE_enum.DBT_DEVICEREMOVECOMPLETE)
                     {
-                        Console.WriteLine(((WM_DEVICECHANGE_enum) n).ToString());
+                        Console.WriteLine(((WM_DEVICECHANGE_enum)n).ToString());
 
                         DEV_BROADCAST_HDR hdr = new DEV_BROADCAST_HDR();
                         Marshal.PtrToStructure(m.LParam, hdr);
@@ -4825,18 +4864,15 @@ namespace MissionPlanner
                         catch
                         {
                         }
-
-                        //string port = Marshal.PtrToStringAuto((IntPtr)((long)m.LParam + 12));
-                        //Console.WriteLine("Added port {0}",port);
                     }
 
-                    log.InfoFormat("Device Change {0} {1} {2}", m.Msg, (WM_DEVICECHANGE_enum) m.WParam, m.LParam);
+                    log.InfoFormat("Device Change {0} {1} {2}", m.Msg, (WM_DEVICECHANGE_enum)m.WParam, m.LParam);
 
                     if (DeviceChanged != null)
                     {
                         try
                         {
-                            DeviceChanged((WM_DEVICECHANGE_enum) m.WParam);
+                            DeviceChanged((WM_DEVICECHANGE_enum)m.WParam);
                         }
                         catch
                         {
@@ -4845,13 +4881,11 @@ namespace MissionPlanner
 
                     foreach (var item in MissionPlanner.Plugin.PluginLoader.Plugins)
                     {
-                        item.Host.ProcessDeviceChanged((WM_DEVICECHANGE_enum) m.WParam);
+                        item.Host.ProcessDeviceChanged((WM_DEVICECHANGE_enum)m.WParam);
                     }
-
                     break;
-                case 0x86: // WM_NCACTIVATE
-                    //var thing = Control.FromHandle(m.HWnd);
 
+                case 0x86: // WM_NCACTIVATE
                     var child = Control.FromHandle(m.LParam);
 
                     if (child is Form)
@@ -4859,15 +4893,135 @@ namespace MissionPlanner
                         log.Debug("ApplyThemeTo " + child.Name);
                         ThemeManager.ApplyThemeTo(child);
                     }
-
                     break;
+
                 default:
-                    //Console.WriteLine(m.ToString());
                     break;
             }
 
             base.WndProc(ref m);
         }
+
+
+        //protected override void WndProc(ref Message m) //old orginal commented for // 07oct2026_maxScreen 
+        //{
+        //    switch (m.Msg)
+        //    {
+        //        case WM_CREATE:
+        //            try
+        //            {
+        //                DEV_BROADCAST_DEVICEINTERFACE devBroadcastDeviceInterface = new DEV_BROADCAST_DEVICEINTERFACE();
+        //                IntPtr devBroadcastDeviceInterfaceBuffer;
+        //                IntPtr deviceNotificationHandle = IntPtr.Zero;
+        //                Int32 size = 0;
+
+        //                // frmMy is the form that will receive device-change messages.
+
+
+        //                size = Marshal.SizeOf(devBroadcastDeviceInterface);
+        //                devBroadcastDeviceInterface.dbcc_size = size;
+        //                devBroadcastDeviceInterface.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+        //                devBroadcastDeviceInterface.dbcc_reserved = 0;
+        //                devBroadcastDeviceInterface.dbcc_classguid = GUID_DEVINTERFACE_USB_DEVICE.ToByteArray();
+        //                devBroadcastDeviceInterfaceBuffer = Marshal.AllocHGlobal(size);
+        //                Marshal.StructureToPtr(devBroadcastDeviceInterface, devBroadcastDeviceInterfaceBuffer, true);
+
+
+        //                deviceNotificationHandle = NativeMethods.RegisterDeviceNotification(this.Handle,
+        //                    devBroadcastDeviceInterfaceBuffer, DEVICE_NOTIFY_WINDOW_HANDLE);
+
+        //                Marshal.FreeHGlobal(devBroadcastDeviceInterfaceBuffer);
+        //            }
+        //            catch
+        //            {
+        //            }
+
+        //            break;
+
+        //        case WM_DEVICECHANGE:
+        //            // The WParam value identifies what is occurring.
+        //            WM_DEVICECHANGE_enum n = (WM_DEVICECHANGE_enum)m.WParam;
+        //            var l = m.LParam;
+        //            if (n == WM_DEVICECHANGE_enum.DBT_DEVICEREMOVEPENDING)
+        //            {
+        //                Console.WriteLine("DBT_DEVICEREMOVEPENDING");
+        //            }
+
+        //            if (n == WM_DEVICECHANGE_enum.DBT_DEVNODES_CHANGED)
+        //            {
+        //                Console.WriteLine("DBT_DEVNODES_CHANGED");
+        //            }
+
+        //            if (n == WM_DEVICECHANGE_enum.DBT_DEVICEARRIVAL ||
+        //                n == WM_DEVICECHANGE_enum.DBT_DEVICEREMOVECOMPLETE)
+        //            {
+        //                Console.WriteLine(((WM_DEVICECHANGE_enum)n).ToString());
+
+        //                DEV_BROADCAST_HDR hdr = new DEV_BROADCAST_HDR();
+        //                Marshal.PtrToStructure(m.LParam, hdr);
+
+        //                try
+        //                {
+        //                    switch (hdr.dbch_devicetype)
+        //                    {
+        //                        case DBT_DEVTYP_DEVICEINTERFACE:
+        //                            DEV_BROADCAST_DEVICEINTERFACE inter = new DEV_BROADCAST_DEVICEINTERFACE();
+        //                            Marshal.PtrToStructure(m.LParam, inter);
+        //                            log.InfoFormat("Interface {0}", inter.dbcc_name);
+        //                            break;
+        //                        case DBT_DEVTYP_PORT:
+        //                            DEV_BROADCAST_PORT prt = new DEV_BROADCAST_PORT();
+        //                            Marshal.PtrToStructure(m.LParam, prt);
+        //                            log.InfoFormat("port {0}", prt.dbcp_name);
+        //                            break;
+        //                    }
+        //                }
+        //                catch
+        //                {
+        //                }
+
+        //                //string port = Marshal.PtrToStringAuto((IntPtr)((long)m.LParam + 12));
+        //                //Console.WriteLine("Added port {0}",port);
+        //            }
+
+        //            log.InfoFormat("Device Change {0} {1} {2}", m.Msg, (WM_DEVICECHANGE_enum)m.WParam, m.LParam);
+
+        //            if (DeviceChanged != null)
+        //            {
+        //                try
+        //                {
+        //                    DeviceChanged((WM_DEVICECHANGE_enum)m.WParam);
+        //                }
+        //                catch
+        //                {
+        //                }
+        //            }
+
+        //            foreach (var item in MissionPlanner.Plugin.PluginLoader.Plugins)
+        //            {
+        //                item.Host.ProcessDeviceChanged((WM_DEVICECHANGE_enum)m.WParam);
+        //            }
+
+        //            break;
+        //        case 0x86: // WM_NCACTIVATE
+        //            //var thing = Control.FromHandle(m.HWnd);
+
+        //            var child = Control.FromHandle(m.LParam);
+
+        //            if (child is Form)
+        //            {
+        //                log.Debug("ApplyThemeTo " + child.Name);
+        //                ThemeManager.ApplyThemeTo(child);
+        //            }
+
+        //            break;
+        //        default:
+        //            //Console.WriteLine(m.ToString());
+        //            break;
+        //    }
+
+        //    base.WndProc(ref m);
+        //}
 
         const int DBT_DEVTYP_PORT = 0x00000003;
         const int WM_CREATE = 0x0001;

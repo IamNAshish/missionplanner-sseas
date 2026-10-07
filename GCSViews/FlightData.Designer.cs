@@ -98,9 +98,12 @@ namespace MissionPlanner.GCSViews
             this.but_ArmAll = new System.Windows.Forms.Button();
             this.dashboardMsgPanel = new System.Windows.Forms.Panel();
             this.tabGauges = new System.Windows.Forms.TabPage();
+            this.Galt2 = new AGaugeApp.AGauge();
+            this.bindingSourceGaugesTab = new System.Windows.Forms.BindingSource(this.components);
             this.G_SATCOM_curr = new AGaugeApp.AGauge();
             this.txt_messagebox = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel_gaugeData = new System.Windows.Forms.TableLayoutPanel();
+            this.lbl_EngineRuntime = new System.Windows.Forms.Label();
             this.lbl_signalStrength = new System.Windows.Forms.Label();
             this.lbl_disttowp = new System.Windows.Forms.Label();
             this.lblGPS = new System.Windows.Forms.Label();
@@ -122,7 +125,6 @@ namespace MissionPlanner.GCSViews
             this.G_engineTemp = new AGaugeApp.AGauge();
             this.G_RPM = new AGaugeApp.AGauge();
             this.Gheading = new MissionPlanner.Controls.HSI();
-            this.bindingSourceGaugesTab = new System.Windows.Forms.BindingSource(this.components);
             this.Galt = new AGaugeApp.AGauge();
             this.Gspeed = new AGaugeApp.AGauge();
             this.contextMenuStrip_Gspeed = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -290,6 +292,7 @@ namespace MissionPlanner.GCSViews
             this.setBatteryCellCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabMapView = new System.Windows.Forms.TabPage();
+            this.tabCamera = new System.Windows.Forms.TabPage();
             this.panel_persistent = new System.Windows.Forms.Panel();
             this.tabPagePreFlight = new System.Windows.Forms.TabPage();
             this.checkListControl1 = new MissionPlanner.Controls.PreFlight.CheckListControl();
@@ -302,7 +305,6 @@ namespace MissionPlanner.GCSViews
             this.timer_gauge = new System.Windows.Forms.Timer(this.components);
             this.dashboardTimer = new System.Windows.Forms.Timer(this.components);
             this.modifyandSetAlt = new MissionPlanner.Controls.ModifyandSet();
-            this.tabCamera = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.MainH)).BeginInit();
             this.MainH.Panel1.SuspendLayout();
             this.MainH.Panel2.SuspendLayout();
@@ -330,8 +332,8 @@ namespace MissionPlanner.GCSViews
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDashboard)).BeginInit();
             this.tableLayoutPanel4.SuspendLayout();
             this.tabGauges.SuspendLayout();
-            this.tableLayoutPanel_gaugeData.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).BeginInit();
+            this.tableLayoutPanel_gaugeData.SuspendLayout();
             this.contextMenuStrip_Gspeed.SuspendLayout();
             this.tabActions.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -1095,6 +1097,7 @@ namespace MissionPlanner.GCSViews
             // tabGauges
             // 
             resources.ApplyResources(this.tabGauges, "tabGauges");
+            this.tabGauges.Controls.Add(this.Galt2);
             this.tabGauges.Controls.Add(this.G_SATCOM_curr);
             this.tabGauges.Controls.Add(this.txt_messagebox);
             this.tabGauges.Controls.Add(this.tableLayoutPanel_gaugeData);
@@ -1112,6 +1115,161 @@ namespace MissionPlanner.GCSViews
             this.tabGauges.Click += new System.EventHandler(this.BUT_ARM_Click);
             this.tabGauges.DoubleClick += new System.EventHandler(this.tabGauges_DoubleClick);
             this.tabGauges.Resize += new System.EventHandler(this.tabPage1_Resize);
+            // 
+            // Galt2
+            // 
+            this.Galt2.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.Galt2, "Galt2");
+            this.Galt2.BaseArcColor = System.Drawing.Color.Transparent;
+            this.Galt2.BaseArcRadius = 60;
+            this.Galt2.BaseArcStart = 270;
+            this.Galt2.BaseArcSweep = 360;
+            this.Galt2.BaseArcWidth = 2;
+            this.Galt2.Cap_Idx = ((byte)(2));
+            this.Galt2.CapColor = System.Drawing.Color.Black;
+            this.Galt2.CapColors = new System.Drawing.Color[] {
+        System.Drawing.Color.White,
+        System.Drawing.Color.Black,
+        System.Drawing.Color.Black,
+        System.Drawing.Color.Black,
+        System.Drawing.Color.Black};
+            this.Galt2.CapFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Galt2.CapPosition = new System.Drawing.Point(10, 10);
+            this.Galt2.CapsFonts = new System.Drawing.Font[] {
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+        new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
+            this.Galt2.CapsPosition = new System.Drawing.Point[] {
+        new System.Drawing.Point(68, 85),
+        new System.Drawing.Point(30, 55),
+        new System.Drawing.Point(10, 10),
+        new System.Drawing.Point(10, 10),
+        new System.Drawing.Point(10, 10)};
+            this.Galt2.CapsText = new string[] {
+        "Alt",
+        "",
+        "x1000",
+        "",
+        ""};
+            this.Galt2.CapText = "x1000";
+            this.Galt2.Center = new System.Drawing.Point(75, 75);
+            this.Galt2.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "altd100", true));
+            this.Galt2.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "altd1000", true));
+            this.Galt2.DataBindings.Add(new System.Windows.Forms.Binding("Value2", this.bindingSourceGaugesTab, "targetaltd100", true));
+            this.Galt2.MaxValue = 10000F;
+            this.Galt2.MinValue = 0F;
+            this.Galt2.Name = "Galt2";
+            this.Galt2.Need_Idx = ((byte)(3));
+            this.Galt2.NeedleColor1 = AGaugeApp.AGauge.NeedleColorEnum.Gray;
+            this.Galt2.NeedleColor2 = System.Drawing.Color.White;
+            this.Galt2.NeedleEnabled = false;
+            this.Galt2.NeedleRadius = 80;
+            this.Galt2.NeedlesColor1 = new AGaugeApp.AGauge.NeedleColorEnum[] {
+        AGaugeApp.AGauge.NeedleColorEnum.Gray,
+        AGaugeApp.AGauge.NeedleColorEnum.Gray,
+        AGaugeApp.AGauge.NeedleColorEnum.Red,
+        AGaugeApp.AGauge.NeedleColorEnum.Gray};
+            this.Galt2.NeedlesColor2 = new System.Drawing.Color[] {
+        System.Drawing.Color.White,
+        System.Drawing.Color.White,
+        System.Drawing.Color.White,
+        System.Drawing.Color.White};
+            this.Galt2.NeedlesEnabled = new bool[] {
+        true,
+        true,
+        true,
+        false};
+            this.Galt2.NeedlesRadius = new int[] {
+        50,
+        30,
+        50,
+        80};
+            this.Galt2.NeedlesType = new int[] {
+        0,
+        0,
+        0,
+        0};
+            this.Galt2.NeedlesWidth = new int[] {
+        2,
+        2,
+        2,
+        2};
+            this.Galt2.NeedleType = 0;
+            this.Galt2.NeedleWidth = 2;
+            this.Galt2.Range_Idx = ((byte)(0));
+            this.Galt2.RangeColor = System.Drawing.Color.LightGreen;
+            this.Galt2.RangeEnabled = false;
+            this.Galt2.RangeEndValue = 360F;
+            this.Galt2.RangeInnerRadius = 1;
+            this.Galt2.RangeOuterRadius = 60;
+            this.Galt2.RangesColor = new System.Drawing.Color[] {
+        System.Drawing.Color.LightGreen,
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Orange,
+        System.Drawing.SystemColors.Control,
+        System.Drawing.SystemColors.Control};
+            this.Galt2.RangesEnabled = new bool[] {
+        false,
+        false,
+        false,
+        false,
+        false};
+            this.Galt2.RangesEndValue = new float[] {
+        360F,
+        200F,
+        150F,
+        0F,
+        0F};
+            this.Galt2.RangesInnerRadius = new int[] {
+        1,
+        1,
+        1,
+        70,
+        70};
+            this.Galt2.RangesOuterRadius = new int[] {
+        60,
+        60,
+        60,
+        80,
+        80};
+            this.Galt2.RangesStartValue = new float[] {
+        0F,
+        150F,
+        75F,
+        0F,
+        0F};
+            this.Galt2.RangeStartValue = 0F;
+            this.Galt2.ScaleLinesInterColor = System.Drawing.Color.White;
+            this.Galt2.ScaleLinesInterInnerRadius = 52;
+            this.Galt2.ScaleLinesInterOuterRadius = 60;
+            this.Galt2.ScaleLinesInterWidth = 1;
+            this.Galt2.ScaleLinesMajorColor = System.Drawing.Color.White;
+            this.Galt2.ScaleLinesMajorInnerRadius = 50;
+            this.Galt2.ScaleLinesMajorOuterRadius = 60;
+            this.Galt2.ScaleLinesMajorStepValue = 1000F;
+            this.Galt2.ScaleLinesMajorWidth = 2;
+            this.Galt2.ScaleLinesMinorColor = System.Drawing.Color.White;
+            this.Galt2.ScaleLinesMinorInnerRadius = 55;
+            this.Galt2.ScaleLinesMinorNumOf = 9;
+            this.Galt2.ScaleLinesMinorOuterRadius = 60;
+            this.Galt2.ScaleLinesMinorWidth = 1;
+            this.Galt2.ScaleNumbersColor = System.Drawing.Color.White;
+            this.Galt2.ScaleNumbersFormat = "";
+            this.Galt2.ScaleNumbersRadius = 42;
+            this.Galt2.ScaleNumbersRotation = 0;
+            this.Galt2.ScaleNumbersStartScaleLine = 1;
+            this.Galt2.ScaleNumbersStepScaleLines = 1;
+            this.Galt2.Value = 0F;
+            this.Galt2.Value0 = 0F;
+            this.Galt2.Value1 = 0F;
+            this.Galt2.Value2 = 0F;
+            this.Galt2.Value3 = 0F;
+            // 
+            // bindingSourceGaugesTab
+            // 
+            this.bindingSourceGaugesTab.DataSource = typeof(MissionPlanner.CurrentState);
             // 
             // G_SATCOM_curr
             // 
@@ -1145,7 +1303,7 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
             this.G_SATCOM_curr.CapsText = new string[] {
-        "SATCOM cur",
+        "Current",
         "",
         "(A)",
         "",
@@ -1261,6 +1419,8 @@ namespace MissionPlanner.GCSViews
             this.G_SATCOM_curr.Value2 = 0F;
             this.G_SATCOM_curr.Value3 = 0F;
             this.G_SATCOM_curr.DoubleClick += new System.EventHandler(this.G_SATCOM_curr_DoubleClick);
+            this.G_SATCOM_curr.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown_G2);
+            this.G_SATCOM_curr.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp_G2);
             // 
             // txt_messagebox
             // 
@@ -1272,6 +1432,7 @@ namespace MissionPlanner.GCSViews
             // tableLayoutPanel_gaugeData
             // 
             resources.ApplyResources(this.tableLayoutPanel_gaugeData, "tableLayoutPanel_gaugeData");
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_EngineRuntime, 1, 10);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_signalStrength, 0, 10);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_disttowp, 1, 8);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lblGPS, 0, 8);
@@ -1288,6 +1449,13 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel_gaugeData.Controls.Add(this.BUT_setmode, 1, 1);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_ARM, 0, 0);
             this.tableLayoutPanel_gaugeData.Name = "tableLayoutPanel_gaugeData";
+            // 
+            // lbl_EngineRuntime
+            // 
+            resources.ApplyResources(this.lbl_EngineRuntime, "lbl_EngineRuntime");
+            this.lbl_EngineRuntime.BackColor = System.Drawing.Color.Gray;
+            this.lbl_EngineRuntime.ForeColor = System.Drawing.Color.White;
+            this.lbl_EngineRuntime.Name = "lbl_EngineRuntime";
             // 
             // lbl_signalStrength
             // 
@@ -1464,11 +1632,11 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(100, 100)};
             this.G_fuel.CapsText = new string[] {
         "Fuel",
-        "0",
+        "",
         "",
         "E",
         "F"};
-            this.G_fuel.CapText = "0";
+            this.G_fuel.CapText = "";
             this.G_fuel.Center = new System.Drawing.Point(75, 75);
             this.G_fuel.MaxValue = 100F;
             this.G_fuel.MinValue = 0F;
@@ -1490,7 +1658,7 @@ namespace MissionPlanner.GCSViews
         System.Drawing.Color.Brown};
             this.G_fuel.NeedlesEnabled = new bool[] {
         true,
-        true,
+        false,
         false,
         false};
             this.G_fuel.NeedlesRadius = new int[] {
@@ -1517,42 +1685,43 @@ namespace MissionPlanner.GCSViews
             this.G_fuel.RangeInnerRadius = 1;
             this.G_fuel.RangeOuterRadius = 70;
             this.G_fuel.RangesColor = new System.Drawing.Color[] {
-        System.Drawing.Color.Red,
-        System.Drawing.Color.Red,
-        System.Drawing.Color.Orange,
-        System.Drawing.SystemColors.Control,
-        System.Drawing.SystemColors.Control};
+                System.Drawing.Color.Red,
+                System.Drawing.Color.Orange,
+                System.Drawing.Color.Lime,
+                System.Drawing.SystemColors.Control,
+                System.Drawing.SystemColors.Control};
             this.G_fuel.RangesEnabled = new bool[] {
-        true,
-        false,
-        false,
-        false,
-        false};
+                true,
+                true,
+                true,
+                false,
+                false};
             this.G_fuel.RangesEndValue = new float[] {
-        1F,
-        60F,
-        50F,
-        0F,
-        0F};
+                30F,
+                90F,
+                100F,
+                0F,
+                0F};
             this.G_fuel.RangesInnerRadius = new int[] {
-        55,
-        1,
-        1,
-        70,
-        70};
+            55,
+            55,
+            55,
+            70,
+            70};
             this.G_fuel.RangesOuterRadius = new int[] {
-        60,
-        70,
-        70,
-        80,
-        80};
+            60,
+            60,
+            60,
+            80,
+            80};
             this.G_fuel.RangesStartValue = new float[] {
-        0F,
-        50F,
-        35F,
-        0F,
-        0F};
-            this.G_fuel.RangeStartValue = 35F;
+            0F,
+            30F,
+            90F,
+            0F,
+            0F};
+
+            //this.G_fuel.RangeStartValue = 35F;
             this.G_fuel.ScaleLinesInterColor = System.Drawing.Color.White;
             this.G_fuel.ScaleLinesInterInnerRadius = 52;
             this.G_fuel.ScaleLinesInterOuterRadius = 60;
@@ -1729,8 +1898,8 @@ namespace MissionPlanner.GCSViews
             this.G_waterflowTemp.Value1 = 0F;
             this.G_waterflowTemp.Value2 = 0F;
             this.G_waterflowTemp.Value3 = 0F;
-            this.G_waterflowTemp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown);
-            this.G_waterflowTemp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp);
+            this.G_waterflowTemp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown_G2);
+            this.G_waterflowTemp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp_G2);
             // 
             // G_silencerTemp
             // 
@@ -1758,13 +1927,13 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
         new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)))};
             this.G_silencerTemp.CapsPosition = new System.Drawing.Point[] {
-        new System.Drawing.Point(54, 88),
+        new System.Drawing.Point(57, 88),
         new System.Drawing.Point(70, 45),
         new System.Drawing.Point(70, 98),
         new System.Drawing.Point(10, 10),
         new System.Drawing.Point(10, 10)};
             this.G_silencerTemp.CapsText = new string[] {
-        "SilencerTemp",
+        "Sil Temp",
         "",
         "(°C)",
         "",
@@ -1879,6 +2048,8 @@ namespace MissionPlanner.GCSViews
             this.G_silencerTemp.Value1 = 0F;
             this.G_silencerTemp.Value2 = 0F;
             this.G_silencerTemp.Value3 = 0F;
+            this.G_silencerTemp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown_G2);
+            this.G_silencerTemp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp_G2);
             // 
             // G_engineTemp
             // 
@@ -2027,6 +2198,8 @@ namespace MissionPlanner.GCSViews
             this.G_engineTemp.Value1 = 0F;
             this.G_engineTemp.Value2 = 0F;
             this.G_engineTemp.Value3 = 0F;
+            this.G_engineTemp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown_G2);
+            this.G_engineTemp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp_G2);
             // 
             // G_RPM
             // 
@@ -2061,7 +2234,7 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(10, 10)};
             this.G_RPM.CapsText = new string[] {
         "RPM",
-        "0",
+        "",
         "x1000",
         "",
         ""};
@@ -2114,37 +2287,37 @@ namespace MissionPlanner.GCSViews
             this.G_RPM.RangeInnerRadius = 1;
             this.G_RPM.RangeOuterRadius = 70;
             this.G_RPM.RangesColor = new System.Drawing.Color[] {
-        System.Drawing.Color.LightGreen,
+        System.Drawing.Color.Red,
         System.Drawing.Color.Red,
         System.Drawing.Color.Orange,
         System.Drawing.SystemColors.Control,
         System.Drawing.SystemColors.Control};
             this.G_RPM.RangesEnabled = new bool[] {
-        false,
+        true,
         false,
         false,
         false,
         false};
             this.G_RPM.RangesEndValue = new float[] {
-        35F,
+        10000F,
         60F,
         50F,
         0F,
         0F};
             this.G_RPM.RangesInnerRadius = new int[] {
-        1,
-        1,
-        1,
-        70,
-        70};
+        55,
+        55,
+        55,
+        55,
+        55};
             this.G_RPM.RangesOuterRadius = new int[] {
-        70,
-        70,
-        70,
-        80,
-        80};
+        60,
+        60,
+        60,
+        60,
+        60};
             this.G_RPM.RangesStartValue = new float[] {
-        0F,
+        9000F,
         50F,
         35F,
         0F,
@@ -2194,10 +2367,6 @@ namespace MissionPlanner.GCSViews
             this.Gheading.NavHeading = 0;
             this.Gheading.VehicleLat = 0D;
             this.Gheading.VehicleLon = 0D;
-            // 
-            // bindingSourceGaugesTab
-            // 
-            this.bindingSourceGaugesTab.DataSource = typeof(MissionPlanner.CurrentState);
             // 
             // Galt
             // 
@@ -2383,14 +2552,14 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(10, 10)};
             this.Gspeed.CapsText = new string[] {
         "Speed",
-        "0",
+        "",
         "(kts)",
         "",
         ""};
-            this.Gspeed.CapText = "0";
+            this.Gspeed.CapText = "";
             this.Gspeed.Center = new System.Drawing.Point(75, 75);
             this.Gspeed.ContextMenuStrip = this.contextMenuStrip_Gspeed;
-            this.Gspeed.MaxValue = 30F;
+            this.Gspeed.MaxValue = 25F;
             this.Gspeed.MinValue = 0F;
             this.Gspeed.Name = "Gspeed";
             this.Gspeed.Need_Idx = ((byte)(3));
@@ -2500,6 +2669,8 @@ namespace MissionPlanner.GCSViews
             this.Gspeed.Value2 = 0F;
             this.Gspeed.Value3 = 0F;
             this.Gspeed.DoubleClick += new System.EventHandler(this.Gspeed_DoubleClick);
+            this.Gspeed.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseDown);
+            this.Gspeed.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Gauge_MouseUp);
             // 
             // contextMenuStrip_Gspeed
             // 
@@ -2554,11 +2725,11 @@ namespace MissionPlanner.GCSViews
         new System.Drawing.Point(10, 10)};
             this.G_batp.CapsText = new string[] {
         "Battery",
-        "0",
+        "",
         "",
         "",
         ""};
-            this.G_batp.CapText = "0";
+            this.G_batp.CapText = "";
             this.G_batp.Center = new System.Drawing.Point(68, 75);
             this.G_batp.MaxValue = 100F;
             this.G_batp.MinValue = 0F;
@@ -4077,7 +4248,6 @@ namespace MissionPlanner.GCSViews
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("datetime", this.bindingSourceHud, "datetime", true));
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("disttowp", this.bindingSourceHud, "wp_dist", true));
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("ekfstatus", this.bindingSourceHud, "ekfstatus", true));
-            this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("failsafe", this.bindingSourceHud, "failsafe", true));
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("gpsfix", this.bindingSourceHud, "gpsstatus", true));
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("gpsfix2", this.bindingSourceHud, "gpsstatus2", true));
             this.hud1.DataBindings.Add(new System.Windows.Forms.Binding("gpshdop", this.bindingSourceHud, "gpshdop", true));
@@ -4288,6 +4458,12 @@ namespace MissionPlanner.GCSViews
             this.tabMapView.Name = "tabMapView";
             this.tabMapView.UseVisualStyleBackColor = true;
             // 
+            // tabCamera
+            // 
+            resources.ApplyResources(this.tabCamera, "tabCamera");
+            this.tabCamera.Name = "tabCamera";
+            this.tabCamera.UseVisualStyleBackColor = true;
+            // 
             // panel_persistent
             // 
             resources.ApplyResources(this.panel_persistent, "panel_persistent");
@@ -4339,7 +4515,6 @@ namespace MissionPlanner.GCSViews
             // 
             // dashboardTimer
             // 
-            this.dashboardTimer.Enabled = true;
             this.dashboardTimer.Interval = 1000;
             this.dashboardTimer.Tick += new System.EventHandler(this.dashboardTimer_Tick);
             // 
@@ -4370,12 +4545,6 @@ namespace MissionPlanner.GCSViews
             0,
             0});
             this.modifyandSetAlt.Click += new System.EventHandler(this.modifyandSetAlt_Click);
-            // 
-            // tabCamera
-            // 
-            resources.ApplyResources(this.tabCamera, "tabCamera");
-            this.tabCamera.Name = "tabCamera";
-            this.tabCamera.UseVisualStyleBackColor = true;
             // 
             // FlightData
             // 
@@ -4419,9 +4588,9 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel4.PerformLayout();
             this.tabGauges.ResumeLayout(false);
             this.tabGauges.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).EndInit();
             this.tableLayoutPanel_gaugeData.ResumeLayout(false);
             this.tableLayoutPanel_gaugeData.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceGaugesTab)).EndInit();
             this.contextMenuStrip_Gspeed.ResumeLayout(false);
             this.tabActions.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -4762,6 +4931,8 @@ private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
         private ToolStripMenuItem addQuicktabToolStripMenuItem;
         private AGaugeApp.AGauge G_SATCOM_curr;
         private TabPage tabCamera;
+        private Label lbl_EngineRuntime;
+        private AGaugeApp.AGauge Galt2;
         //private Label label_batp_onGauge;
     }
 }

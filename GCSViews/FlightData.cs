@@ -8,6 +8,7 @@ using GMap.NET.WindowsForms.Markers;
 using log4net;
 using Microsoft.Scripting.Utils;
 using Microsoft.VisualBasic;
+using Microsoft.Web.WebView2.WinForms; // 05oct2026_cameraTab
 using MissionPlanner.ArduPilot;
 using MissionPlanner.Comms;
 using MissionPlanner.Controls;
@@ -44,6 +45,8 @@ using static Stimulsoft.Report.StiOptions.Engine;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
 using TableLayoutPanelCellPosition = System.Windows.Forms.TableLayoutPanelCellPosition;
 using UnauthorizedAccessException = System.UnauthorizedAccessException;
+
+using Microsoft.Web.WebView2.Core;
 
 // written by michael oborne
 
@@ -405,6 +408,13 @@ namespace MissionPlanner.GCSViews
              G_batp_Resize(null, null);
 
 
+
+            // gorund speed 
+            //Binding bbbb = new Binding("Value", bindingSourceHud, "groundspeed", true);
+            //Gspeed.DataBindings.Add(bbbb);
+            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "groundspeed", true));
+            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "groundspeed", true));
+
             // 07july2026_task2  start
             //simple code  //
             //this.lbl_Mode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "mode", true));
@@ -471,11 +481,10 @@ namespace MissionPlanner.GCSViews
                         e.Value = "Signal: " + e.Value + hud1.datetime.ToString("HH:mm:ss");
                     };
                 lbl_signalStrength.DataBindings.Add(b);
-               
+
             //11july2026_task1 end
 
-
-
+            
 
             // 08july2026_task3 start
             //EKF status
@@ -505,7 +514,7 @@ namespace MissionPlanner.GCSViews
                     e.Value = connected ? "Connected" : "Disconnected";
 
                     lbl_Connected.ForeColor = connected
-                        ? Color.Yellow
+                        ? Color.Black
                         : Color.White;
 
                     // 27june2026_task3
@@ -740,7 +749,7 @@ namespace MissionPlanner.GCSViews
             gMapControl1.Overlays.Add(poioverlay);
 
             float gspeedMax = Settings.Instance.GetFloat("GspeedMAX");
-            gspeedMax = 30;
+            gspeedMax = 25;
             if (gspeedMax != 0)
             {
                 Gspeed.MaxValue = gspeedMax;
@@ -6271,7 +6280,11 @@ namespace MissionPlanner.GCSViews
             }
 
             // 06july2026_task1_commented List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, hud1, tableLayoutPanel_gaugeData };
-            List<Control> gauges = new List<Control> { G_engineTemp, G_silencerTemp, Galt, Gheading, /* 10sep2026_cmt G_waterflow,*/  Gspeed/*10sep_test G_waterflowTemp*/, hud1, G_SATCOM_curr, tableLayoutPanel_gaugeData }; // 06july2026_task1
+            //big gauges (only):
+            //List<Control> gauges = new List<Control> { G_engineTemp, G_silencerTemp, Galt,Galt2, Gheading, /* 10sep2026_cmt G_waterflow,*/  G_waterflowTemp/*10sep_test G_waterflowTemp*/, hud1, G_SATCOM_curr, tableLayoutPanel_gaugeData }; // 06july2026_task1
+            List<Control> gauges = new List<Control> {  Galt, Galt2, Gheading, hud1, tableLayoutPanel_gaugeData }; // 06july2026_task1
+
+
 
             // 10june26_task1_commented int minGaugeSize = 150;
 
@@ -6299,12 +6312,12 @@ namespace MissionPlanner.GCSViews
             
             //mini gauges  fix covering the Galt
             G_batp.Location = Galt.Location;  //alt gauge[0,0]
-            G_batp.Height = G_engineTemp.Height / 2;
-            G_batp.Width = G_engineTemp.Width / 2;
+            G_batp.Height = Galt.Height / 2;//G_engineTemp.Height / 2;
+            G_batp.Width = Galt.Width / 2;  //G_engineTemp.Width / 2;
                         
-            G_waterflowTemp.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y); ////alt gauge[0,1]
-            G_waterflowTemp.Height = G_batp.Height;
-            G_waterflowTemp.Width = G_batp.Width;
+            Gspeed.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y); ////alt gauge[0,1]
+            Gspeed.Height = G_batp.Height;
+            Gspeed.Width = G_batp.Width;
             
 
             G_RPM.Location = new Point(Galt.Location.X, Galt.Location.Y + G_batp.Height); ////alt gauge[1,0]
@@ -6316,6 +6329,32 @@ namespace MissionPlanner.GCSViews
             G_fuel.Width = G_batp.Width;
 
             //lbl_ARM.Font = BUT_ARM.Font;
+
+
+
+            //group2 mini gauges  fix covering the Galt2 
+            G_engineTemp.Location = Galt2.Location;  //alt gauge[0,0]
+            G_engineTemp.Height = Galt2.Height / 2;
+            G_engineTemp.Width = Galt2.Width / 2;
+
+            G_silencerTemp.Location = new Point(Galt2.Location.X + G_engineTemp.Width, Galt2.Location.Y); ////alt gauge[0,1]
+            G_silencerTemp.Height = G_engineTemp.Height;
+            G_silencerTemp.Width = G_engineTemp.Width;
+
+
+            G_waterflowTemp.Location = new Point(Galt2.Location.X, Galt2.Location.Y + G_engineTemp.Height); ////alt gauge[1,0]
+            G_waterflowTemp.Height = G_engineTemp.Height;
+            G_waterflowTemp.Width = G_engineTemp.Width;
+
+            G_SATCOM_curr.Location = new Point(Galt2.Location.X + G_engineTemp.Width, Galt2.Location.Y + G_engineTemp.Height); //alt gauge[1,1]
+            G_SATCOM_curr.Height = G_engineTemp.Height;
+            G_SATCOM_curr.Width = G_engineTemp.Width;
+            //group2 mini gauges end
+
+            
+            //MessageBox.Show(Galt.Width + " <=width and height=>" + Galt.Height);
+
+
 
         }
         // 05june26_task3_v2 end        
@@ -7951,6 +7990,18 @@ namespace MissionPlanner.GCSViews
                 textBox.Size = new Size(290, 25);
                 textBox.Text = "192.168.144.1";
 
+                // 06oct2026_camIPsave start
+                var camIP = Settings.Instance["camIP"]?.ToString();
+                if (string.IsNullOrWhiteSpace(camIP))
+                {
+                    camIP = "192.168.144.1"; //default
+                    Settings.Instance["camIP"] = camIP;
+                }
+                textBox.Text = camIP;
+                // 06oct2026_camIPsave end
+
+
+
                 Button okButton = new Button();
                 okButton.Text = "OK";
                 okButton.Location = new Point(150, 85);
@@ -8007,6 +8058,8 @@ namespace MissionPlanner.GCSViews
                     //            MessageBoxButtons.OK,
                     //            MessageBoxIcon.Error);
                     //    }
+
+                    Settings.Instance["camIP"] = textBox.Text; // 06oct2026_camIPsave
                     OpenCameraTab(ipAddress);// 05oct2026_cameraTab start 
                 }
                 
@@ -8042,21 +8095,18 @@ namespace MissionPlanner.GCSViews
 
             //  commneted under Task_camera_30sep2026 ends
         }
-
-
-        //private void OpenCameraTab(string ipAddress) // 05oct2026_cameraTab
-        private void OpenCameraTab(string ipAddress)
+                
+        private async void OpenCameraTab(string ipAddress) // 05oct2026_cameraTab
         {
-            WebBrowser cameraBrowser = tabCamera.Controls
-                .OfType<WebBrowser>()
+            WebView2 cameraBrowser = tabCamera.Controls
+                .OfType<WebView2>()
                 .FirstOrDefault();
 
             if (cameraBrowser == null)
             {
-                cameraBrowser = new WebBrowser
+                cameraBrowser = new WebView2
                 {
-                    Dock = DockStyle.Fill,
-                    ScriptErrorsSuppressed = false
+                    Dock = DockStyle.Fill
                 };
 
                 tabCamera.Controls.Add(cameraBrowser);
@@ -8069,37 +8119,27 @@ namespace MissionPlanner.GCSViews
 
             tabControlactions.SelectedTab = tabCamera;
 
-            cameraBrowser.Navigate(ipAddress);
+            // Initialize WebView2 only the first time
+            if (cameraBrowser.CoreWebView2 == null)
+            {
+                string userDataFolder = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "SaifSeasMP",
+                    "WebView2");
+
+                Directory.CreateDirectory(userDataFolder);
+
+                var environment = await CoreWebView2Environment.CreateAsync(
+                    null,
+                    userDataFolder);
+
+                await cameraBrowser.EnsureCoreWebView2Async(environment);
+            }
+
+            // If WebView2 is already initialized,
+            // just navigate to the new URL.
+            cameraBrowser.CoreWebView2.Navigate(ipAddress);
         }
-        //{
-        //    WebBrowser cameraBrowser = tabCamera.Controls.OfType<WebBrowser>().FirstOrDefault();
-
-        //    if (cameraBrowser == null)
-        //    {
-        //        cameraBrowser = new WebBrowser
-        //        {
-        //            Dock = DockStyle.Fill,
-        //            ScriptErrorsSuppressed = true
-        //        };
-
-        //        tabCamera.Controls.Add(cameraBrowser);
-        //    }
-
-        //    cameraBrowser.Navigate(ipAddress);
-        //    MessageBox.Show("Navigating to: " + ipAddress);
-
-        //    if (!tabControlactions.TabPages.Contains(tabCamera))
-        //    {
-        //        tabControlactions.TabPages.Insert(1, tabCamera);
-        //    }
-
-        //    tabControlactions.SelectedTab = tabCamera;
-        //}
-
-
-
-
-
 
 
         private void gimbalVideoPopOutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8167,6 +8207,7 @@ namespace MissionPlanner.GCSViews
         private bool g_speed_popout = false;
         private bool g_batp_popout = false; //04june26_task1
         private bool g_alt_popout = false;
+        private bool g_alt2_popout = false;
         private bool g_fuel_popout = false;
         private bool g_hud1_popout = false;
         private bool G_SATCOM_curr_popout = false;
@@ -8235,6 +8276,8 @@ namespace MissionPlanner.GCSViews
                 else if (item.Gauge == G_fuel) isPoppedOut = g_fuel_popout;
                 else if (item.Gauge == hud1) isPoppedOut = g_hud1_popout; // 10june26_task1
                 else if (item.Gauge == G_SATCOM_curr) isPoppedOut = G_SATCOM_curr_popout;
+
+                else if (item.Gauge == Galt2) isPoppedOut = g_alt2_popout;
 
                 if (isPoppedOut)
                 {
@@ -8398,6 +8441,7 @@ namespace MissionPlanner.GCSViews
                 if (gauge == G_batp) g_batp_popout = state;
                 else if (gauge == Gspeed) g_speed_popout = state;
                 else if (gauge == Galt) g_alt_popout = state;
+                else if (gauge == Galt2) g_alt2_popout = state;
                 else if (gauge == Gheading) g_heading_popout = state;
                 else if (gauge == G_RPM) g_rpm_popout = state;
                 else if (gauge == G_engineTemp) g_enginetemp_popout = state;
@@ -9098,6 +9142,8 @@ namespace MissionPlanner.GCSViews
             int mav_lbl_LeakSts_custom_number = 0;
             int mav_lbl_EngineSts_custom_number = 0;
             int mav_G_SATCOM_curr_number = 0;
+            int mav_G_silencerTemp_number = 0;
+            int mav_lblEngineRuntime_custom_number = 0;
 
             object thisBoxed = MainV2.comPort.MAV.cs;
             Type test = thisBoxed.GetType();
@@ -9138,7 +9184,7 @@ namespace MissionPlanner.GCSViews
                             {
                                 //MessageBox.Show(n.ToString());
                                 mav_batp_custom_number = n;
-                                this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                                //this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_batp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
                                 this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
                                 this.G_batp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_batp_custom_number, true));//bindingSourceGaugesTab
 
@@ -9149,24 +9195,24 @@ namespace MissionPlanner.GCSViews
                             }
                             else if (name == "MAV_CSL") //gspeed
                             {
-                                //MessageBox.Show("mav_Gspeed_custom_number:" + n.ToString());
-                                mav_Gspeed_custom_number = n;
-                                this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Gspeed_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
-                                this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
-                                this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
+                                ////MessageBox.Show("mav_Gspeed_custom_number:" + n.ToString());
+                                //mav_Gspeed_custom_number = n;
+                                ////this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Gspeed_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                                //this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
+                                //this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
                             }
                             else if (name == "MAV_RPM")//"MAV_CSR")//Grpm
                             {
                                 //MessageBox.Show("mav_Grpm_custom_number:" + n.ToString());
                                 mav_Grpm_custom_number = n;
-                                this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Grpm_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                //this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Grpm_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
                                 this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
                                 this.G_RPM.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Grpm_custom_number, true));//bindingSourceGaugesTab
                             }
                             else if (name == "MAV_ET")//engine temp
                             {
                                 mav_G_engineTemp_custom_number = n;
-                                this.G_engineTemp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_engineTemp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                //this.G_engineTemp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_engineTemp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
                                 this.G_engineTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_engineTemp_custom_number, true));//bindingSourceGaugesTab
                                 this.G_engineTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_engineTemp_custom_number, true));//bindingSourceGaugesTab
                             }
@@ -9182,36 +9228,36 @@ namespace MissionPlanner.GCSViews
                             else if (name == "MAV_FUEL")//fuel
                             {
                                 mav_G_fuel_custom_number = n;
-                                this.G_fuel.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_fuel_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                //this.G_fuel.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_fuel_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
                                 this.G_fuel.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_fuel_custom_number, true));//bindingSourceGaugesTab
                                 this.G_fuel.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_fuel_custom_number, true));//bindingSourceGaugesTab
                             }
                             else if (name == "MAV_WT")//water flow temp
                             {
                                 mav_G_waterflowTemp_custom_number = n;
-                                this.G_waterflowTemp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_waterflowTemp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                //this.G_waterflowTemp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_waterflowTemp_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
                                 this.G_waterflowTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflowTemp_custom_number, true));//bindingSourceGaugesTab
                                 this.G_waterflowTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_waterflowTemp_custom_number, true));//bindingSourceGaugesTab
                             }
-                            else if (name=="MAV_LS1") //leak status // 04july2026_task1
+                            else if (name == "MAV_LS1") //leak status // 04july2026_task1
                             {
                                 mav_lbl_LeakSts_custom_number = n;
-                                
+
                                 var binding = new Binding("Text", this.bindingSourceHud, "customfield" + mav_lbl_LeakSts_custom_number, true);
 
-                                    binding.Format += (s, e) =>
+                                binding.Format += (s, e) =>
+                                {
+                                    if (e.Value != null)
                                     {
-                                        if (e.Value != null)
-                                        {
-                                            double leakValue = System.Convert.ToDouble(e.Value);
+                                        double leakValue = System.Convert.ToDouble(e.Value);
 
-                                            e.Value = (leakValue>2.5) ? "NO LEAK" : "LEAK DETECTED";
+                                        e.Value = (leakValue > 2.5) ? "NO LEAK" : "LEAK DETECTED";
 
-                                            lbl_LeakSts.ForeColor = (leakValue > 2.5)? Color.White : Color.White;
-                                            lbl_LeakSts.BackColor = (leakValue > 2.5) ? Color.LimeGreen:Color.Red;
-                                        }
-                                    };
-                                    this.lbl_LeakSts.DataBindings.Add(binding);
+                                        lbl_LeakSts.ForeColor = (leakValue > 2.5) ? Color.White : Color.White;
+                                        lbl_LeakSts.BackColor = (leakValue > 2.5) ? Color.LimeGreen : Color.Red;
+                                    }
+                                };
+                                this.lbl_LeakSts.DataBindings.Add(binding);
                             }
                             else if (name == "MAV_ES") // engine status // 04july2026_task2
                             {
@@ -9237,13 +9283,34 @@ namespace MissionPlanner.GCSViews
                             else if (name == "MAV_SATC") //G_SATCOM_curr
                             {
                                 mav_G_SATCOM_curr_number = n;
-                                this.G_SATCOM_curr.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_SATCOM_curr_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                //this.G_SATCOM_curr.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_SATCOM_curr_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
                                 this.G_SATCOM_curr.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_SATCOM_curr_number, true));//bindingSourceGaugesTab
                                 this.G_SATCOM_curr.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_SATCOM_curr_number, true));//bindingSourceGaugesTab
                             }
 
+                            else if (name == "MAV_ST") //G_silencer_temp
+                            {
+                                mav_G_silencerTemp_number = n;
+                                //this.G_silencerTemp.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_G_silencerTemp_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0"));
+                                this.G_silencerTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_G_silencerTemp_number, true));//bindingSourceGaugesTab
+                                this.G_silencerTemp.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_G_silencerTemp_number, true));//bindingSourceGaugesTab
+                            }
+                            else if (name == "MAV_ENGRT") //06oct2026_lblEngineRuntime
+                            {
+                                mav_lblEngineRuntime_custom_number = n;
+                                var binding3 = new Binding("Text", this.bindingSourceHud, "customfield" + mav_lblEngineRuntime_custom_number, true);
+
+                                binding3.Format += (s, e) =>
+                                {
+                                    e.Value = "Eng RT: " + e.Value;
+                                };
+
+                                this.lbl_EngineRuntime.DataBindings.Add(binding3);
+
+                            }
                         }
-                        catch { 
+                        catch
+                        {
                             //MessageBox.Show("mali bind add chesara?"); 
                         }
 
@@ -9326,7 +9393,7 @@ namespace MissionPlanner.GCSViews
              if (g_speed_popout)
                      return;
 
-                string max = "60";
+                string max = "25";
                 if (DialogResult.OK == InputBox.Show("Enter Max Speed", "Enter Max Speed", ref max))
                 {
                     if (!float.TryParse(max, out float maxVal))
@@ -9352,8 +9419,8 @@ namespace MissionPlanner.GCSViews
                     //    Gspeed.ScaleLinesMajorStepValue = 0.1f * float.Parse(max);
                     //}
 
-                    Gspeed.ScaleLinesMajorStepValue = Math.Max(10f, 0.1f * maxVal);
-
+                    Gspeed.ScaleLinesMajorStepValue = Math.Max(5f, 0.1f * maxVal);
+                    
                     // 03june26_task3 this will not work as color enable is set to false in flightsata.cs
                     this.Gspeed.RangesEndValue = new float[]
                     {(0.6f)* maxVal,
@@ -9418,21 +9485,44 @@ namespace MissionPlanner.GCSViews
 
         }
 
+        private void Gauge_MouseDown_G2(object sender, MouseEventArgs e) // for group2
+        {
+            if (e.Button != MouseButtons.Middle)
+                return;
+
+            Control gauge = (Control)sender;
+
+            //gauge.Tag = gauge.Location;//with this that agauge stores its loc in its own memory called tag
+
+            prevX = gauge.Location.X;
+            prevY = gauge.Location.Y;
+            gauge.Location = Galt2.Location;
+
+            gauge.Size = new Size(Galt2.Width, Galt2.Height);
+
+            gauge.BringToFront();
+            toolTip1.SetToolTip(gauge, "RightClick to Freez.");
+
+
+        }
+
 
 
         private void Gauge_MouseUp(object sender, MouseEventArgs e) // 04june26_task_zoomG
         {
+            
             if (e.Button != MouseButtons.Middle)
                 return;
             Control gauge = (Control)sender;
 
             gauge.Size = new Size(Galt.Width / 2,Galt.Height / 2);
 
+            
             //gauge.Location = new Point(prevX, prevY); // commented under 11june2026_problemSol1
 
             // 11june2026_problemSol1 start //or just call tabPage1_Resize();            
                 G_batp.Location = Galt.Location;
-                G_waterflowTemp.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y);
+                Gspeed.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y);
                 G_RPM.Location = new Point(Galt.Location.X, Galt.Location.Y + G_batp.Height);
                 G_fuel.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y + G_batp.Height);
             // 11june2026_problemSol1 end 
@@ -9444,11 +9534,34 @@ namespace MissionPlanner.GCSViews
             toolTip1.SetToolTip(gauge, "");
         }
 
+
+        private void Gauge_MouseUp_G2(object sender, MouseEventArgs e) // group2 
+        {
+            if (e.Button != MouseButtons.Middle)
+                return;
+            Control gauge = (Control)sender;
+
+            gauge.Size = new Size(Galt2.Width / 2, Galt2.Height / 2);
+
+               
+            G_engineTemp.Location = Galt2.Location;
+            G_silencerTemp.Location = new Point(Galt2.Location.X + G_batp.Width, Galt2.Location.Y);
+            G_waterflowTemp.Location = new Point(Galt2.Location.X, Galt2.Location.Y + G_batp.Height);
+            G_SATCOM_curr.Location = new Point(Galt2.Location.X + G_batp.Width, Galt2.Location.Y + G_batp.Height);   
+            toolTip1.SetToolTip(gauge, "");
+        }
+
+
+
+
+
+
         private Form messagePopup;
         private RichTextBox popupRTB;
         Control originalParent;
         private void BUT_ShowMessages_Click(object sender, EventArgs e) //03july2027_task1
         {
+        
             if (messagePopup != null && !messagePopup.IsDisposed)
             {
                 messagePopup.Activate();
@@ -9873,7 +9986,7 @@ namespace MissionPlanner.GCSViews
                 if (!float.TryParse(max, out float maxVal))
                 {
                     CustomMessageBox.Show(
-                        "Please enter a valid number for Max Speed.","Invalid Max Speed");
+                        "Please enter a valid number for Max Speed.", "Invalid Max Speed");
 
                     setMaxSpeedToolStripMenuItem_Click(null, null);
                     return;
@@ -9881,7 +9994,7 @@ namespace MissionPlanner.GCSViews
 
                 if (maxVal <= 0)
                 {
-                    CustomMessageBox.Show("Max Speed must be greater than 0.","Invalid Max Speed");
+                    CustomMessageBox.Show("Max Speed must be greater than 0.", "Invalid Max Speed");
 
                     setMaxSpeedToolStripMenuItem_Click(null, null);
                     return;
@@ -9890,8 +10003,12 @@ namespace MissionPlanner.GCSViews
                 Gspeed.MaxValue = maxVal;
                 Settings.Instance["GspeedMAX"] = maxVal.ToString();
 
-                Gspeed.ScaleLinesMajorStepValue =
-                    Math.Max(10f, 0.1f * maxVal);
+                Gspeed.ScaleLinesMajorStepValue = Math.Max(5f, 0.1f * maxVal);
+
+                if (Gspeed.MaxValue < Gspeed.ScaleLinesMajorStepValue)
+                {
+                    Gspeed.ScaleLinesMajorStepValue = Gspeed.MaxValue;
+                }
 
                 // 03june26_task3 this will not work as color enable is set to false in flightsata.cs
                 Gspeed.RangesEndValue = new float[]
