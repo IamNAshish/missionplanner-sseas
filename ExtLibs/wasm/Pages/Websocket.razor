@@ -576,7 +576,9 @@ serial.requestPort()
                     hud1.groundspeed = mavd.cs.groundspeed;
                     hud1.heading = mavd.cs.yaw;
                     hud1.linkqualitygcs = mavd.cs.linkqualitygcs;
-                    hud1.message = mavd.cs.messageHigh;
+                    
+                    // hud1.message = mavd.cs.messageHigh; // 07oct2026_removeHudMessages
+
                     hud1.mode = mavd.cs.mode;
                     hud1.navpitch = mavd.cs.nav_pitch;
                     hud1.navroll = mavd.cs.nav_roll;

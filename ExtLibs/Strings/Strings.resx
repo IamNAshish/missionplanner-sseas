@@ -514,7 +514,8 @@ Please use Standard/Advanced Params for the safe settings</value>
     <value>Geofence Breach</value>
   </data>
   <data name="BadAHRS" xml:space="preserve">
-    <value>Unhealthy AHRS</value>
+	  <value> </value>
+   <!-- <value>Unhealthy AHRS</value>  // commented under 07oct2026_UnhealthyAHRS -->
   </data>
   <data name="NORCReceiver" xml:space="preserve">
     <value>NO RC Receiver</value>

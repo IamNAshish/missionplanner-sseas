@@ -1679,49 +1679,48 @@ namespace MissionPlanner.GCSViews
             this.G_fuel.NeedleType = 0;
             this.G_fuel.NeedleWidth = 2;
             this.G_fuel.Range_Idx = ((byte)(2));
-            this.G_fuel.RangeColor = System.Drawing.Color.Orange;
-            this.G_fuel.RangeEnabled = false;
-            this.G_fuel.RangeEndValue = 50F;
-            this.G_fuel.RangeInnerRadius = 1;
-            this.G_fuel.RangeOuterRadius = 70;
+            this.G_fuel.RangeColor = System.Drawing.Color.Lime;
+            this.G_fuel.RangeEnabled = true;
+            this.G_fuel.RangeEndValue = 100F;
+            this.G_fuel.RangeInnerRadius = 55;
+            this.G_fuel.RangeOuterRadius = 60;
             this.G_fuel.RangesColor = new System.Drawing.Color[] {
-                System.Drawing.Color.Red,
-                System.Drawing.Color.Orange,
-                System.Drawing.Color.Lime,
-                System.Drawing.SystemColors.Control,
-                System.Drawing.SystemColors.Control};
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Orange,
+        System.Drawing.Color.Lime,
+        System.Drawing.SystemColors.Control,
+        System.Drawing.SystemColors.Control};
             this.G_fuel.RangesEnabled = new bool[] {
-                true,
-                true,
-                true,
-                false,
-                false};
+        true,
+        true,
+        true,
+        false,
+        false};
             this.G_fuel.RangesEndValue = new float[] {
-                30F,
-                90F,
-                100F,
-                0F,
-                0F};
+        30F,
+        90F,
+        100F,
+        0F,
+        0F};
             this.G_fuel.RangesInnerRadius = new int[] {
-            55,
-            55,
-            55,
-            70,
-            70};
+        55,
+        55,
+        55,
+        70,
+        70};
             this.G_fuel.RangesOuterRadius = new int[] {
-            60,
-            60,
-            60,
-            80,
-            80};
+        60,
+        60,
+        60,
+        80,
+        80};
             this.G_fuel.RangesStartValue = new float[] {
-            0F,
-            30F,
-            90F,
-            0F,
-            0F};
-
-            //this.G_fuel.RangeStartValue = 35F;
+        0F,
+        30F,
+        90F,
+        0F,
+        0F};
+            this.G_fuel.RangeStartValue = 90F;
             this.G_fuel.ScaleLinesInterColor = System.Drawing.Color.White;
             this.G_fuel.ScaleLinesInterInnerRadius = 52;
             this.G_fuel.ScaleLinesInterOuterRadius = 60;
@@ -2284,8 +2283,8 @@ namespace MissionPlanner.GCSViews
             this.G_RPM.RangeColor = System.Drawing.Color.Orange;
             this.G_RPM.RangeEnabled = false;
             this.G_RPM.RangeEndValue = 50F;
-            this.G_RPM.RangeInnerRadius = 1;
-            this.G_RPM.RangeOuterRadius = 70;
+            this.G_RPM.RangeInnerRadius = 55;
+            this.G_RPM.RangeOuterRadius = 60;
             this.G_RPM.RangesColor = new System.Drawing.Color[] {
         System.Drawing.Color.Red,
         System.Drawing.Color.Red,

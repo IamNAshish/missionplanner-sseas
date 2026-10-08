@@ -6240,7 +6240,7 @@ namespace MissionPlanner.GCSViews
                     best = candidate;
             }
 
-            return best;
+            return best-30; // 07oct2026_EndsystemSize
         }
         // 05june26_task3 //v2
         private void ArrangeControls(List<Control> controls, int columns, int cellSize, int startX, int startY)
@@ -6283,8 +6283,6 @@ namespace MissionPlanner.GCSViews
             //big gauges (only):
             //List<Control> gauges = new List<Control> { G_engineTemp, G_silencerTemp, Galt,Galt2, Gheading, /* 10sep2026_cmt G_waterflow,*/  G_waterflowTemp/*10sep_test G_waterflowTemp*/, hud1, G_SATCOM_curr, tableLayoutPanel_gaugeData }; // 06july2026_task1
             List<Control> gauges = new List<Control> {  Galt, Galt2, Gheading, hud1, tableLayoutPanel_gaugeData }; // 06july2026_task1
-
-
 
             // 10june26_task1_commented int minGaugeSize = 150;
 
