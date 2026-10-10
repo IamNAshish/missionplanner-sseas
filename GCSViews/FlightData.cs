@@ -224,7 +224,8 @@ namespace MissionPlanner.GCSViews
                 routes.Routes.Add(route);
             }
 
-            return route;
+            return route; //commented under // 08oct2026_vehiclePathsRemoved
+            //return null; // 08oct2026_vehiclePathsRemoved
         }
         // 24july2026_DrawAllPathsFlightData end
 
@@ -447,21 +448,39 @@ namespace MissionPlanner.GCSViews
             {
                 switch (System.Convert.ToInt32(e.Value))
                 {
-                    case 0: e.Value = "No GPS"; lblGPS.BackColor = Color.FromArgb(200,0,0); break;
-                    case 1: e.Value = "No Fix"; lblGPS.BackColor = Color.FromArgb(200, 0, 0); break;
-                    case 2: e.Value = "2D Fix"; lblGPS.BackColor = Color.FromArgb(255, 182, 0); break; //kind of yellow 
-                    case 3: e.Value = "3D Fix"; lblGPS.BackColor = Color.LimeGreen; break;
-                    case 4: e.Value = "DGPS"; lblGPS.BackColor = Color.LimeGreen; break;
-                    case 5: e.Value = "RTK Float"; lblGPS.BackColor = Color.FromArgb(127, 111, 248); break;
-                    case 6: e.Value = "RTK Fixed"; lblGPS.BackColor = Color.FromArgb(127, 111, 248); break;
-                    default: e.Value = "Unknown"; lblGPS.BackColor = Color.LimeGreen; break;
+                    case 0: e.Value = "GPS1: No GPS"; lblGPS.BackColor = Color.FromArgb(200,0,0); break;
+                    case 1: e.Value = "GPS1: No Fix"; lblGPS.BackColor = Color.FromArgb(200, 0, 0); break;
+                    case 2: e.Value = "GPS1: 2D Fix"; lblGPS.BackColor = Color.FromArgb(255, 182, 0); break; //kind of yellow 
+                    case 3: e.Value = "GPS1: 3D Fix"; lblGPS.BackColor = Color.LimeGreen; break;
+                    case 4: e.Value = "GPS1: DGPS"; lblGPS.BackColor = Color.LimeGreen; break;
+                    case 5: e.Value = "GPS1: RTK Float"; lblGPS.BackColor = Color.FromArgb(127, 111, 248); break;
+                    case 6: e.Value = "GPS1: RTK Fixed"; lblGPS.BackColor = Color.FromArgb(127, 111, 248); break;
+                    default: e.Value = "GPS1: Unknown"; lblGPS.BackColor = Color.LimeGreen; break;
                 }
             };
             lblGPS.DataBindings.Add(b);
+
+            Binding b_gps2 = new Binding("Text", bindingSourceHud, "gpsstatus2", true);
+
+            b_gps2.Format += (s, e) =>
+            {
+                switch (System.Convert.ToInt32(e.Value))
+                {
+                    case 0: e.Value = "GPS2: No GPS"; lblGPS2.BackColor = Color.FromArgb(200, 0, 0); break;
+                    case 1: e.Value = "GPS2: No Fix"; lblGPS2.BackColor = Color.FromArgb(200, 0, 0); break;
+                    case 2: e.Value = "GPS2: 2D Fix"; lblGPS2.BackColor = Color.FromArgb(255, 182, 0); break; //kind of yellow 
+                    case 3: e.Value = "GPS2: 3D Fix"; lblGPS2.BackColor = Color.LimeGreen; break;
+                    case 4: e.Value = "GPS2: DGPS"; lblGPS2.BackColor = Color.LimeGreen; break;
+                    case 5: e.Value = "GPS2: RTK Float"; lblGPS2.BackColor = Color.FromArgb(127, 111, 248); break;
+                    case 6: e.Value = "GPS2: RTK Fixed"; lblGPS2.BackColor = Color.FromArgb(127, 111, 248); break;
+                    default: e.Value = "GPS2: Unknown"; lblGPS2.BackColor = Color.LimeGreen; break;
+                }
+            };
+            lblGPS2.DataBindings.Add(b_gps2);
             // 09july2026_GPS end
 
             // 10july2026_disttowp start
-                b = new Binding("Text", bindingSourceHud, "wp_dist", true);
+            b = new Binding("Text", bindingSourceHud, "wp_dist", true);
                 b.Format += (s, e) =>
                 {
                     int currentWp =(int) (MainV2.comPort.MAV.cs.wpno); // 15july2026_task1
@@ -470,17 +489,38 @@ namespace MissionPlanner.GCSViews
                     e.Value = $"D2WP ({currentWp}/{totalWp}) = {e.Value} m"; // 15july2026_task1
                     
                 };
-                lbl_disttowp.DataBindings.Add(b);
+            //lbl_disttowp.DataBindings.Add(b); //09oct2026_removeD2WP
             // 10july2026_disttowp end
 
+
+            //lbl_distTraveled start
+            b = new Binding("Text", bindingSourceHud, "distTraveled", true);
+            b.Format += (s, e) =>
+            {                                                   
+                e.Value = $"Dist Traveled: {e.Value}m"; 
+            };
+            lbl_distTraveled.DataBindings.Add(b);
+            //lbl_distTraveled end
+
             //11july2026_task1 start
-                //signal strength
-                b = new Binding("Text", bindingSourceHud, "linkqualitygcs", true);
+            //signal strength
+            b = new Binding("Text", bindingSourceHud, "linkqualitygcs", true);
                 b.Format += (s, e) =>
                     {
-                        e.Value = "Signal: " + e.Value + hud1.datetime.ToString("HH:mm:ss");
-                    };
-                lbl_signalStrength.DataBindings.Add(b);
+                        if (e.Value == null)
+                            e.Value = "Signal: ";
+                        double signalValue = System.Convert.ToDouble(e.Value);
+                        //e.Value = "Signal: " + e.Value; //+ hud1.datetime.ToString("HH:mm:ss");
+                        if (signalValue >= 80)
+                            e.Value = "Signal: GOOD";
+                        else if (signalValue < 80 && signalValue > 1)
+                            e.Value = "Signal: FAIR";
+                        else if (signalValue <= 1)
+                            e.Value = "Signal: BAD";                      
+
+                    };            
+
+            lbl_signalStrength.DataBindings.Add(b);
 
             //11july2026_task1 end
 
@@ -496,7 +536,7 @@ namespace MissionPlanner.GCSViews
                     e.Value = "EKF: " + e.Value;
                 };
 
-                this.lbl_EKFstatus.DataBindings.Add(binding_ekf);
+                 //this.lbl_EKFstatus.DataBindings.Add(binding_ekf); //commented 08oct2026_EKFremovedfromGaugeTab
             // 08july2026_task3 end
 
 
@@ -4562,7 +4602,7 @@ namespace MissionPlanner.GCSViews
 
                                 gMapControl1.UpdateRouteLocalPosition(route1);
                             }
-                            //24july2026_DrawAllPathsFlightData start
+                            //24july2026_DrawAllPathsFlightData end
 
                         }
 
@@ -6242,6 +6282,33 @@ namespace MissionPlanner.GCSViews
 
             return best-30; // 07oct2026_EndsystemSize
         }
+
+        private int CalculateBestGaugeSize(Control parent, int gaugeCount, int bottomReservedHeight, int hud1Width) // 07oct2026_tablegaugeFixedSize
+        {
+            int best = 150;
+
+            int availableHeight = parent.ClientSize.Height - bottomReservedHeight;
+
+            int availableWidth = parent.ClientSize.Width - hud1Width;
+
+            for (int columns = 1; columns <= gaugeCount; columns++)
+            {
+                int rows = (int)Math.Ceiling(
+                    gaugeCount / (double)columns);
+
+                int sizeByWidth = availableWidth / columns;
+                int sizeByHeight = availableHeight / rows;
+
+                int candidate = Math.Min(
+                    sizeByWidth,
+                    sizeByHeight);
+
+                if (candidate > best)
+                    best = candidate;
+            }
+
+            return best;
+        }
         // 05june26_task3 //v2
         private void ArrangeControls(List<Control> controls, int columns, int cellSize, int startX, int startY)
         {
@@ -6282,41 +6349,75 @@ namespace MissionPlanner.GCSViews
             // 06july2026_task1_commented List<Control> gauges = new List<Control> { G_batp, Gspeed, Galt, Gheading, G_RPM, G_fuel, hud1, tableLayoutPanel_gaugeData };
             //big gauges (only):
             //List<Control> gauges = new List<Control> { G_engineTemp, G_silencerTemp, Galt,Galt2, Gheading, /* 10sep2026_cmt G_waterflow,*/  G_waterflowTemp/*10sep_test G_waterflowTemp*/, hud1, G_SATCOM_curr, tableLayoutPanel_gaugeData }; // 06july2026_task1
-            List<Control> gauges = new List<Control> {  Galt, Galt2, Gheading, hud1, tableLayoutPanel_gaugeData }; // 06july2026_task1
+            List<Control> gauges = new List<Control> { Galt, Galt2 };//, Gheading, hud1, /*  tableLayoutPanel_gaugeData  commented under // 07oct2026_tablegaugeFixedSize */ }; // 06july2026_task1
+
+            // 07oct2026_tablegaugeFixedSize start
+
+            // Reserve bottom area for gauge data table          
+            int gaugeDataHeight = tableLayoutPanel_gaugeData.Height;
+            int availableHeight = tabGauges.ClientSize.Height - gaugeDataHeight;
+            int availableWidth = tabGauges.ClientSize.Width;
+
+            // Table occupies full width at bottom
+            tableLayoutPanel_gaugeData.Location = new Point(0, availableHeight);
+            tableLayoutPanel_gaugeData.Width = availableWidth;
+
+            // Reserve right-side area for Gheading + hud1   
+            // Keep the designer-defined width of the right section
+            int hud1Width = hud1.Width;
+            int leftWidth = availableWidth - hud1Width;
+
+            // Right side Gheading ra babu  
+            int rightGaugeHeight = availableHeight / 2;
+            Gheading.Location = new Point(leftWidth, 0);
+            Gheading.Size = new Size(hud1Width, rightGaugeHeight);
+
+            // Right sideHUD        
+            hud1.Location = new Point(leftWidth, rightGaugeHeight);
+            hud1.Size = new Size(hud1Width, availableHeight - rightGaugeHeight);
+
+
+            // 07oct2026_tablegaugeFixedSize end
+
+
+
+
 
             // 10june26_task1_commented int minGaugeSize = 150;
 
             // Calculate columns based on available width
-            //int columns = Math.Max(1, tabGauges.Width / minGaugeSize);
-            int gaugeSize = CalculateBestGaugeSize(tabGauges, gauges.Count);
-            int columns = Math.Max(1, tabGauges.Width / gaugeSize);
+            //int gaugeSize = CalculateBestGaugeSize(tabGauges, gauges.Count); commented 07oct2026_tablegaugeFixedSize
 
-            
-            
+            int gaugeSize = CalculateBestGaugeSize(tabGauges, gauges.Count, gaugeDataHeight, hud1Width); // 07oct2026_tablegaugeFixedSize
+
+            int columns = Math.Max(1, availableWidth / gaugeSize); // 07oct2026_tablegaugeFixedSize
+
+
+
             ArrangeControls(gauges, columns, gaugeSize, 0, 0);
-            
+
             hud1.KeepAspectRatio = false; // 08july2026_task2
-            
+
             // Set circular/oval region on hud1 matching its current size  // 10june26_task1 start
             using (GraphicsPath path = new GraphicsPath())
             {
                 //path.AddEllipse(0, 0, hud1.Width, hud1.Height); 
                 path.AddEllipse((hud1.Width - hud1.Height) / 2, 0, hud1.Height, hud1.Height);// 07july2026_task1
-                hud1.Region = new Region(path);                
+                hud1.Region = new Region(path);
             }
             // 10june26_task1 end
 
 
-            
+
             //mini gauges  fix covering the Galt
             G_batp.Location = Galt.Location;  //alt gauge[0,0]
             G_batp.Height = Galt.Height / 2;//G_engineTemp.Height / 2;
             G_batp.Width = Galt.Width / 2;  //G_engineTemp.Width / 2;
-                        
+
             Gspeed.Location = new Point(Galt.Location.X + G_batp.Width, Galt.Location.Y); ////alt gauge[0,1]
             Gspeed.Height = G_batp.Height;
             Gspeed.Width = G_batp.Width;
-            
+
 
             G_RPM.Location = new Point(Galt.Location.X, Galt.Location.Y + G_batp.Height); ////alt gauge[1,0]
             G_RPM.Height = G_batp.Height;
@@ -6347,15 +6448,9 @@ namespace MissionPlanner.GCSViews
             G_SATCOM_curr.Location = new Point(Galt2.Location.X + G_engineTemp.Width, Galt2.Location.Y + G_engineTemp.Height); //alt gauge[1,1]
             G_SATCOM_curr.Height = G_engineTemp.Height;
             G_SATCOM_curr.Width = G_engineTemp.Width;
-            //group2 mini gauges end
-
-            
-            //MessageBox.Show(Galt.Width + " <=width and height=>" + Galt.Height);
-
-
-
+            //group2 mini gauges end 
         }
-        // 05june26_task3_v2 end        
+        // 05june26_task3_v2 end      
 
         private void tabQuick_Resize(object sender, EventArgs e)
         {

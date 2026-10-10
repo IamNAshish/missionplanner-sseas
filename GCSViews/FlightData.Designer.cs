@@ -103,11 +103,11 @@ namespace MissionPlanner.GCSViews
             this.G_SATCOM_curr = new AGaugeApp.AGauge();
             this.txt_messagebox = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel_gaugeData = new System.Windows.Forms.TableLayoutPanel();
+            this.lblGPS2 = new System.Windows.Forms.Label();
             this.lbl_EngineRuntime = new System.Windows.Forms.Label();
             this.lbl_signalStrength = new System.Windows.Forms.Label();
-            this.lbl_disttowp = new System.Windows.Forms.Label();
+            this.lbl_distTraveled = new System.Windows.Forms.Label();
             this.lblGPS = new System.Windows.Forms.Label();
-            this.lbl_EKFstatus = new System.Windows.Forms.Label();
             this.lbl_Mode = new System.Windows.Forms.Label();
             this.lbl_EngineSts = new System.Windows.Forms.Label();
             this.lbl_LeakSts = new System.Windows.Forms.Label();
@@ -1432,14 +1432,14 @@ namespace MissionPlanner.GCSViews
             // tableLayoutPanel_gaugeData
             // 
             resources.ApplyResources(this.tableLayoutPanel_gaugeData, "tableLayoutPanel_gaugeData");
-            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_EngineRuntime, 1, 10);
-            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_signalStrength, 0, 10);
-            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_disttowp, 1, 8);
-            this.tableLayoutPanel_gaugeData.Controls.Add(this.lblGPS, 0, 8);
-            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_EKFstatus, 1, 6);
-            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_Mode, 0, 6);
-            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_EngineSts, 1, 4);
-            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_LeakSts, 0, 4);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lblGPS2, 2, 3);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_EngineRuntime, 3, 3);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_signalStrength, 3, 1);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_distTraveled, 3, 2);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lblGPS, 2, 2);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_Mode, 2, 1);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_EngineSts, 3, 0);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_LeakSts, 2, 0);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_Connected, 0, 3);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.BUT_ShowMessages, 1, 3);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.BUT_ARM, 1, 0);
@@ -1449,6 +1449,13 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel_gaugeData.Controls.Add(this.BUT_setmode, 1, 1);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_ARM, 0, 0);
             this.tableLayoutPanel_gaugeData.Name = "tableLayoutPanel_gaugeData";
+            // 
+            // lblGPS2
+            // 
+            resources.ApplyResources(this.lblGPS2, "lblGPS2");
+            this.lblGPS2.BackColor = System.Drawing.Color.Gray;
+            this.lblGPS2.ForeColor = System.Drawing.Color.White;
+            this.lblGPS2.Name = "lblGPS2";
             // 
             // lbl_EngineRuntime
             // 
@@ -1464,12 +1471,12 @@ namespace MissionPlanner.GCSViews
             this.lbl_signalStrength.ForeColor = System.Drawing.Color.White;
             this.lbl_signalStrength.Name = "lbl_signalStrength";
             // 
-            // lbl_disttowp
+            // lbl_distTraveled
             // 
-            resources.ApplyResources(this.lbl_disttowp, "lbl_disttowp");
-            this.lbl_disttowp.BackColor = System.Drawing.Color.Gray;
-            this.lbl_disttowp.ForeColor = System.Drawing.Color.White;
-            this.lbl_disttowp.Name = "lbl_disttowp";
+            resources.ApplyResources(this.lbl_distTraveled, "lbl_distTraveled");
+            this.lbl_distTraveled.BackColor = System.Drawing.Color.Gray;
+            this.lbl_distTraveled.ForeColor = System.Drawing.Color.White;
+            this.lbl_distTraveled.Name = "lbl_distTraveled";
             // 
             // lblGPS
             // 
@@ -1477,15 +1484,6 @@ namespace MissionPlanner.GCSViews
             this.lblGPS.BackColor = System.Drawing.Color.Gray;
             this.lblGPS.ForeColor = System.Drawing.Color.White;
             this.lblGPS.Name = "lblGPS";
-            // 
-            // lbl_EKFstatus
-            // 
-            resources.ApplyResources(this.lbl_EKFstatus, "lbl_EKFstatus");
-            this.lbl_EKFstatus.BackColor = System.Drawing.Color.Gray;
-            this.lbl_EKFstatus.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lbl_EKFstatus.ForeColor = System.Drawing.Color.White;
-            this.lbl_EKFstatus.Name = "lbl_EKFstatus";
-            this.lbl_EKFstatus.Click += new System.EventHandler(this.hud1_ekfclick);
             // 
             // lbl_Mode
             // 
@@ -4901,10 +4899,9 @@ private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
         private TextBox txt_messagebox;
         private Label lbl_LeakSts;
         private Label lbl_EngineSts;
-        private Label lbl_EKFstatus;
         private Label lbl_Mode;
         private Label lblGPS;
-        private Label lbl_disttowp;
+        private Label lbl_distTraveled;
         private Label lbl_signalStrength;
         private TabPage tabDashboard;
         private Label lblConnectedVehicles;
@@ -4932,6 +4929,7 @@ private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
         private TabPage tabCamera;
         private Label lbl_EngineRuntime;
         private AGaugeApp.AGauge Galt2;
+        private Label lblGPS2;
         //private Label label_batp_onGauge;
     }
 }
