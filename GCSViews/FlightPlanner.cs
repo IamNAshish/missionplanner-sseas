@@ -1474,7 +1474,7 @@ namespace MissionPlanner.GCSViews
                 writeKML();
 
                 MainMap.ZoomAndCenterMarkers("WPOverlay");
-        }
+            }
             catch (Exception ex)
             {
                 CustomMessageBox.Show("Can't open file! " + ex);
@@ -6084,6 +6084,7 @@ namespace MissionPlanner.GCSViews
         /// </summary>
         private void processToScreen(List<Locationwp> cmds, bool append = false)
         {
+            MessageBox.Show($"processToScreen called. append={append}, cmds.Count={cmds.Count}");
             quickadd = true;
 
 
@@ -6224,8 +6225,10 @@ namespace MissionPlanner.GCSViews
                     cellhome = Commands.Rows[0].Cells[Lat.Index] as DataGridViewTextBoxCell;
                     if (cellhome.Value != null)
                     {
+                        MessageBox.Show($"Home prompt check: LoadedLat={cellhome.Value}, CurrentHomeLat={TXT_homelat.Text}");// test
                         if (cellhome.Value.ToString() != TXT_homelat.Text && cellhome.Value.ToString() != "0")
-                        {
+                        {        
+
                             var dr = CustomMessageBox.Show("Reset Home to loaded coords", "Reset Home Coords",
                                 MessageBoxButtons.YesNo);
 

@@ -272,7 +272,7 @@ namespace MissionPlanner.Joystick
 
                         noButtons = joy.getNumButtons();
 
-                        noButtons = Math.Min(16, noButtons);
+                        noButtons = Math.Min(16, noButtons); // ashish: this limits it to 16 joystick buttons 
 
                         SuspendLayout();
 

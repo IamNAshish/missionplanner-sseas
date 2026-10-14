@@ -413,8 +413,27 @@ namespace MissionPlanner.GCSViews
             // gorund speed 
             //Binding bbbb = new Binding("Value", bindingSourceHud, "groundspeed", true);
             //Gspeed.DataBindings.Add(bbbb);
-            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "groundspeed", true));
-            this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "groundspeed", true));
+            //this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "groundspeed", true));
+            //this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "groundspeed", true));
+
+
+            Binding binding0 = new Binding("Value0", this.bindingSourceGaugesTab, "groundspeed", true);
+            binding0.Format += (s, e) =>
+            {
+                if (e.Value != null)
+                    e.Value = System.Convert.ToDouble(e.Value) * 1.944;
+            };
+            this.Gspeed.DataBindings.Add(binding0);
+
+            Binding binding1 = new Binding("Value1", this.bindingSourceGaugesTab, "groundspeed", true);
+
+            binding1.Format += (s, e) =>
+            {
+                if (e.Value != null)
+                    e.Value = System.Convert.ToDouble(e.Value) * 1.943844;
+            };
+            this.Gspeed.DataBindings.Add(binding1);
+
 
             // 07july2026_task2  start
             //simple code  //
@@ -493,11 +512,14 @@ namespace MissionPlanner.GCSViews
             // 10july2026_disttowp end
 
 
-            //lbl_distTraveled start
+            //lbl_distTraveled start      
             b = new Binding("Text", bindingSourceHud, "distTraveled", true);
             b.Format += (s, e) =>
-            {                                                   
-                e.Value = $"Dist Traveled: {e.Value}m"; 
+            {
+                //e.Value = $"Dist Traveled: {e.Value}m";
+                if (e.Value != null)
+                    e.Value = $"Dist Traveled: {System.Convert.ToInt16(e.Value)}m";
+
             };
             lbl_distTraveled.DataBindings.Add(b);
             //lbl_distTraveled end
@@ -518,7 +540,7 @@ namespace MissionPlanner.GCSViews
                         else if (signalValue <= 1)
                             e.Value = "Signal: BAD";                      
 
-                    };            
+                    };
 
             lbl_signalStrength.DataBindings.Add(b);
 
@@ -545,23 +567,45 @@ namespace MissionPlanner.GCSViews
             this.tb_battery.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceHud, "battery_remaining", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0 %")); // 08may26_task1_3
   
             // 08may26_task1_4 start
+
+            //var binding = new Binding("Text", this.bindingSourceHud, "connected", true);
+            //binding.Format += (s, e) =>
+            //{
+            //    if (e.Value is bool connected)
+            //    {
+            //        e.Value = connected ? "Connected" : "Disconnected";
+            //        lbl_Connected.ForeColor = connected? Color.Black: Color.White;
+
+            //        // 27june2026_task3
+            //        lbl_Connected.BackColor = connected? Color.LimeGreen: Color.Gray;
+            //    }
+            //};
+            //this.lbl_Connected.DataBindings.Add(binding);
+
+            //////////////
             var binding = new Binding("Text", this.bindingSourceHud, "connected", true);
 
             binding.Format += (s, e) =>
             {
-                if (e.Value is bool connected)
+                bool connected = e.Value is bool value && value;
+
+                // Get signal strength
+                double signalValue = 0;
+                try
                 {
-                    e.Value = connected ? "Connected" : "Disconnected";
-
-                    lbl_Connected.ForeColor = connected
-                        ? Color.Black
-                        : Color.White;
-
-                    // 27june2026_task3
-                    lbl_Connected.BackColor = connected
-                        ? Color.LimeGreen
-                        : Color.Gray;
+                    signalValue = System.Convert.ToDouble(((System.Data.DataRowView)bindingSourceHud.Current)["linkqualitygcs"]);
                 }
+                catch
+                {
+                    signalValue = 0;
+                }
+
+                // Connected only when link is connected AND signal is not BAD
+                bool isConnected = connected && signalValue > 1;
+
+                e.Value = isConnected ? "Connected" : "Disconnected";
+                lbl_Connected.ForeColor = isConnected ? Color.Black: Color.White;
+                lbl_Connected.BackColor = isConnected ? Color.LimeGreen: Color.Gray;
             };
 
             this.lbl_Connected.DataBindings.Add(binding);
@@ -3149,18 +3193,18 @@ namespace MissionPlanner.GCSViews
                 //password code
                 // Lock screen before any main GUI windows are shown.
                 // Uses Settings.Instance["lock_pin"] (default "1234") and requires exactly 4 digits.
-                if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
-                {
-                    Settings.Instance["lock_pin"] = "1234";
-                }
-                using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
-                {
-                    var result = lockScreen.ShowDialog();
-                    if (result != DialogResult.OK)
-                    {
-                        return;
-                    }
-                }
+                //if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
+                //{
+                //    Settings.Instance["lock_pin"] = "1234";
+                //}
+                //using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
+                //{
+                //    var result = lockScreen.ShowDialog();
+                //    if (result != DialogResult.OK)
+                //    {
+                //        return;
+                //    }
+                //}
                 /////lock end 
                
                 tabControlactions.Controls.Add(tabQuick);
@@ -9395,7 +9439,26 @@ namespace MissionPlanner.GCSViews
 
                                 binding3.Format += (s, e) =>
                                 {
-                                    e.Value = "Eng RT: " + e.Value;
+                                    //e.Value = "Eng RT: " + e.Value;
+                                    if (e.Value != null && double.TryParse(
+                                        e.Value.ToString(),System.Globalization.NumberStyles.Any,
+                                        System.Globalization.CultureInfo.InvariantCulture,
+                                        out double totalMinutes))
+                                    {
+                                        int totalSeconds = (int)Math.Round(totalMinutes * 60);
+                                        int hours = totalSeconds / 3600;
+                                        int minutes = (totalSeconds % 3600) / 60;
+                                        int seconds = totalSeconds % 60;
+
+                                        if (hours > 0)
+                                            e.Value = $"Eng RT: {hours}h {minutes}m {seconds}s";
+                                        else
+                                            e.Value = $"Eng RT: {minutes}m {seconds}s";
+                                    }
+                                    else
+                                    {
+                                        e.Value = "Eng RT: --";
+                                    }
                                 };
 
                                 this.lbl_EngineRuntime.DataBindings.Add(binding3);

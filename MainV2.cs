@@ -1478,19 +1478,19 @@ namespace MissionPlanner
         {
             // Lock screen before any main GUI windows are shown.
             // Uses Settings.Instance["lock_pin"] (default "1234") and requires exactly 4 digits.
-            if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
-            {
-                Settings.Instance["lock_pin"] = "1234";
-            }
+            //if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
+            //{
+            //    Settings.Instance["lock_pin"] = "1234";
+            //}
 
-            using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
-            {
-                var result = lockScreen.ShowDialog();
-                if (result != DialogResult.OK)
-                {
-                    return;
-                }
-            }
+            //using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
+            //{
+            //    var result = lockScreen.ShowDialog();
+            //    if (result != DialogResult.OK)
+            //    {
+            //        return;
+            //    }
+            //}
             /////lock
 
 
@@ -1555,24 +1555,20 @@ namespace MissionPlanner
         {
             // Lock screen before any main GUI windows are shown.
             // Uses Settings.Instance["lock_pin"] (default "1234") and requires exactly 4 digits.
-            if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
-            {
-                Settings.Instance["lock_pin"] = "1234";
-            }
+            //if (Settings.Instance["lock_pin"] == null || string.IsNullOrWhiteSpace(Settings.Instance["lock_pin"]?.ToString()))
+            //{
+            //    Settings.Instance["lock_pin"] = "1234";
+            //}
 
-            using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
-            {
-                var result = lockScreen.ShowDialog();
-                if (result != DialogResult.OK)
-                {
-                    return;
-                }
-            }
+            //using (var lockScreen = new LockScreen(Settings.Instance["lock_pin"].ToString()))
+            //{
+            //    var result = lockScreen.ShowDialog();
+            //    if (result != DialogResult.OK)
+            //    {
+            //        return;
+            //    }
+            //}
             /////lock
-
-
-
-
 
 
             if (Settings.Instance.GetBoolean("password_protect") == false)
