@@ -31,7 +31,6 @@ namespace MissionPlanner.Joystick
         /// </summary>
         private void InitializeComponent()
         {
-
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JoystickSetup));
             this.CMB_joysticks = new System.Windows.Forms.ComboBox();
@@ -94,19 +93,31 @@ namespace MissionPlanner.Joystick
             this.CHK_elevons.Name = "CHK_elevons";
             this.CHK_elevons.UseVisualStyleBackColor = true;
             this.CHK_elevons.CheckedChanged += new System.EventHandler(this.CHK_elevons_CheckedChanged);
+            this.CHK_elevons.Anchor = AnchorStyles.Bottom | AnchorStyles.Left; // 14oct2026_virtualJoystick_GUI moved this to bottom left as its disturbing after our virtual joystick buttons
+
             // 
             // BUT_enable
             // 
+            this.BUT_enable.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_enable.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_enable.ColorMouseDown = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.BUT_enable.ColorMouseOver = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             resources.ApplyResources(this.BUT_enable, "BUT_enable");
             this.BUT_enable.Name = "BUT_enable";
+            this.BUT_enable.TextColor = System.Drawing.Color.White;
             this.BUT_enable.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
             this.BUT_enable.UseVisualStyleBackColor = true;
             this.BUT_enable.Click += new System.EventHandler(this.BUT_enable_Click);
             // 
             // BUT_save
             // 
+            this.BUT_save.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_save.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.BUT_save.ColorMouseDown = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.BUT_save.ColorMouseOver = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             resources.ApplyResources(this.BUT_save, "BUT_save");
             this.BUT_save.Name = "BUT_save";
+            this.BUT_save.TextColor = System.Drawing.Color.White;
             this.BUT_save.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
             this.BUT_save.UseVisualStyleBackColor = true;
             this.BUT_save.Click += new System.EventHandler(this.BUT_save_Click);
@@ -125,16 +136,26 @@ namespace MissionPlanner.Joystick
             // 
             // but_export
             // 
+            this.but_export.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.but_export.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.but_export.ColorMouseDown = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.but_export.ColorMouseOver = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             resources.ApplyResources(this.but_export, "but_export");
             this.but_export.Name = "but_export";
+            this.but_export.TextColor = System.Drawing.Color.White;
             this.but_export.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
             this.but_export.UseVisualStyleBackColor = true;
             this.but_export.Click += new System.EventHandler(this.but_export_Click);
             // 
             // but_import
             // 
+            this.but_import.BGGradBot = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.but_import.BGGradTop = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(125)))), ((int)(((byte)(255)))));
+            this.but_import.ColorMouseDown = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.but_import.ColorMouseOver = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             resources.ApplyResources(this.but_import, "but_import");
             this.but_import.Name = "but_import";
+            this.but_import.TextColor = System.Drawing.Color.White;
             this.but_import.TextColorNotEnabled = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(87)))), ((int)(((byte)(4)))));
             this.but_import.UseVisualStyleBackColor = true;
             this.but_import.Click += new System.EventHandler(this.but_import_Click);
@@ -160,8 +181,6 @@ namespace MissionPlanner.Joystick
             this.Load += new System.EventHandler(this.Joystick_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
-
-            
 
         }
 

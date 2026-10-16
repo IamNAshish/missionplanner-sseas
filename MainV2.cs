@@ -692,9 +692,9 @@ namespace MissionPlanner
             //Prevent the user from resizing the window borders
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             //Disable the Maximize/ Restore button entirely 
-            this.MaximizeBox = false;
-            
-           //07oct2026_maxScreen end
+            //this.MaximizeBox = false;
+
+            //07oct2026_maxScreen end
 
             // 29june26_task1 start..
             //webServer = new SimpleWebServer();

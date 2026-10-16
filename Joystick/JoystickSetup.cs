@@ -29,6 +29,7 @@ namespace MissionPlanner.Joystick
 
         private void Joystick_Load(object sender, EventArgs e)
         {
+            MessageBox.Show("Joystick_Load called");
             try
             {
                 var joysticklist = JoystickBase.getDevices();
@@ -39,12 +40,7 @@ namespace MissionPlanner.Joystick
                 }
 
                 // 04july2026_test1_problemSolution1 commented this line BUT_enable_Click(null, null); //default enable // 11june26_task1
-                JoystickSetup_FormClosed(null, null);// 11june26_task2
-                //this.Close(); // 11june26_task2
-                //return; // 11june26_task2
-
-                
-
+                //commented under 14oct2026_virtualJoystick_GUI JoystickSetup_FormClosed(null, null);// 11june26_task2
 
             }
             catch
@@ -201,7 +197,7 @@ namespace MissionPlanner.Joystick
 
                     //MessageBox.Show(this.GetType().ToString()); // 11june26_task2
                     //here this.close() will not work as its not a form so we have to close the parent of this control
-                    ((Form)this.Parent)?.Close(); // 11june26_task2 if this creats problem use .hide();
+                    // commented under 14oct2026_virtualJoystick_GUI ((Form)this.Parent)?.Close(); // 11june26_task2 if this creats problem use .hide();
                     return; // 11june26_task1_test commented
                 }
 
@@ -229,7 +225,7 @@ namespace MissionPlanner.Joystick
                 
             }
             //MessageBox.Show(this.GetType().ToString()); // 11june26_task2
-            ((Form)this.Parent)?.Close(); // 11june26_task2
+            // commented under 14oct2026_virtualJoystick_GUI ((Form)this.Parent)?.Close(); // 11june26_task2
 
 
         }
@@ -242,12 +238,12 @@ namespace MissionPlanner.Joystick
                 return;
             }
             MainV2.joystick.saveconfig();
-
             Settings.Instance["joy_elevons"] = CHK_elevons.Checked.ToString();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)        
         {
+            
             try
             {
                 if (MainV2.joystick == null || MainV2.joystick.enabled == false)
@@ -279,13 +275,12 @@ namespace MissionPlanner.Joystick
                         MainV2.joystick = joy;
 
                         var maxctl = Controls.Find("axis" + 1, false).FirstOrDefault();
-
+                        
                         for (int f = 0; f < noButtons; f++)
                         {
                             string name = (f).ToString();
 
-                            doButtontoUI(name, maxctl.Right + 100, maxctl.Top + f * maxctl.Height);
-
+                            doButtontoUI(name, maxctl.Right + 100, maxctl.Top + f * maxctl.Height);                           
                             var config = joy.getButton(f);
 
                             joy.setButton(f, config);
@@ -397,7 +392,7 @@ namespace MissionPlanner.Joystick
             HorizontalProgressBar hbar = new HorizontalProgressBar();
             ComboBox cmbaction = new ComboBox();
             Controls.MyButton but_settings = new Controls.MyButton();
-
+                        
             if (MainV2.joystick == null)
             {
                 butlabel.Dispose();
@@ -484,6 +479,60 @@ namespace MissionPlanner.Joystick
 
             if ((but_settings.Right) > this.Width)
                 this.Width = but_settings.Right + 5;
+
+           // 14oct2026_virtualJoystick_GUI start
+            // Virtual GUI button
+            Button virtualButton_right = new Button();
+
+            virtualButton_right.Name = "virtualButton" + name;
+            virtualButton_right.Text = "Press";
+            virtualButton_right.Tag = int.Parse(name);
+            virtualButton_right.Size = new Size(70, 25);
+            virtualButton_right.Location = new Point(but_settings.Right + 5, y);
+            virtualButton_right.Visible = true;
+            virtualButton_right.Enabled = true;            
+
+            // Add the button to the form
+            this.Controls.Add(virtualButton_right);
+            virtualButton_right.BackColor = Color.Red;
+            virtualButton_right.BringToFront();
+
+            // Expand form width if required
+            if (virtualButton_right.Right > this.Width)
+                this.Width = virtualButton_right.Right + 10;
+
+            // Expand form height if required
+            if (virtualButton_right.Bottom + 30 > this.Height)
+                this.Height = virtualButton_right.Bottom + 30;
+            // 14oct2026_virtualJoystick_GUI end
+
+            // 14oct2026_virtualJoystick_fun start
+                //int buttonIndex = int.Parse(name);
+                virtualButton_right.MouseDown += (sender, e) =>
+                {
+                    if (e.Button != MouseButtons.Left)
+                        return;
+
+                    if (MainV2.joystick == null)
+                        return;
+
+                    int buttonIndex = Convert.ToInt32(virtualButton_right.Tag);
+                    MainV2.joystick.PressVirtualButton_right(buttonIndex);
+                };
+
+                virtualButton_right.MouseUp += (sender, e) =>
+                {
+                    if (e.Button != MouseButtons.Left)
+                        return;
+
+                    if (MainV2.joystick == null)
+                        return;
+
+                    int buttonIndex = Convert.ToInt32(virtualButton_right.Tag);
+                    MainV2.joystick.ReleaseVirtualButton_right(buttonIndex);
+                };
+            // 14oct2026_virtualJoystick_fun end
+
         }
 
         void cmbaction_SelectedIndexChanged(object sender, EventArgs e)

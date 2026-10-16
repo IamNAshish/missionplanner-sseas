@@ -19,6 +19,7 @@ namespace MissionPlanner.Joystick
         protected IMyJoystickState state;
         public bool enabled = false;
         bool[] buttonpressed = new bool[128];
+        
         public string name;
         public bool elevons = false;
 
@@ -180,6 +181,7 @@ namespace MissionPlanner.Joystick
 
         protected JoyChannel[] JoyChannels = new JoyChannel[20]; // we are base 1
         JoyButton[] JoyButtons = new JoyButton[128]; // base 0
+        private readonly bool[] virtualButtonPressed_right = new bool[128]; // 14oct2026_virtualJoystick_fun_mergingVirtualHW
 
         public abstract bool AcquireJoystick(string name);
 
@@ -365,6 +367,7 @@ namespace MissionPlanner.Joystick
 
         public void DoJoystickButtonFunction()
         {
+            //CustomMessageBox.Show("DoJoystickButtonFunction called");
             foreach (JoyButton but in JoyButtons)
             {
                 if (but.buttonno != -1)
@@ -376,6 +379,13 @@ namespace MissionPlanner.Joystick
 
         void ProcessButtonEvent(JoyButton but, bool buttondown)
         {
+
+            //CustomMessageBox.Show("ProcessButtonEvent\n\n"+
+            //        "Function: " + but.function +
+            //        "\nButton No: " + but.buttonno +
+            //        "\nButton Down: " + buttondown +
+            //        "\nButton Mode: " + but.state
+            //    );
             if (but.buttonno != -1)
             {
                 // only do_set_relay and Button_axis0-1 uses the button up option
@@ -392,6 +402,12 @@ namespace MissionPlanner.Joystick
                 switch (but.function)
                 {
                     case buttonfunction.ChangeMode:
+                        //CustomMessageBox.Show(
+                        //       "ChangeMode reached" +
+                        //       "\nButton Down: " + buttondown +
+                        //       "\nButton No: " + but.buttonno
+                        //   );
+
                         string mode = but.mode;
                         if (mode != null)
                         {
@@ -691,12 +707,61 @@ namespace MissionPlanner.Joystick
 
         void ButtonDown(JoyButton but)
         {
+            //CustomMessageBox.Show("ButtonDown: butto no= " + but.buttonno +
+            //    "\n btn mode= " + but.state);
             ProcessButtonEvent(but, true);
+            
         }
 
         void ButtonUp(JoyButton but)
         {
+            //CustomMessageBox.Show("ButtonUP: butto no= " + but.buttonno +
+            //    "\n btn mode= " + but.state);
             ProcessButtonEvent(but, false);
+            
+        }
+
+        //public void PressVirtualButton_right(int buttonIndex) // 14oct2026_virtualJoystick_fun
+        //{
+        //    if (buttonIndex < 0 || buttonIndex >= JoyButtons.Length)
+        //        return;
+        //    JoyButton but = JoyButtons[buttonIndex];         
+        //    ButtonDown(but);
+        //}
+
+        //public void ReleaseVirtualButton_right(int buttonIndex) // 14oct2026_virtualJoystick_fun
+        //{
+        //    if (buttonIndex < 0 || buttonIndex >= JoyButtons.Length)
+        //        return;
+        //    JoyButton but = JoyButtons[buttonIndex];
+        //    ButtonUp(but);
+        //}
+        public void PressVirtualButton_right(int buttonIndex) // 14oct2026_virtualJoystick_fun_mergingVirtualHW
+        {
+            if (buttonIndex < 0 || buttonIndex >= JoyButtons.Length)
+                return;
+
+            if (virtualButtonPressed_right[buttonIndex])
+                return;
+
+            virtualButtonPressed_right[buttonIndex] = true;
+
+            JoyButton but = JoyButtons[buttonIndex];
+            ButtonDown(but);
+        }
+
+        public void ReleaseVirtualButton_right(int buttonIndex) // 14oct2026_virtualJoystick_fun_mergingVirtualHW
+        {
+            if (buttonIndex < 0 || buttonIndex >= JoyButtons.Length)
+                return;
+
+            if (!virtualButtonPressed_right[buttonIndex])
+                return;
+
+            virtualButtonPressed_right[buttonIndex] = false;
+
+            JoyButton but = JoyButtons[buttonIndex];
+            ButtonUp(but);
         }
 
         public abstract int getNumButtons();
@@ -715,15 +780,32 @@ namespace MissionPlanner.Joystick
 
         public bool isButtonPressed(int buttonno)
         {
+            // commented under 14oct2026_virtualJoystick_fun_mergingVirtualHW start
+            //if (state == null)
+            //    return false;
+            //var buts = state.GetButtons();
+            //if (buts == null || JoyButtons[buttonno].buttonno < 0)
+            //    return false;
+            //return buts[JoyButtons[buttonno].buttonno];
+            // commented under 14oct2026_virtualJoystick_fun_mergingVirtualHW end
+            if (buttonno < 0 || buttonno >= JoyButtons.Length)
+                return false;
+
+            if (virtualButtonPressed_right[buttonno])
+                return true;
+
             if (state == null)
                 return false;
 
             var buts = state.GetButtons();
 
-            if (buts == null || JoyButtons[buttonno].buttonno < 0)
+            int physicalButtonNo = JoyButtons[buttonno].buttonno;
+
+            if (buts == null || physicalButtonNo < 0 ||
+                physicalButtonNo >= buts.Length)
                 return false;
 
-            return buts[JoyButtons[buttonno].buttonno];
+            return buts[physicalButtonNo];
         }
 
         protected short pickchannel(int chan, joystickaxis axis, bool rev, int expo)
@@ -1128,7 +1210,7 @@ namespace MissionPlanner.Joystick
 
                     // disable button actions when not connected.
                     if (Interface.BaseStream.IsOpen)
-                        DoJoystickButtonFunction();
+                        DoJoystickButtonFunction(); 
 
                     //Console.WriteLine("{0} {1} {2} {3}", Interface.MAV.cs.rcoverridech1, Interface.MAV.cs.rcoverridech2, Interface.MAV.cs.rcoverridech3, Interface.MAV.cs.rcoverridech4);
                 }

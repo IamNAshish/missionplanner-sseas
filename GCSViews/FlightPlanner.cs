@@ -6084,7 +6084,7 @@ namespace MissionPlanner.GCSViews
         /// </summary>
         private void processToScreen(List<Locationwp> cmds, bool append = false)
         {
-            MessageBox.Show($"processToScreen called. append={append}, cmds.Count={cmds.Count}");
+            //MessageBox.Show($"processToScreen called. append={append}, cmds.Count={cmds.Count}");
             quickadd = true;
 
 

@@ -16,6 +16,7 @@ namespace MissionPlanner.Joystick
         private TextBox expo_ch;
         private Controls.HorizontalProgressBar ProgressBarCH;
         private ComboBox CMB_CH;
+        private Controls.MyButton virtualButton; // 14oct2026_virtualJoystick_GUI
 
         public Func<string> Detect;
         public Action SetAxis;
@@ -94,7 +95,8 @@ namespace MissionPlanner.Joystick
             this.expo_ch = new System.Windows.Forms.TextBox();
             this.ProgressBarCH = new MissionPlanner.Controls.HorizontalProgressBar();
             this.CMB_CH = new System.Windows.Forms.ComboBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.virtualButton = new MissionPlanner.Controls.MyButton(); // 14oct2026_virtualJoystick_GUI
+            this.timer1 = new System.Windows.Forms.Timer(this.components);            
             this.SuspendLayout();
             // 
             // BUT_detch
@@ -167,6 +169,18 @@ namespace MissionPlanner.Joystick
             this.CMB_CH.Size = new System.Drawing.Size(70, 21);
             this.CMB_CH.TabIndex = 57;
             this.CMB_CH.SelectedIndexChanged += new System.EventHandler(this.CMB_CH_SelectedIndexChanged);
+
+            // 
+            // virtualButton // 14oct2026_virtualJoystick_GUI
+            // 
+            this.virtualButton.Location = new System.Drawing.Point(432, 2);
+            this.virtualButton.Name = "virtualButton";
+            this.virtualButton.Size = new System.Drawing.Size(70, 23);
+            this.virtualButton.TabIndex = 63;
+            this.virtualButton.Text = "Press";
+            this.virtualButton.UseVisualStyleBackColor = true;
+
+
             // 
             // timer1
             // 
@@ -183,8 +197,9 @@ namespace MissionPlanner.Joystick
             this.Controls.Add(this.expo_ch);
             this.Controls.Add(this.ProgressBarCH);
             this.Controls.Add(this.CMB_CH);
+            this.Controls.Add(this.virtualButton); // 14oct2026_virtualJoystick_GUI
             this.Name = "JoystickAxis";
-            this.Size = new System.Drawing.Size(427, 28);
+            this.Size = new System.Drawing.Size(510, 28);//(427, 28);
             this.ResumeLayout(false);
             this.PerformLayout();
 

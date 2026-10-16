@@ -301,7 +301,7 @@
     <value>NoControl</value>
   </data>
   <data name="CHK_elevons.Location" type="System.Drawing.Point, System.Drawing">
-    <value>434, 81</value>
+    <value>617, 18</value>
   </data>
   <data name="CHK_elevons.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 17</value>
