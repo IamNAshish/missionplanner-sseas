@@ -223,7 +223,7 @@ namespace MissionPlanner.GCSViews
 
             // get zoom
             MainMap.MinZoom = 0;
-            MainMap.MaxZoom = 24;
+            MainMap.MaxZoom = 20;
 
             // draw this layer first
             kmlpolygonsoverlay = new GMapOverlay("kmlpolygons");
@@ -891,6 +891,18 @@ namespace MissionPlanner.GCSViews
                 callMeDrag("H", lat, lng, alt);
                 return;
             }
+
+            // 230ct2026_TurnLimitMap start
+            // NEW: Validate the turn before creating a waypoint.
+            if ((MAVLink.MAV_MISSION_TYPE)cmb_missiontype.SelectedValue
+                    == MAVLink.MAV_MISSION_TYPE.MISSION)
+            {
+                if (!ValidateWaypointTurn(lat, lng))
+                    return;
+            }
+            // 230ct2026_TurnLimitMap end
+
+
             // creating a WP
 
             selectedrow = Commands.Rows.Add();
@@ -920,6 +932,130 @@ namespace MissionPlanner.GCSViews
             updateUndoBuffer(false);
             setfromMap(lat, lng, alt);
         }
+
+        // 230ct2026_TurnLimitMap start
+        private const double MaxWaypointTurnAngle = 60.0;
+
+        private double GetBearingDegrees(double lat1, double lon1,double lat2, double lon2)
+        {
+            // Convert coordinates to radians.
+            double phi1 = lat1 * Math.PI / 180.0;
+            double phi2 = lat2 * Math.PI / 180.0;
+            double deltaLon = (lon2 - lon1) * Math.PI / 180.0;
+
+            // Calculate the initial bearing.
+            double y = Math.Sin(deltaLon) * Math.Cos(phi2);
+
+            double x =
+                Math.Cos(phi1) * Math.Sin(phi2) -
+                Math.Sin(phi1) * Math.Cos(phi2) *
+                Math.Cos(deltaLon);
+
+            double bearing = Math.Atan2(y, x) * 180.0 / Math.PI;
+
+            // Normalize to 0–360 degrees.
+            return (bearing + 360.0) % 360.0;
+        }
+
+        private double NormalizeTurnAngle(double angle)
+        {
+            while (angle > 180.0)
+                angle -= 360.0;
+
+            while (angle < -180.0)
+                angle += 360.0;
+
+            return angle;
+        }
+
+        private bool IsTurnWithinLimit(double lat1, double lon1, double lat2, double lon2, double lat3, double lon3,
+            out double turnAngle)
+        {
+            double incomingBearing = GetBearingDegrees(lat1, lon1, lat2, lon2);
+            double outgoingBearing = GetBearingDegrees(lat2, lon2, lat3, lon3);
+            turnAngle = NormalizeTurnAngle(outgoingBearing - incomingBearing);
+            return Math.Abs(turnAngle) <= MaxWaypointTurnAngle;
+        }
+
+        private bool ValidateWaypointTurn(double newLat,double newLon)
+        {
+            var waypoints = new System.Collections.Generic.List<
+                System.Tuple<double, double>>();
+
+            foreach (DataGridViewRow row in Commands.Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+
+                string command = Convert.ToString(
+                    row.Cells[Command.Index].Value);
+
+                // Only consider ordinary navigation waypoints.
+                if (!string.Equals(
+                        command,
+                        MAVLink.MAV_CMD.WAYPOINT.ToString(),
+                        StringComparison.OrdinalIgnoreCase)
+                    &&
+                    !string.Equals(
+                        command,
+                        MAVLink.MAV_CMD.SPLINE_WAYPOINT.ToString(),
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                double lat;
+                double lon;
+
+                if (!double.TryParse(
+                        Convert.ToString(row.Cells[Lat.Index].Value),
+                        out lat)
+                    ||
+                    !double.TryParse(
+                        Convert.ToString(row.Cells[Lon.Index].Value),
+                        out lon))
+                {
+                    continue;
+                }
+
+                waypoints.Add(
+                    System.Tuple.Create(lat, lon));
+            }
+
+            // At least two existing waypoints are needed
+            // to calculate a turn at the last waypoint.
+            if (waypoints.Count < 2)
+                return true;
+
+            var wp1 = waypoints[waypoints.Count - 2];
+            var wp2 = waypoints[waypoints.Count - 1];
+
+            double turnAngle;
+
+            bool allowed = IsTurnWithinLimit(
+                wp1.Item1, wp1.Item2,
+                wp2.Item1, wp2.Item2,
+                newLat, newLon,
+                out turnAngle);
+
+            if (!allowed)
+            {
+                CustomMessageBox.Show(
+                    string.Format(
+                        "Waypoint rejected!\n\n" +
+                        "The heading change is {0:F1}°.\n" +
+                        "The maximum allowed turn is ±{1:F0}°.\n\n" +
+                        "Please select a waypoint within the allowed sector.",
+                        turnAngle,
+                        MaxWaypointTurnAngle),
+                    "Turn Angle Limit");
+
+                return false;
+            }
+
+            return true;
+        }
+        // 230ct2026_TurnLimitMap end
 
         /// <summary>
         /// Reads the EEPROM from a com port
@@ -3968,11 +4104,11 @@ namespace MissionPlanner.GCSViews
             }
 
             TRK_zoom.Minimum = MainMap.MapProvider.MinZoom;
-            TRK_zoom.Maximum = 24;
+            TRK_zoom.Maximum = 20;
             TRK_zoom.Value = (float)MainMap.Zoom;
 
             Zoomlevel.Minimum = MainMap.MapProvider.MinZoom;
-            Zoomlevel.Maximum = 24;
+            Zoomlevel.Maximum = 20;
             Zoomlevel.Value = Convert.ToDecimal(MainMap.Zoom);
 
             updateCMDParams();

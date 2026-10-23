@@ -790,7 +790,7 @@ namespace MissionPlanner.GCSViews
             gMapControl1.CacheLocation = Settings.GetDataDirectory() +
                                          "gmapcache" + Path.DirectorySeparatorChar;
             gMapControl1.MinZoom = 0;
-            gMapControl1.MaxZoom = 24;
+            gMapControl1.MaxZoom = 20;
             gMapControl1.Zoom = 3;
 
             gMapControl1.OnMapZoomChanged += gMapControl1_OnMapZoomChanged;
@@ -3310,13 +3310,13 @@ namespace MissionPlanner.GCSViews
                 NoFly.NoFly.NoFlyEvent += NoFly_NoFlyEvent;
 
             TRK_zoom.Minimum = gMapControl1.MapProvider.MinZoom;
-            TRK_zoom.Maximum = 24;
+            TRK_zoom.Maximum = 20;
             TRK_zoom.Value = (float) gMapControl1.Zoom;
 
             gMapControl1.EmptyTileColor = Color.Gray;
 
             Zoomlevel.Minimum = gMapControl1.MapProvider.MinZoom;
-            Zoomlevel.Maximum = 24;
+            Zoomlevel.Maximum = 20;
             Zoomlevel.Value = System.Convert.ToDecimal(gMapControl1.Zoom);
 
 
@@ -6353,6 +6353,31 @@ namespace MissionPlanner.GCSViews
 
             return best;
         }
+
+        private int CalculateBestGaugeSize(int availableWidth,int availableHeight,int gaugeCount)
+        {
+            int best = 150;
+
+            for (int columns = 1; columns <= gaugeCount; columns++)
+            {
+                int rows = (int)Math.Ceiling(
+                    gaugeCount / (double)columns);
+
+                int sizeByWidth = availableWidth / columns;
+                int sizeByHeight = availableHeight / rows;
+
+                int candidate = Math.Min(
+                    sizeByWidth,
+                    sizeByHeight);
+
+                if (candidate > best)
+                    best = candidate;
+            }
+
+            return Math.Max(100, best - 30);
+        }
+
+
         // 05june26_task3 //v2
         private void ArrangeControls(List<Control> controls, int columns, int cellSize, int startX, int startY)
         {
@@ -6399,45 +6424,76 @@ namespace MissionPlanner.GCSViews
 
             // Reserve bottom area for gauge data table          
             int gaugeDataHeight = tableLayoutPanel_gaugeData.Height;
-            int availableHeight = tabGauges.ClientSize.Height - gaugeDataHeight;
+            //int availableHeight = tabGauges.ClientSize.Height - gaugeDataHeight;21oct2026_test_c
+            int availableHeight =
+                tabGauges.ClientSize.Height - tableLayoutPanel_gaugeData.Height; //21oct2026_test
             int availableWidth = tabGauges.ClientSize.Width;
 
             // Table occupies full width at bottom
             tableLayoutPanel_gaugeData.Location = new Point(0, availableHeight);
             tableLayoutPanel_gaugeData.Width = availableWidth;
 
+            //21oct2026_test_c start
             // Reserve right-side area for Gheading + hud1   
             // Keep the designer-defined width of the right section
-            int hud1Width = hud1.Width;
-            int leftWidth = availableWidth - hud1Width;
+            //int hud1Width = hud1.Width; 
+            //int leftWidth = availableWidth - hud1Width; //21oct2026_test_c
 
-            // Right side Gheading ra babu  
+            //// Right side Gheading ra babu  
+            //int rightGaugeHeight = availableHeight / 2;
+            //Gheading.Location = new Point(leftWidth, 0);
+            //Gheading.Size = new Size(hud1Width, rightGaugeHeight);
+
+            //// Right sideHUD        
+            //hud1.Location = new Point(leftWidth, rightGaugeHeight);
+            //hud1.Size = new Size(hud1Width, availableHeight - rightGaugeHeight);
+            //21oct2026_test_c end
+
+
+            // Right-side column: Gheading and HUD aligned to the extreme right
+
+            // 21oct2026 - Right-side layout and main gauge sizing
+
+            // Fixed width for the right-side column.
+            // Use the designer's original width rather than a width
+            // that may have changed during a previous resize.
+            int rightColumnWidth = 350;
+
+            // Keep the right column within the available tab width.
+            rightColumnWidth = Math.Min(
+                rightColumnWidth,
+                tabGauges.ClientSize.Width / 2);
+
+            int rightX = tabGauges.ClientSize.Width - rightColumnWidth;
+
+            // Split the available height between heading and HUD.
             int rightGaugeHeight = availableHeight / 2;
-            Gheading.Location = new Point(leftWidth, 0);
-            Gheading.Size = new Size(hud1Width, rightGaugeHeight);
 
-            // Right sideHUD        
-            hud1.Location = new Point(leftWidth, rightGaugeHeight);
-            hud1.Size = new Size(hud1Width, availableHeight - rightGaugeHeight);
+            // Gheading: top-right corner
+            Gheading.Location = new Point(rightX, 0);
+            Gheading.Size = new Size(
+                rightColumnWidth,
+                rightGaugeHeight);
 
+            // HUD: directly below Gheading
+            hud1.Location = new Point(rightX, rightGaugeHeight);
+            hud1.Size = new Size(
+                rightColumnWidth,
+                availableHeight - rightGaugeHeight);
 
-            // 07oct2026_tablegaugeFixedSize end
+            // Available area for Galt and Galt2
+            int leftWidth = rightX;
+            int leftHeight = availableHeight;
 
+            // Calculate gauge size using ONLY the left-side dimensions.
+            int gaugeSize = CalculateBestGaugeSize(
+                leftWidth,
+                leftHeight,
+                gauges.Count);
 
+            int columns = Math.Max(1, leftWidth / gaugeSize);
 
-
-
-            // 10june26_task1_commented int minGaugeSize = 150;
-
-            // Calculate columns based on available width
-            //int gaugeSize = CalculateBestGaugeSize(tabGauges, gauges.Count); commented 07oct2026_tablegaugeFixedSize
-
-            int gaugeSize = CalculateBestGaugeSize(tabGauges, gauges.Count, gaugeDataHeight, hud1Width); // 07oct2026_tablegaugeFixedSize
-
-            int columns = Math.Max(1, availableWidth / gaugeSize); // 07oct2026_tablegaugeFixedSize
-
-
-
+            // Position Galt and Galt2.
             ArrangeControls(gauges, columns, gaugeSize, 0, 0);
 
             hud1.KeepAspectRatio = false; // 08july2026_task2

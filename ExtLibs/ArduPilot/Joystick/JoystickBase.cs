@@ -182,6 +182,22 @@ namespace MissionPlanner.Joystick
         protected JoyChannel[] JoyChannels = new JoyChannel[20]; // we are base 1
         JoyButton[] JoyButtons = new JoyButton[128]; // base 0
         private readonly bool[] virtualButtonPressed_right = new bool[128]; // 14oct2026_virtualJoystick_fun_mergingVirtualHW
+        private readonly int[] virtualAxisOffset = new int[19]; // 14oct2026_virtualJoystick_fun_mergingVirtualHW_left
+
+        public void AdjustVirtualAxis(int channel, int delta) // 14oct2026_virtualJoystick_fun_mergingVirtualHW_left
+        {
+            if (channel < 1 || channel >= virtualAxisOffset.Length)
+                return;
+
+            virtualAxisOffset[channel] += delta;
+        }
+        public void ResetVirtualAxis(int channel) // 14oct2026_virtualJoystick_fun_mergingVirtualHW_left
+        {
+            if (channel < 1 || channel >= virtualAxisOffset.Length)
+                return;
+
+            virtualAxisOffset[channel] = 0;
+        }
 
         public abstract bool AcquireJoystick(string name);
 
@@ -1167,9 +1183,32 @@ namespace MissionPlanner.Joystick
                     }
                     else
                     {
-                        if (getJoystickAxis(1) != joystickaxis.None)
-                            Interface.MAV.cs.rcoverridech1 = pickchannel(1, JoyChannels[1].axis,
+                        //if (getJoystickAxis(1) != joystickaxis.None) //commented unnder 14oct2026_virtualJoystick_fun_mergingVirtualHW_left
+                        //{
+                        //    Interface.MAV.cs.rcoverridech1 = pickchannel(1, JoyChannels[1].axis,
+                        //        JoyChannels[1].reverse, JoyChannels[1].expo);
+                        //}
+                        if (getJoystickAxis(1) != joystickaxis.None) // 14oct2026_virtualJoystick_fun_mergingVirtualHW_left
+                        {
+                            int value = pickchannel(
+                                1, JoyChannels[1].axis,
                                 JoyChannels[1].reverse, JoyChannels[1].expo);
+
+                            int min = 1000;
+                            int max = 2000;
+
+                            if (Interface.MAV.param.ContainsKey("RC1_MIN"))
+                                min = (int)(float)Interface.MAV.param["RC1_MIN"];
+
+                            if (Interface.MAV.param.ContainsKey("RC1_MAX"))
+                                max = (int)(float)Interface.MAV.param["RC1_MAX"];
+
+                            value += virtualAxisOffset[1];
+                            value = Math.Max(min, Math.Min(max, value));
+
+                            Interface.MAV.cs.rcoverridech1 = (short)value;
+                        }
+
                         //(ushort)(((int)state.Rz / 65.535) + 1000);
                         if (getJoystickAxis(2) != joystickaxis.None)
                             Interface.MAV.cs.rcoverridech2 = pickchannel(2, JoyChannels[2].axis,
