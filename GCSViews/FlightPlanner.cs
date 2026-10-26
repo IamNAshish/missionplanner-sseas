@@ -61,6 +61,7 @@ using Renci.SshNet.Common;
 using Dowding.Model;
 using static MissionPlanner.Controls.ConnectionControl;
 using System.Runtime.InteropServices;
+using Xamarin.Essentials;
 
 
 
@@ -223,7 +224,7 @@ namespace MissionPlanner.GCSViews
 
             // get zoom
             MainMap.MinZoom = 0;
-            MainMap.MaxZoom = 20;
+            MainMap.MaxZoom = 17;
 
             // draw this layer first
             kmlpolygonsoverlay = new GMapOverlay("kmlpolygons");
@@ -1055,7 +1056,315 @@ namespace MissionPlanner.GCSViews
 
             return true;
         }
+
+
+        private bool ValidateDraggedWaypoint(int movedRowIndex,double newLat,double newLon,
+            out double invalidTurnAngle)
+        {
+            invalidTurnAngle = 0;
+
+            var waypoints =
+                new System.Collections.Generic.List<
+                    System.Tuple<int, double, double>>();
+
+            int movedWaypointIndex = -1;
+
+            foreach (DataGridViewRow row in Commands.Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+
+                string command = Convert.ToString(
+                    row.Cells[Command.Index].Value);
+
+                if (!string.Equals(
+                        command,
+                        MAVLink.MAV_CMD.WAYPOINT.ToString(),
+                        StringComparison.OrdinalIgnoreCase)
+                    &&
+                    !string.Equals(
+                        command,
+                        MAVLink.MAV_CMD.SPLINE_WAYPOINT.ToString(),
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                double lat;
+                double lon;
+
+                if (!double.TryParse(
+                        Convert.ToString(row.Cells[Lat.Index].Value),
+                        out lat)
+                    ||
+                    !double.TryParse(
+                        Convert.ToString(row.Cells[Lon.Index].Value),
+                        out lon))
+                {
+                    continue;
+                }
+
+                // Substitute the proposed position for the dragged waypoint.
+                if (row.Index == movedRowIndex)
+                {
+                    lat = newLat;
+                    lon = newLon;
+                }
+
+                waypoints.Add(
+                    System.Tuple.Create(row.Index, lat, lon));
+
+                if (row.Index == movedRowIndex)
+                    movedWaypointIndex = waypoints.Count - 1;
+            }
+
+            // Nothing to validate if this row is not a navigation waypoint.
+            if (movedWaypointIndex < 0)
+                return true;
+
+            // Validate only turns that could be affected by this movement.
+            int firstTriple = Math.Max(0, movedWaypointIndex - 2);
+
+            int lastTriple = Math.Min(
+                movedWaypointIndex,
+                waypoints.Count - 3);
+
+            for (int i = firstTriple; i <= lastTriple; i++)
+            {
+                var wp1 = waypoints[i];
+                var wp2 = waypoints[i + 1];
+                var wp3 = waypoints[i + 2];
+
+                double turnAngle;
+
+                if (!IsTurnWithinLimit(
+                        wp1.Item2, wp1.Item3,
+                        wp2.Item2, wp2.Item3,
+                        wp3.Item2, wp3.Item3,
+                        out turnAngle))
+                {
+                    invalidTurnAngle = turnAngle;
+                    return false;
+                }
+            }
+
+            return true;
+        }
         // 230ct2026_TurnLimitMap end
+
+        // 230ct2026_TurnLimitMapSector start
+        private void UpdateTurnSectorOverlay()
+        { //this methdod is for making sector UI 
+
+            const string overlayId = "TurnSectorOverlay";
+
+            // Remove the previous sector.
+            var existing = MainMap.Overlays
+                .Where(o => o.Id == overlayId)
+                .ToList();
+
+            foreach (var overlay in existing)
+                MainMap.Overlays.Remove(overlay);
+
+            // This visual guide applies only to mission planning.
+            if ((MAVLink.MAV_MISSION_TYPE)cmb_missiontype.SelectedValue
+                != MAVLink.MAV_MISSION_TYPE.MISSION)
+                return;
+
+            var waypoints = new System.Collections.Generic.List<PointLatLngAlt>();
+
+            foreach (DataGridViewRow row in Commands.Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+
+                string command = Convert.ToString(
+                    row.Cells[Command.Index].Value);
+
+                if (!string.Equals(
+                        command,
+                        MAVLink.MAV_CMD.WAYPOINT.ToString(),
+                        StringComparison.OrdinalIgnoreCase)
+                    &&
+                    !string.Equals(
+                        command,
+                        MAVLink.MAV_CMD.SPLINE_WAYPOINT.ToString(),
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                double lat;
+                double lon;
+
+                if (!double.TryParse(
+                        Convert.ToString(row.Cells[Lat.Index].Value),
+                        out lat)
+                    ||
+                    !double.TryParse(
+                        Convert.ToString(row.Cells[Lon.Index].Value),
+                        out lon))
+                {
+                    continue;
+                }
+
+                waypoints.Add(new PointLatLngAlt(lat, lon, 0));
+            }
+
+            // Need two points to establish the incoming direction.
+            if (waypoints.Count < 2)
+                return;
+
+            var previous = waypoints[waypoints.Count - 2];
+            var current = waypoints[waypoints.Count - 1];
+
+            // Direction of travel into the current waypoint.
+            double bearing = GetBearingDegrees(
+                previous.Lat, previous.Lng,
+                current.Lat, current.Lng);
+
+            //const double radiusMeters = 500.0;
+            //const double halfAngle = 60.0;
+            //const double angleStep = 5.0;
+
+
+            //var sectorPoints =
+            //    new System.Collections.Generic.List<GMap.NET.PointLatLng>();
+
+            //// Start at the vertex.
+            //sectorPoints.Add(
+            //    new GMap.NET.PointLatLng(current.Lat, current.Lng));
+
+            //// Draw the arc from -60 degrees to +60 degrees.
+            //for (double angle = -halfAngle;
+            //     angle <= halfAngle;
+            //     angle += angleStep)
+            //{
+            //    double arcBearing = bearing + angle;
+            //    double lat;
+            //    double lon;
+
+            //    CalculateDestinationPoint(current.Lat,current.Lng,arcBearing,radiusMeters,out lat,out lon);
+            //    sectorPoints.Add(new GMap.NET.PointLatLng(lat, lon));
+            //}
+
+            //// Close the sector polygon.
+            //sectorPoints.Add(new GMap.NET.PointLatLng(current.Lat, current.Lng));
+            //var sectorOverlay =new GMap.NET.WindowsForms.GMapOverlay(overlayId);
+            //var sectorPolygon =new GMap.NET.WindowsForms.GMapPolygon(sectorPoints, "AllowedTurnSector");
+            //sectorPolygon.Fill = new System.Drawing.SolidBrush(
+            //    System.Drawing.Color.FromArgb(45, 0, 200, 80));
+            //sectorPolygon.Stroke = new System.Drawing.Pen(
+            //    System.Drawing.Color.LimeGreen, 2);
+            //sectorOverlay.Polygons.Add(sectorPolygon);
+            //MainMap.Overlays.Add(sectorOverlay);
+
+            // above code is for solid sector but lets try gradient sector 
+            
+            // Radial gradient sector settings.
+            const double radiusMeters = 300.0;
+            const double halfAngle = 60.0;
+            const double angleStep = 5.0;
+            const int gradientLayers = 30;
+
+            // Create the overlay.
+            var sectorOverlay = new GMap.NET.WindowsForms.GMapOverlay(overlayId);
+
+            // Draw the largest, most transparent sector first,
+            // then draw progressively smaller, stronger layers.
+            for (int layer = gradientLayers; layer >= 1; layer--)
+            {
+                double scale = (double)layer / gradientLayers;
+                double layerRadius = radiusMeters * scale;
+
+                // Outer edge is transparent; inner layers are stronger.
+                int alpha = 4 + (int)((1.0 - scale) * 10.0);
+                var sectorPoints = new System.Collections.Generic.List<GMap.NET.PointLatLng>();
+
+                // Sector vertex.
+                sectorPoints.Add(new GMap.NET.PointLatLng(current.Lat, current.Lng));
+
+                // Build the 120-degree arc.
+                for (double angle = -halfAngle;angle <= halfAngle + 0.001;angle += angleStep)
+                {
+                    double arcBearing = bearing + angle;
+                    double lat;
+                    double lon;
+
+                    CalculateDestinationPoint(current.Lat,current.Lng,arcBearing,layerRadius,out lat,out lon);
+                    sectorPoints.Add(new GMap.NET.PointLatLng(lat, lon));
+                }
+
+                // Close the polygon at the vertex.
+                sectorPoints.Add(new GMap.NET.PointLatLng(current.Lat, current.Lng));
+                var polygon =new GMap.NET.WindowsForms.GMapPolygon(sectorPoints,"AllowedTurnGradient_" + layer);
+                polygon.Fill = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(alpha, 0, 220, 90));
+
+                // Hide the edges of individual gradient layers.
+                polygon.Stroke = new System.Drawing.Pen(System.Drawing.Color.Transparent, 0);
+
+                sectorOverlay.Polygons.Add(polygon);
+            }
+
+            // Draw the two visible sector boundaries.
+            //foreach (double angle in new[] { -halfAngle, halfAngle })
+            //{
+            //    double lat;
+            //    double lon;
+
+            //    CalculateDestinationPoint(current.Lat,current.Lng,bearing + angle,radiusMeters,out lat,out lon);
+
+            //    var boundaryPoints = new System.Collections.Generic.List<GMap.NET.PointLatLng>
+            //    {
+            //        new GMap.NET.PointLatLng(current.Lat, current.Lng),
+            //        new GMap.NET.PointLatLng(lat, lon)
+            //    };
+
+            //    var boundary = new GMap.NET.WindowsForms.GMapRoute(boundaryPoints,"AllowedTurnBoundary")
+            //    {
+            //        Stroke = new System.Drawing.Pen(System.Drawing.Color.LimeGreen, 2)
+            //    };
+
+            //    sectorOverlay.Routes.Add(boundary);
+            //}
+
+            // Add the completed sector to the map.
+            MainMap.Overlays.Add(sectorOverlay);
+
+        }
+
+        private void CalculateDestinationPoint(double latitude,double longitude,double bearingDegrees,
+                double distanceMeters,out double destinationLatitude,out double destinationLongitude)
+        {/* converts a waypoint's latitude, longitude, desired bearing, and distance into the destination coordinates
+           needed to draw the green turning sector accurately on your map */
+            const double earthRadius = 6371000.0;
+
+            double angularDistance = distanceMeters / earthRadius;
+            double bearing = bearingDegrees * Math.PI / 180.0;
+
+            double lat1 = latitude * Math.PI / 180.0;
+            double lon1 = longitude * Math.PI / 180.0;
+
+            double lat2 = Math.Asin(
+                Math.Sin(lat1) * Math.Cos(angularDistance) +
+                Math.Cos(lat1) * Math.Sin(angularDistance) *
+                Math.Cos(bearing));
+
+            double lon2 = lon1 + Math.Atan2(
+                Math.Sin(bearing) * Math.Sin(angularDistance) *
+                Math.Cos(lat1),
+                Math.Cos(angularDistance) -
+                Math.Sin(lat1) * Math.Sin(lat2));
+
+            destinationLatitude = lat2 * 180.0 / Math.PI;
+            destinationLongitude = ((lon2 * 180.0 / Math.PI + 540.0) % 360.0) - 180.0;
+        }
+
+        // 230ct2026_TurnLimitMapSector end
+
+
+
+
 
         /// <summary>
         /// Reads the EEPROM from a com port
@@ -1375,11 +1684,52 @@ namespace MissionPlanner.GCSViews
             {
                 MessageBox.Show(ex.ToString());
                 return;
-            }            
-            System.Diagnostics.Debugger.Break();
-            updateUndoBuffer(true);            
+            }
+            // commented Org code under 230ct2026_TurnLimitMapDrag start
+            //System.Diagnostics.Debugger.Break();
+            //updateUndoBuffer(true);            
+            //setfromMap(lat, lng, alt);
+            // commented under 230ct2026_TurnLimitMapDrag end
+
+            // 230ct2026_TurnLimitMapDrag start
+            // Apply turn restrictions only to ordinary mission waypoints.
+            if ((MAVLink.MAV_MISSION_TYPE)cmb_missiontype.SelectedValue
+                    == MAVLink.MAV_MISSION_TYPE.MISSION)
+            {
+                double invalidTurnAngle;
+
+                if (!ValidateDraggedWaypoint(
+                        selectedrow,
+                        lat,
+                        lng,
+                        out invalidTurnAngle))
+                {
+                    CustomMessageBox.Show(
+                        string.Format(
+                            "Waypoint movement rejected!\n\n" +
+                            "The resulting heading change would be {0:F1}°.\n" +
+                            "The maximum allowed turn is ±60°.\n\n" +
+                            "Please choose a different position.",
+                            invalidTurnAngle),
+                        "Turn Angle Limit");
+
+                    // Rebuild the map from the unchanged Commands grid
+                    // to restore the original waypoint position and sector.
+                    writeKML();
+
+                    return;
+                }
+            }
+
+            // Movement is valid: preserve the existing behaviour.
+            updateUndoBuffer(true);
             setfromMap(lat, lng, alt);
-            
+
+            // Refresh the gradient sector after an accepted movement.
+            writeKML();
+
+            // 230ct2026_TurnLimitMapDrag end
+
         }
 
         public T DeepClone<T>(T obj)
@@ -2100,6 +2450,7 @@ namespace MissionPlanner.GCSViews
                     }
 
                     pointlist = wpOverlay.pointlist;
+                    UpdateTurnSectorOverlay(); // 230ct2026_TurnLimitMapSector
 
                     {
                         foreach (var pointLatLngAlt in pointlist.PrevNowNext())
@@ -3960,11 +4311,11 @@ namespace MissionPlanner.GCSViews
         {
             PointLatLngAlt lastpnt = null;
 
-            string maxzoomstring = "20";
+            string maxzoomstring = "17";
             if (InputBox.Show("max zoom", "Enter the max zoom to prefetch to.", ref maxzoomstring) != DialogResult.OK)
                 return;
 
-            int maxzoom = 20;
+            int maxzoom = 17;
             if (!int.TryParse(maxzoomstring, out maxzoom))
             {
                 CustomMessageBox.Show(Strings.InvalidNumberEntered, Strings.ERROR);
@@ -4104,11 +4455,11 @@ namespace MissionPlanner.GCSViews
             }
 
             TRK_zoom.Minimum = MainMap.MapProvider.MinZoom;
-            TRK_zoom.Maximum = 20;
+            TRK_zoom.Maximum = 17;
             TRK_zoom.Value = (float)MainMap.Zoom;
 
             Zoomlevel.Minimum = MainMap.MapProvider.MinZoom;
-            Zoomlevel.Maximum = 20;
+            Zoomlevel.Maximum = 17;
             Zoomlevel.Value = Convert.ToDecimal(MainMap.Zoom);
 
             updateCMDParams();
@@ -6361,7 +6712,7 @@ namespace MissionPlanner.GCSViews
                     cellhome = Commands.Rows[0].Cells[Lat.Index] as DataGridViewTextBoxCell;
                     if (cellhome.Value != null)
                     {
-                        MessageBox.Show($"Home prompt check: LoadedLat={cellhome.Value}, CurrentHomeLat={TXT_homelat.Text}");// test
+                        //MessageBox.Show($"Home prompt check: LoadedLat={cellhome.Value}, CurrentHomeLat={TXT_homelat.Text}");// test
                         if (cellhome.Value.ToString() != TXT_homelat.Text && cellhome.Value.ToString() != "0")
                         {        
 

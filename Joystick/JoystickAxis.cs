@@ -17,11 +17,12 @@ namespace MissionPlanner.Joystick
         private Controls.HorizontalProgressBar ProgressBarCH;
         private ComboBox CMB_CH;
 
-        private Controls.MyButton virtualButtonPlus;// 14oct2026_virtualJoystick_GUI
-        private Controls.MyButton virtualButtonMinus;// 14oct2026_virtualJoystick_GUI
-        private bool virtualIncreasePressed; // 14oct2026_virtualJoystick_fun
-        private bool virtualDecreasePressed; // 14oct2026_virtualJoystick_fun
-        private int virtualOffset = 0; // 14oct2026_virtualJoystick_fun
+        //private Controls.MyButton virtualButtonPlus;// 14oct2026_virtualJoystick_GUI
+        //private Controls.MyButton virtualButtonMinus;// 14oct2026_virtualJoystick_GUI
+        //private bool virtualIncreasePressed; // 14oct2026_virtualJoystick_fun
+        //private bool virtualDecreasePressed; // 14oct2026_virtualJoystick_fun
+        //private int virtualOffset = 0; // 14oct2026_virtualJoystick_fun
+        private Controls.MyButton virtualButton; // 14oct2026_virtualJoystick_fun
 
         public Func<string> Detect;
         public Action SetAxis;
@@ -100,8 +101,7 @@ namespace MissionPlanner.Joystick
             this.expo_ch = new System.Windows.Forms.TextBox();
             this.ProgressBarCH = new MissionPlanner.Controls.HorizontalProgressBar();
             this.CMB_CH = new System.Windows.Forms.ComboBox();
-            this.virtualButtonPlus = new MissionPlanner.Controls.MyButton(); // 14oct2026_virtualJoystick_fun
-            this.virtualButtonMinus = new MissionPlanner.Controls.MyButton(); // 14oct2026_virtualJoystick_fun
+            this.virtualButton = new MissionPlanner.Controls.MyButton(); // 14oct2026_virtualJoystick_fun          
             this.timer1 = new System.Windows.Forms.Timer(this.components);            
             this.SuspendLayout();
             // 
@@ -179,26 +179,15 @@ namespace MissionPlanner.Joystick
 
 
 
-            // Increase button // 14oct2026_virtualJoystick_fun
-            this.virtualButtonPlus.Location = new System.Drawing.Point(432, 2);
-            this.virtualButtonPlus.Name = "virtualButtonPlus";
-            this.virtualButtonPlus.Size = new System.Drawing.Size(35, 23);
-            this.virtualButtonPlus.Text = "+";
-            this.virtualButtonPlus.UseVisualStyleBackColor = true;
+            // 14oct2026_virtualJoystick_fun
+            this.virtualButton.Location = new System.Drawing.Point(432, 2);
+            this.virtualButton.Name = "virtualButton";
+            this.virtualButton.Size = new System.Drawing.Size(35, 23);
+            this.virtualButton.Text = "Press";
+            this.virtualButton.UseVisualStyleBackColor = true;
 
-            // Decrease button // 14oct2026_virtualJoystick_fun
-            this.virtualButtonMinus.Location = new System.Drawing.Point(470, 2);
-            this.virtualButtonMinus.Name = "virtualButtonMinus";
-            this.virtualButtonMinus.Size = new System.Drawing.Size(35, 23);
-            this.virtualButtonMinus.Text = "-";
-            this.virtualButtonMinus.UseVisualStyleBackColor = true;
-
-            this.virtualButtonPlus.MouseDown += virtualButtonPlus_MouseDown;
-            this.virtualButtonPlus.MouseUp += virtualButtonPlus_MouseUp;
-
-            this.virtualButtonMinus.MouseDown += virtualButtonMinus_MouseDown;
-            this.virtualButtonMinus.MouseUp += virtualButtonMinus_MouseUp;
-
+            this.virtualButton.MouseDown += virtualButton_MouseDown;
+            this.virtualButton.MouseUp += virtualButton_MouseUp;  
 
             // 
             // timer1
@@ -216,8 +205,7 @@ namespace MissionPlanner.Joystick
             this.Controls.Add(this.expo_ch);
             this.Controls.Add(this.ProgressBarCH);
             this.Controls.Add(this.CMB_CH);
-            this.Controls.Add(this.virtualButtonPlus); // 14oct2026_virtualJoystick_GUI
-            this.Controls.Add(this.virtualButtonMinus); // 14oct2026_virtualJoystick_GUI
+            this.Controls.Add(this.virtualButton); // 14oct2026_virtualJoystick_GUI
             this.Name = "JoystickAxis";
             this.Size = new System.Drawing.Size(510, 28);//(427, 28);
             this.ResumeLayout(false);
@@ -256,15 +244,18 @@ namespace MissionPlanner.Joystick
             ProgressBarCH.Value = GetValue();
         }
 
-        private void virtualButtonPlus_MouseDown(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun
+        private void virtualButton_MouseDown(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun
         {
             if (e.Button == MouseButtons.Left)
-                virtualIncreasePressed = true;
+            {
+
+            }
+                
         }
 
-        private void virtualButtonPlus_MouseUp(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun
+        private void virtualButton_MouseUp(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun
         {
-            virtualIncreasePressed = false;
+            
         }
 
         private void virtualButtonMinus_MouseDown(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun

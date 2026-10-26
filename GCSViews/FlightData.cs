@@ -790,7 +790,7 @@ namespace MissionPlanner.GCSViews
             gMapControl1.CacheLocation = Settings.GetDataDirectory() +
                                          "gmapcache" + Path.DirectorySeparatorChar;
             gMapControl1.MinZoom = 0;
-            gMapControl1.MaxZoom = 20;
+            gMapControl1.MaxZoom = 17;
             gMapControl1.Zoom = 3;
 
             gMapControl1.OnMapZoomChanged += gMapControl1_OnMapZoomChanged;
@@ -3310,13 +3310,13 @@ namespace MissionPlanner.GCSViews
                 NoFly.NoFly.NoFlyEvent += NoFly_NoFlyEvent;
 
             TRK_zoom.Minimum = gMapControl1.MapProvider.MinZoom;
-            TRK_zoom.Maximum = 20;
+            TRK_zoom.Maximum = 17;
             TRK_zoom.Value = (float) gMapControl1.Zoom;
 
             gMapControl1.EmptyTileColor = Color.Gray;
 
             Zoomlevel.Minimum = gMapControl1.MapProvider.MinZoom;
-            Zoomlevel.Maximum = 20;
+            Zoomlevel.Maximum = 17;
             Zoomlevel.Value = System.Convert.ToDecimal(gMapControl1.Zoom);
 
 
@@ -9386,13 +9386,13 @@ namespace MissionPlanner.GCSViews
                                 //G_batp_captext = Convert.ToInt16(temp);
 
                             }
-                            else if (name == "MAV_CSL") //gspeed
+                            else if (name == "MAV_GSPD") //gspeed
                             {
                                 ////MessageBox.Show("mav_Gspeed_custom_number:" + n.ToString());
-                                //mav_Gspeed_custom_number = n;
-                                ////this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Gspeed_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
-                                //this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
-                                //this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
+                                mav_Gspeed_custom_number = n;
+                                //this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("CapText", this.bindingSourceHud, "customfield" + mav_Gspeed_custom_number, true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged, "", "0.0"));
+                                this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value0", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
+                                this.Gspeed.DataBindings.Add(new System.Windows.Forms.Binding("Value1", this.bindingSourceGaugesTab, "customfield" + mav_Gspeed_custom_number, true));//bindingSourceGaugesTab
                             }
                             else if (name == "MAV_RPM")//"MAV_CSR")//Grpm
                             {

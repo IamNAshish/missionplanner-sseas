@@ -100,7 +100,7 @@ namespace AltitudeAngelWings.Plugin
             {
                 if (DateTimeOffset.UtcNow.Subtract(_lastShownCtrlClickMessage) >= CtrlClickMessageInterval)
                 {
-                    _messages.AddMessageAsync(Message.ForInfo(Resources.MessageCtrlClickPlannerMap, CtrlClickMessageInterval));
+                    //_messages.AddMessageAsync(Message.ForInfo(Resources.MessageCtrlClickPlannerMap, CtrlClickMessageInterval));
                     _lastShownCtrlClickMessage = DateTimeOffset.UtcNow;
                 }
                 return;

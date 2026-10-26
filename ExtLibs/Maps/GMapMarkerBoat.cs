@@ -36,6 +36,8 @@ namespace MissionPlanner.Maps
 
         public int Sysid { get; set; } // 22july2026_colorBoatsFlightData
 
+        public string FlightMode { get; set; } = ""; // 26oct2026_modeOnMap
+
         // 22july2026_colorBoatsFlightData start 
         //dont know why but these props were not public earlier
         public float Heading
@@ -138,10 +140,15 @@ namespace MissionPlanner.Maps
             var img = Resources.boat;
 
             //string vehicleLabel = $"{Sysid}"; // commented under 18aug2026_task1_IP
-            string vehicleLabel = IpLastOctet != null ? $"\n{Sysid}({IpLastOctet})" : $"\n{Sysid}";// 18aug2026_task1_IP
-            
+            //commented under 26oct2026_modeOnMap string vehicleLabel = IpLastOctet != null ? $"\n{Sysid}({IpLastOctet})" : $"\n{Sysid}";// 18aug2026_task1_IP
+
+
+            string vehicleLabel = IpLastOctet != null  // 26oct2026_modeOnMap
+                ? $"\n{Sysid}({IpLastOctet})\n{FlightMode}"
+                : $"\n{Sysid}\n{FlightMode}";
+
             // 22july2026_colorBoatsFlightData start
-            
+
             switch (Sysid % 6)
             {                
                 case 1:

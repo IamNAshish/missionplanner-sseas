@@ -102,7 +102,8 @@ namespace MissionPlanner
                         itemb.Cog = MAV.cs.groundcourse;
                         itemb.Target = MAV.cs.target_bearing;
                         itemb.Nav_bearing = MAV.cs.nav_bearing;
-                        itemb.Sysid = MAV.sysid;                        
+                        itemb.Sysid = MAV.sysid;
+                        itemb.FlightMode = MAV.cs.mode.ToString(); // 26oct2026_modeOnMap
                         itemb.IsActive = MAV == MainV2.comPort?.MAV;
                         return null;
                     }
