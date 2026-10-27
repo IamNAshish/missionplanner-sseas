@@ -1479,5 +1479,13 @@ namespace MissionPlanner.Joystick
                 }
             }
         }
+
+        public void SetVirtualCustom0(bool pressed, float pwmMin, float pwmMax) // 14oct2026_virtualJoystick_fun (left)
+        {
+            if (pressed)
+                custom0 = (int)pwmMax;
+            else
+                custom0 = (int)pwmMin;
+        }
     }
 }

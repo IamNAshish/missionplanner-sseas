@@ -22,7 +22,7 @@ namespace MissionPlanner.Joystick
         //private bool virtualIncreasePressed; // 14oct2026_virtualJoystick_fun
         //private bool virtualDecreasePressed; // 14oct2026_virtualJoystick_fun
         //private int virtualOffset = 0; // 14oct2026_virtualJoystick_fun
-        private Controls.MyButton virtualButton; // 14oct2026_virtualJoystick_fun
+        private Controls.MyButton virtualButton; // 14oct2026_virtualJoystick_fun 
 
         public Func<string> Detect;
         public Action SetAxis;
@@ -248,25 +248,16 @@ namespace MissionPlanner.Joystick
         {
             if (e.Button == MouseButtons.Left)
             {
-
+                MainV2.joystick?.SetVirtualCustom0(true, 0, 65535);
             }
-                
+
         }
 
         private void virtualButton_MouseUp(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun
         {
-            
+            MainV2.joystick?.SetVirtualCustom0(false, 0, 65535);
         }
 
-        private void virtualButtonMinus_MouseDown(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun
-        {
-            if (e.Button == MouseButtons.Left)
-                virtualDecreasePressed = true;
-        }
 
-        private void virtualButtonMinus_MouseUp(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun
-        {
-            virtualDecreasePressed = false;
-        }
     }
 }
