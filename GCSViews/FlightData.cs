@@ -1273,6 +1273,7 @@ namespace MissionPlanner.GCSViews
                 //tabControlactions.TabPages.Add(tabQuick);// test_addingQuicktab_29sep2026
                 tabControlactions.TabPages.Add(tabMapView);
                 tabControlactions.TabPages.Add(tabCamera);
+                tabControlactions.TabPages.Add(tabScripts); // 29oct2026_joystickScript 
                 tabControlactions.SelectedIndex = 0;
             }
 
@@ -6214,15 +6215,16 @@ namespace MissionPlanner.GCSViews
 
             // Ignore normal tabs
             if (clicked == tabDashboard  /* 04aug2026_DashboardTab */ || clicked == tabGauges || clicked == tabQuick /* test_addingQuicktab_29sep2026 */ || clicked == tabMapView
-                ||  clicked==tabCamera /* 05oct2026_CameraTab*/) 
+                ||  clicked==tabCamera /* 05oct2026_CameraTab*/ || clicked == tabScripts /* 29oct2026_joystickScript */) 
                 return;
 
             // Placeholder vehicle tab clicked i.e auv1, auv2 (non gauge auv tab) clicked
             if (!tabControlactions.TabPages.Contains(tabGauges))
                 return;
 
-            if (!tabControlactions.TabPages.Contains(clicked))
-                return;
+            if (!tabControlactions.TabPages.Contains(clicked)) // SUS its always true? remove this if next line not exe i.e tabs are not moving as planned when multiple vehicle and write it for each tab that we wanted to stay
+                return;            
+
             MoveVehicleTab(clicked);
 
             //  20july2026_vehicletabs end
@@ -9869,7 +9871,8 @@ namespace MissionPlanner.GCSViews
                     
                 if (tabControlactions.TabPages[i] != tabGauges && tabControlactions.TabPages[i] != tabDashboard && tabControlactions.TabPages[i] != tabQuick /* test_addingQuicktab_29sep2026 */ 
                     && tabControlactions.TabPages[i] != tabMapView
-                    && tabControlactions.TabPages[i] != tabCamera /* 05oct2026_CameraTab */)
+                    && tabControlactions.TabPages[i] != tabCamera /* 05oct2026_CameraTab */
+                    && tabControlactions.TabPages[i]!=tabScripts /* 29oct2026_joystickScript */)
                 {
                     tabControlactions.TabPages.RemoveAt(i);
                 }
@@ -9889,6 +9892,11 @@ namespace MissionPlanner.GCSViews
             if (!tabControlactions.TabPages.Contains(tabCamera)) // 05oct2026_cameraTab
             {
                 tabControlactions.TabPages.Insert(2, tabCamera);
+            }
+
+            if (!tabControlactions.TabPages.Contains(tabScripts)) // 29oct2026_joystickScript
+            {
+                tabControlactions.TabPages.Insert(3, tabScripts);
             }
 
 

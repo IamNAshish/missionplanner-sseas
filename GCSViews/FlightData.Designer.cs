@@ -2671,6 +2671,7 @@ namespace MissionPlanner.GCSViews
             // 
             // contextMenuStrip_Gspeed
             // 
+            this.contextMenuStrip_Gspeed.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip_Gspeed.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setMaxSpeedToolStripMenuItem,
             this.setCruiseSspeedToolStripMenuItem});
