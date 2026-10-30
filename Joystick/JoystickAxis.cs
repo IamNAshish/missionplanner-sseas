@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MissionPlanner.GCSViews;
+using System;
 using System.Windows.Forms;
 
 namespace MissionPlanner.Joystick
@@ -23,6 +24,12 @@ namespace MissionPlanner.Joystick
         //private bool virtualDecreasePressed; // 14oct2026_virtualJoystick_fun
         //private int virtualOffset = 0; // 14oct2026_virtualJoystick_fun
         private Controls.MyButton virtualButton; // 14oct2026_virtualJoystick_fun 
+        private Controls.MyButton virtualSettingsButton; // 30oct2026_joystickLeft
+        // Virtual button configuration
+        private string virtualButtonLabel = "Virtual Button"; // 30oct2026_joystickLeft
+        private int virtualTargetChannel = 1; // 30oct2026_joystickLeft
+        private int virtualOnPwm = 1900; // 30oct2026_joystickLeft
+        private int virtualOffPwm = 1100; // 30oct2026_joystickLeft
 
         public Func<string> Detect;
         public Action SetAxis;
@@ -101,7 +108,8 @@ namespace MissionPlanner.Joystick
             this.expo_ch = new System.Windows.Forms.TextBox();
             this.ProgressBarCH = new MissionPlanner.Controls.HorizontalProgressBar();
             this.CMB_CH = new System.Windows.Forms.ComboBox();
-            this.virtualButton = new MissionPlanner.Controls.MyButton(); // 14oct2026_virtualJoystick_fun          
+            this.virtualButton = new MissionPlanner.Controls.MyButton(); // 14oct2026_virtualJoystick_fun
+            this.virtualSettingsButton = new MissionPlanner.Controls.MyButton(); // 30oct2026_joystickLeft
             this.timer1 = new System.Windows.Forms.Timer(this.components);            
             this.SuspendLayout();
             // 
@@ -187,7 +195,15 @@ namespace MissionPlanner.Joystick
             this.virtualButton.UseVisualStyleBackColor = true;
 
             this.virtualButton.MouseDown += virtualButton_MouseDown;
-            this.virtualButton.MouseUp += virtualButton_MouseUp;  
+            this.virtualButton.MouseUp += virtualButton_MouseUp;
+
+            // Virtual button settings // 30oct2026_joystickLeft
+            this.virtualSettingsButton.Location = new System.Drawing.Point(472, 2);
+            this.virtualSettingsButton.Name = "virtualSettingsButton";
+            this.virtualSettingsButton.Size = new System.Drawing.Size(30, 23);
+            this.virtualSettingsButton.Text = "...";
+            this.virtualSettingsButton.UseVisualStyleBackColor = true;
+            this.virtualSettingsButton.Click += virtualSettingsButton_Click;
 
             // 
             // timer1
@@ -206,6 +222,7 @@ namespace MissionPlanner.Joystick
             this.Controls.Add(this.ProgressBarCH);
             this.Controls.Add(this.CMB_CH);
             this.Controls.Add(this.virtualButton); // 14oct2026_virtualJoystick_GUI
+            this.Controls.Add(this.virtualSettingsButton); // 30oct2026_joystickLeft
             this.Name = "JoystickAxis";
             this.Size = new System.Drawing.Size(510, 28);//(427, 28);
             this.ResumeLayout(false);
@@ -244,11 +261,31 @@ namespace MissionPlanner.Joystick
             ProgressBarCH.Value = GetValue();
         }
 
+        private bool virtualButtonIsOn = false;
         private void virtualButton_MouseDown(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            try
             {
-                MainV2.joystick?.SetVirtualCustom0(true, 0, 65535);
+                virtualButtonIsOn = !virtualButtonIsOn;
+
+                int pwm = virtualButtonIsOn ? virtualOnPwm : virtualOffPwm;
+
+                string code = string.Format(
+                    "Script.SendRC({0}, {1}, True)",
+                    virtualTargetChannel,
+                    pwm);
+
+                FlightData.instance.RunVirtualButtonPythonCommand(code);
+            }
+            catch (Exception ex)
+            {
+                virtualButtonIsOn = !virtualButtonIsOn;
+
+                CustomMessageBox.Show(
+                    "Failed to send virtual RC command: " + ex.Message);
             }
 
         }
@@ -256,6 +293,30 @@ namespace MissionPlanner.Joystick
         private void virtualButton_MouseUp(object sender, MouseEventArgs e) // 14oct2026_virtualJoystick_fun
         {
             MainV2.joystick?.SetVirtualCustom0(false, 0, 65535);
+        }
+
+        private void virtualSettingsButton_Click(object sender, EventArgs e) // 30oct2026_joystickLeft
+        {
+            using (var settings = new VirtualButtonSettings(virtualButtonLabel,
+                virtualTargetChannel, virtualOnPwm, virtualOffPwm))
+            {
+                if (settings.ShowDialog(this) == DialogResult.OK)
+                {
+                    virtualButtonLabel = settings.ButtonLabel;
+                    virtualTargetChannel = settings.TargetChannel;
+                    virtualOnPwm = settings.OnPwm;
+                    virtualOffPwm = settings.OffPwm;
+
+                    virtualButton.Text = virtualButtonLabel;
+
+                    MessageBox.Show(
+                        "Settings saved for row RC " + ChannelNo +
+                        "\nButton label: " + virtualButtonLabel +
+                        "\nTarget channel: " + virtualTargetChannel +
+                        "\nON PWM: " + virtualOnPwm +
+                        "\nOFF PWM: " + virtualOffPwm);
+                }
+            }
         }
 
 

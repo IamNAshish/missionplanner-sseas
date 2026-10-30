@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace MissionPlanner
 {
@@ -16,6 +18,57 @@ namespace MissionPlanner
 
         // keeps history
         MAVLink.mavlink_rc_channels_override_t rc = new MAVLink.mavlink_rc_channels_override_t();
+
+        // 30oct2026_joystickPyScript start
+        private readonly ConcurrentQueue<Tuple<int, short>> virtualRcQueue =
+        new ConcurrentQueue<Tuple<int, short>>();
+
+        public void QueueVirtualRC(int channel, short pwm) // 30oct2026_joystickPyScript
+        {
+            if (channel < 1 || channel > 8)
+                throw new ArgumentOutOfRangeException(nameof(channel),
+                    "RC channel must be between 1 and 8.");
+
+            if (pwm < 800 || pwm > 2200)
+                throw new ArgumentOutOfRangeException(nameof(pwm),
+                    "PWM must be between 800 and 2200.");
+
+            virtualRcQueue.Enqueue(Tuple.Create(channel, pwm));
+        }
+
+        public bool TryDequeueVirtualRC(out int channel, out short pwm) // 30oct2026_joystickPyScript
+        {
+            Tuple<int, short> command;
+
+            if (virtualRcQueue.TryDequeue(out command))
+            {
+                channel = command.Item1;
+                pwm = command.Item2;
+                return true;
+            }
+
+            channel = 0;
+            pwm = 0;
+            return false;
+        }
+        public bool ProcessNextVirtualRC() // 30oct2026_joystickPyScript
+        {
+            int channel;
+            short pwm;
+
+            if (!TryDequeueVirtualRC(out channel, out pwm))
+                return false;
+
+            return SendRC(channel, pwm, true);
+        }
+
+        public void RunPythonCommand(string code) // 30oct2026_joystickPyScript
+        {
+            engine.CreateScriptSourceFromString(code).Execute(scope);
+        }
+        // 30oct2026_joystickPyScript stop
+
+
 
         public StringRedirectWriter OutputWriter { get; private set; }
 

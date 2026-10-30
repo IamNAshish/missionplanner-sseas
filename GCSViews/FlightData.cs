@@ -48,6 +48,7 @@ using UnauthorizedAccessException = System.UnauthorizedAccessException;
 
 using Microsoft.Web.WebView2.Core;
 
+using System.Collections.Concurrent;
 // written by michael oborne
 
 namespace MissionPlanner.GCSViews
@@ -229,7 +230,56 @@ namespace MissionPlanner.GCSViews
         }
         // 24july2026_DrawAllPathsFlightData end
 
-        Script script;
+        //Script script;  // commented under // 30oct2026_joystickPyScript
+        public Script script; // 30oct2026_joystickPyScript
+        private Script virtualButtonScript; // 30oct2026_joystickPyScript
+        private Thread virtualRcWorkerThread; // 30oct2026_joystickPyScript
+        private volatile bool virtualRcWorkerRunning; // 30oct2026_joystickPyScript
+        private readonly object virtualRcWorkerLock = new object(); // 30oct2026_joystickPyScript
+        public void RunVirtualButtonPythonCommand(string code) // 30oct2026_joystickPyScript
+        {
+            if (virtualButtonScript == null)
+            {
+                virtualButtonScript = new Script(false);
+            }
+
+            virtualButtonScript.RunPythonCommand(code);
+        }
+        public void StartVirtualRcWorker() // 30oct2026_joystickPyScript
+        {
+            lock (virtualRcWorkerLock)
+            {
+                if (virtualRcWorkerRunning)
+                    return;
+
+                virtualRcWorkerRunning = true;
+
+                virtualRcWorkerThread = new Thread(() =>
+                {
+                    try
+                    {
+                        while (virtualRcWorkerRunning)
+                        {
+                            // The command-processing implementation
+                            // will be added in the next step.
+                            Thread.Sleep(20);
+                        }
+                    }
+                    finally
+                    {
+                        virtualRcWorkerRunning = false;
+                    }
+                })
+                {
+                    IsBackground = true,
+                    Name = "Virtual RC Worker"
+                };
+
+                virtualRcWorkerThread.Start();
+            }
+        }
+
+
 
         //whether or not a script is running
         bool scriptrunning;
