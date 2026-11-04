@@ -147,6 +147,8 @@ namespace MissionPlanner.Maps
                 ? $"\n{Sysid}({IpLastOctet})\n{FlightMode}"
                 : $"\n{Sysid}\n{FlightMode}";
 
+            CustomMessageBox.Show(" abcdef FlightMode: " + FlightMode);
+
             // 22july2026_colorBoatsFlightData start
 
             switch (Sysid % 6)

@@ -533,7 +533,7 @@ namespace MissionPlanner
         /// joystick static class
         /// </summary>
         public static Joystick.JoystickBase joystick { get; set; }
-
+        public static bool VirtualJoystickMode = false; // 04nov2026_separatingVjoystick
         /// <summary>
         /// track last joystick packet sent. used to control rate
         /// </summary>

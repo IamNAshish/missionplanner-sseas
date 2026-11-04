@@ -1,5 +1,6 @@
 ﻿using MissionPlanner.GCSViews;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MissionPlanner.Joystick
@@ -277,8 +278,19 @@ namespace MissionPlanner.Joystick
                     "Script.SendRC({0}, {1}, True)",
                     virtualTargetChannel,
                     pwm);
+                //MessageBox.Show("virtualTargetChannel:"+ virtualTargetChannel);
 
                 FlightData.instance.RunVirtualButtonPythonCommand(code);
+
+                // after 3 sec lets make its value the average of on and off // 04nov2026_restoreJoystickValue
+                //Task.Delay(3000).ContinueWith(_ =>
+                //{
+                //    string resetCode = string.Format(
+                //        "Script.SendRC({0}, {1}, True)",
+                //        virtualTargetChannel,(virtualOnPwm+ virtualOffPwm)/2);
+
+                //    FlightData.instance.RunVirtualButtonPythonCommand(resetCode);
+                //});
             }
             catch (Exception ex)
             {

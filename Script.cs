@@ -262,6 +262,9 @@ namespace MissionPlanner
 
             if (sendnow)
             {
+                //CustomMessageBox.Show(
+                //    $"CH1={rc.chan1_raw}, CH2={rc.chan2_raw}, " +
+                //    $"CH3={rc.chan3_raw}, CH4={rc.chan4_raw}");
                 MainV2.comPort.sendPacket(rc, rc.target_system, rc.target_component);
                 System.Threading.Thread.Sleep(20);
                 MainV2.comPort.sendPacket(rc, rc.target_system, rc.target_component);

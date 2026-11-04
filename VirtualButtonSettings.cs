@@ -42,11 +42,7 @@ namespace MissionPlanner.Joystick
             get { return (int)numOffPwm.Value; }
         }
 
-        public VirtualButtonSettings(
-            string label,
-            int channel,
-            int onPwm,
-            int offPwm)
+        public VirtualButtonSettings(string label, int channel, int onPwm, int offPwm)
         {
             Text = "Virtual Button Settings";
             Size = new Size(340, 280);

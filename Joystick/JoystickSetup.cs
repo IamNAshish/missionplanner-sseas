@@ -18,13 +18,13 @@ namespace MissionPlanner.Joystick
 
         int noButtons = 0;
         private int maxaxis = 16;
-
+        private VirtualControllerForm virtualControllerForm; // 04nov2026_VjoystickPopup
         public JoystickSetup()
         {
             
             InitializeComponent();
 
-            MissionPlanner.Utilities.Tracking.AddPage(this.GetType().ToString(), this.Text);
+            MissionPlanner.Utilities.Tracking.AddPage(this.GetType().ToString(), this.Text);            
         }
 
         private void Joystick_Load(object sender, EventArgs e)
@@ -38,6 +38,7 @@ namespace MissionPlanner.Joystick
                 {
                     CMB_joysticks.Items.Add(device);
                 }
+                CMB_joysticks.Items.Add("Virtual Joystick");  // 04nov2026_separatingVjoystick 
 
                 // 04july2026_test1_problemSolution1 commented this line BUT_enable_Click(null, null); //default enable // 11june26_task1
                 //commented under 14oct2026_virtualJoystick_GUI JoystickSetup_FormClosed(null, null);// 11june26_task2
@@ -170,6 +171,53 @@ namespace MissionPlanner.Joystick
 
         private void BUT_enable_Click(object sender, EventArgs e)
         {
+            // 04nov2026_separatingVjoystick start
+            if (MainV2.VirtualJoystickMode)
+            {
+                MainV2.VirtualJoystickMode = false;
+
+                // 04nov2026_VjoystickPopup start
+                if (virtualControllerForm != null && !virtualControllerForm.IsDisposed)
+                {
+                    virtualControllerForm.Close();
+                    virtualControllerForm = null;
+                }
+                // 04nov2026_VjoystickPopup stop
+
+                if (CMB_joysticks.Text == "Virtual Joystick")
+                {
+                    BUT_enable.Text = "Enable";
+                    return;
+                }
+            }
+            if (CMB_joysticks.Text == "Virtual Joystick")
+            {
+                // Stop the physical joystick, if one is active.
+                if (MainV2.joystick != null)
+                {
+                    MainV2.joystick.clearRCOverride();
+                    MainV2.joystick.UnAcquireJoyStick();
+                    MainV2.joystick = null;
+                }
+
+                MainV2.VirtualJoystickMode = true;
+
+                // 04nov2026_VjoystickPopup start
+                if (virtualControllerForm == null || virtualControllerForm.IsDisposed)
+                {
+                    virtualControllerForm = new VirtualControllerForm();
+                }
+                virtualControllerForm.Show();
+                virtualControllerForm.BringToFront();
+                // 04nov2026_VjoystickPopup end
+
+                Settings.Instance["joystick_name"] = "Virtual Joystick";
+
+                BUT_enable.Text = "Disable";
+                return;
+            }
+            // 04nov2026_separatingVjoystick end
+
             if (MainV2.joystick == null || MainV2.joystick.enabled == false)
             {
                 MessageBox.Show("Enabling Joystick");
@@ -243,7 +291,9 @@ namespace MissionPlanner.Joystick
 
         private void timer1_Tick(object sender, EventArgs e)        
         {
-            
+            if (MainV2.VirtualJoystickMode) // 04nov2026_separatingVjoystick
+                return;
+
             try
             {
                 if (MainV2.joystick == null || MainV2.joystick.enabled == false)
@@ -359,8 +409,10 @@ namespace MissionPlanner.Joystick
 
             foreach (var device in joysticklist)
             {
-                CMB_joysticks.Items.Add(device);
+                CMB_joysticks.Items.Add(device);            
             }
+            CMB_joysticks.Items.Add("Virtual Joystick"); // 04nov2026_separatingVjoystick
+
 
             if (CMB_joysticks.Items.Count > 0 && CMB_joysticks.SelectedIndex == -1)
                 CMB_joysticks.SelectedIndex = 0;

@@ -55,6 +55,7 @@
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Location = new System.Drawing.Point(300, 300);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(600, 300);
             this.MinimizeBox = false;
