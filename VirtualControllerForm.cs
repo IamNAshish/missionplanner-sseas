@@ -1,4 +1,4 @@
-﻿using MissionPlanner.GCSViews;
+using MissionPlanner.GCSViews;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

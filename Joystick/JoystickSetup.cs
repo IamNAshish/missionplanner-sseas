@@ -29,7 +29,6 @@ namespace MissionPlanner.Joystick
 
         private void Joystick_Load(object sender, EventArgs e)
         {
-            MessageBox.Show("Joystick_Load called");
             try
             {
                 var joysticklist = JoystickBase.getDevices();

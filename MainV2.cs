@@ -2744,47 +2744,103 @@ namespace MissionPlanner
         /// <summary>
         /// Used to fix the icon status for unexpected unplugs etc...
         /// </summary>
-        private void UpdateConnectIcon()
+        //private void UpdateConnectIcon() // commented fun under // 10nov2026_connected
+        //{
+        //    if ((DateTime.UtcNow - connectButtonUpdate).Milliseconds > 500)
+        //    {
+        //        //Console.WriteLine(DateTime.Now.Millisecond);
+        //        if (comPort.BaseStream.IsOpen)
+        //        {
+        //            if (this.MenuConnect.Image == null || (string) this.MenuConnect.Image.Tag != "Disconnect")
+        //            {
+        //                this.BeginInvoke((MethodInvoker) delegate
+        //                {
+        //                    this.MenuConnect.Image = displayicons.disconnect;
+        //                    this.MenuConnect.Image.Tag = "Disconnect";
+        //                    this.MenuConnect.Text = "";//Strings.DISCONNECTc;
+        //                    _connectionControl.IsConnected(true);
+        //                });
+        //            }
+        //            //toolStripButton_addConnection.Visible = true; // 11aug2026_task1
+        //        }
+        //        else
+        //        {
+        //            if (this.MenuConnect.Image != null && (string) this.MenuConnect.Image.Tag != "Connect")
+        //            {
+        //                this.BeginInvoke((MethodInvoker) delegate
+        //                {
+        //                    this.MenuConnect.Image = displayicons.connect;
+        //                    this.MenuConnect.Image.Tag = "Connect";
+        //                    this.MenuConnect.Text = ""; //Strings.CONNECTc;
+        //                    _connectionControl.IsConnected(false);
+        //                    if (_connectionStats != null)
+        //                    {
+        //                        _connectionStats.StopUpdates();
+        //                    }
+        //                });
+        //            }
+
+        //            if (comPort.logreadmode)
+        //            {
+        //                this.BeginInvoke((MethodInvoker) delegate { _connectionControl.IsConnected(true); });
+        //            }
+        //            //toolStripButton_addConnection.Visible = false; // 11aug2026_task1
+        //        }
+
+        //        connectButtonUpdate = DateTime.UtcNow;
+        //    }
+        //}
+        private void UpdateConnectIcon() // 10nov2026_connected old code commented above this also handles when udp/tcp connection along with comport
         {
-            if ((DateTime.UtcNow - connectButtonUpdate).Milliseconds > 500)
+            if ((DateTime.UtcNow - connectButtonUpdate).TotalMilliseconds > 500)
             {
-                //Console.WriteLine(DateTime.Now.Millisecond);
-                if (comPort.BaseStream.IsOpen)
+                bool connectionOpen = comPort.BaseStream != null &&
+                                      comPort.BaseStream.IsOpen;
+
+                bool vehicleConnected = connectionOpen &&
+                    (DateTime.UtcNow - comPort.MAV.lastvalidpacket).TotalSeconds < 3;
+
+                if (vehicleConnected)
                 {
-                    if (this.MenuConnect.Image == null || (string) this.MenuConnect.Image.Tag != "Disconnect")
+                    if (this.MenuConnect.Image == null ||
+                        (string)this.MenuConnect.Image.Tag != "Disconnect")
                     {
-                        this.BeginInvoke((MethodInvoker) delegate
+                        this.BeginInvoke((MethodInvoker)delegate
                         {
                             this.MenuConnect.Image = displayicons.disconnect;
                             this.MenuConnect.Image.Tag = "Disconnect";
-                            this.MenuConnect.Text = "";//Strings.DISCONNECTc;
+                            this.MenuConnect.Text = "";
                             _connectionControl.IsConnected(true);
                         });
                     }
-                    //toolStripButton_addConnection.Visible = true; // 11aug2026_task1
                 }
                 else
                 {
-                    if (this.MenuConnect.Image != null && (string) this.MenuConnect.Image.Tag != "Connect")
+                    if (this.MenuConnect.Image != null &&
+                        (string)this.MenuConnect.Image.Tag != "Connect")
                     {
-                        this.BeginInvoke((MethodInvoker) delegate
+                        this.BeginInvoke((MethodInvoker)delegate
                         {
                             this.MenuConnect.Image = displayicons.connect;
                             this.MenuConnect.Image.Tag = "Connect";
-                            this.MenuConnect.Text = ""; //Strings.CONNECTc;
+                            this.MenuConnect.Text = "";
                             _connectionControl.IsConnected(false);
+
                             if (_connectionStats != null)
                             {
                                 _connectionStats.StopUpdates();
                             }
                         });
                     }
+                }
 
-                    if (comPort.logreadmode)
+                // Preserve log playback handling
+                if (comPort.logreadmode)
+                {
+                    this.BeginInvoke((MethodInvoker)delegate
                     {
-                        this.BeginInvoke((MethodInvoker) delegate { _connectionControl.IsConnected(true); });
-                    }
-                    //toolStripButton_addConnection.Visible = false; // 11aug2026_task1
+                        _connectionControl.IsConnected(true);
+                    });
                 }
 
                 connectButtonUpdate = DateTime.UtcNow;

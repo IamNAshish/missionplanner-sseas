@@ -77,6 +77,8 @@ namespace MissionPlanner.GCSViews
         PictureBox _picCameraMiniToggle;
         PictureBox _picjoystick; // 07june26_task1
 
+        PictureBox _picPreFlightHealthCheck; // 07nov2026_preflightHealth
+
 
         // Left side (HUD + Actions tabs) collapse/expand
         private MissionPlanner.Controls.MyButton _butToggleLeftPanel;
@@ -8056,6 +8058,56 @@ namespace MissionPlanner.GCSViews
             _picjoystick.BringToFront();
             toolTip1.SetToolTip(_picjoystick, "Joystick Setup");
 
+            // 07nov2026_preflightHealth start 
+            _picPreFlightHealthCheck = new PictureBox
+            {
+                Name = "picPreFlightHealth",
+                Size = new Size(36, 36),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Cursor = Cursors.Hand,
+                TabStop = false,
+                BackColor = Color.Transparent
+            };
+            try
+            {
+                var bmp = global::MissionPlanner.Properties.Resources.preflightHealthIcon;
+                if (bmp != null)
+                    _picPreFlightHealthCheck.Image = (Bitmap)bmp.Clone();
+            }
+            catch
+            {
+            }
+
+            _picPreFlightHealthCheck.Click += (_, __) =>
+            {
+                try
+                {
+                    var mav = MainV2.comPort?.MAV;
+
+                    if (mav == null)
+                    {
+                        CustomMessageBox.Show("No vehicle selected or connected.");
+                        return;
+                    }
+
+                    using (var form = new PreflightHealthCheckForm(mav.sysid))
+                    {
+                        form.ShowDialog(this);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex);
+                    CustomMessageBox.Show(ex.Message, Strings.ERROR);
+                }
+            };
+
+            splitContainer1.Panel2.Controls.Add(_picPreFlightHealthCheck);
+            _picPreFlightHealthCheck.BringToFront();
+            toolTip1.SetToolTip(_picPreFlightHealthCheck, "pre-flight health check");
+            // 07nov2026_preflightHealth end
+
+
             LayoutMapOverlayToolButtons();
             LayoutCameraMiniToggleButton();
         }
@@ -8140,6 +8192,16 @@ namespace MissionPlanner.GCSViews
                 var top = _picLogExport != null && !_picLogExport.IsDisposed ? _picLogExport.Bottom : _picOfflineMaps.Bottom;
                 _picjoystick.Location = new Point(x, top + gap);
             }
+            // 07nov2026_preflightHealth start
+            if (_picPreFlightHealthCheck != null && !_picPreFlightHealthCheck.IsDisposed)
+            {
+                var top = _picjoystick != null && !_picjoystick.IsDisposed
+                    ? _picjoystick.Bottom
+                    : _picLogExport.Bottom;
+
+                _picPreFlightHealthCheck.Location =new Point(x, top + gap);
+            }
+            // 07nov2026_preflightHealth end
         }
 
 
@@ -9516,7 +9578,7 @@ namespace MissionPlanner.GCSViews
                                     {
                                         bool EngSts = System.Convert.ToBoolean(e.Value);
 
-                                        e.Value = EngSts ? "ON" : "OFF";
+                                        e.Value = EngSts ? "Engine ON" : "Engine OFF";
 
                                         lbl_EngineSts.ForeColor = EngSts ? Color.White : Color.Black;
                                         lbl_EngineSts.BackColor = EngSts ? Color.LimeGreen : Color.Gray;

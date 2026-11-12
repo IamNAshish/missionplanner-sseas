@@ -55,13 +55,13 @@
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Location = new System.Drawing.Point(300, 300);
+            this.Location = new System.Drawing.Point(350, 200);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(600, 300);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(600, 300);
             this.Name = "Splash";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Saif Seas Planner V1.0";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.Splash_Load_1);

@@ -27,7 +27,7 @@ OutputDir=Output
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern dynamic
-OutputBaseFilename=SaifSeasMP_setup_v1.0_GCS4_30oct_1830
+OutputBaseFilename=SaifSeasMP_setup_v1.0_GCS4_10nov_1900
 ;MissionPlanner_Setup_v1.0
 
 
