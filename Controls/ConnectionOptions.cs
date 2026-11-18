@@ -21,7 +21,8 @@ namespace MissionPlanner.Controls
             CMB_serialport.Items.Add("UDP");
             CMB_serialport.Items.Add("UDPCl");
             CMB_serialport.Items.Add("WS");
-
+            CMB_serialport.Items.Add("via File"); // 12nov2026_mavfailoverSerial
+            CMB_serialport.Items.Add("via FileT"); //test
             ThemeManager.ApplyThemeTo(this);
 
             MissionPlanner.Utilities.Tracking.AddPage(this.GetType().ToString(), this.Text);

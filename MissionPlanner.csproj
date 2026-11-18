@@ -526,9 +526,7 @@
     <Compile Update="GCSViews\FlightData.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="GCSViews\FlightPlanner.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="GCSViews\FlightPlanner.cs" />
     <Compile Update="GCSViews\Help.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -10365,7 +10365,28 @@ namespace MissionPlanner.GCSViews
             
         }
 
-        
+        public void UpdateFailoverStatus(bool rfAlive, bool rfActive,
+    bool satAlive, bool satActive) // 12nov2026_mavfailoverSerial
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() =>
+                    UpdateFailoverStatus(rfAlive, rfActive, satAlive, satActive)));
+                return;
+            }
+
+            lblRFStatus.Text = rfAlive ? "RF Alive" : "RF Dead";
+
+            lblRFStatus.ForeColor = !rfAlive
+                ? Color.Red
+                : rfActive ? Color.LimeGreen : Color.Gray;
+
+            lblSATStatus.Text = satAlive ? "SATCOM Alive" : "SATCOM Dead";
+
+            lblSATStatus.ForeColor = !satAlive
+                ? Color.Red
+                : satActive ? Color.LimeGreen : Color.Gray;
+        }
 
 
     }

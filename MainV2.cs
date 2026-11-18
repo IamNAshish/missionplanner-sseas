@@ -50,6 +50,9 @@ using MissionPlanner.WebServer;
 using System.Speech.Synthesis; //01july2026_task1
 
 
+
+
+
 namespace MissionPlanner
 {
     
@@ -72,7 +75,8 @@ namespace MissionPlanner
 
     public partial class MainV2 : Form
     {
-        
+        private Process failoverProcess; // 12nov2026_mavfailoverSerial
+
         private static readonly ILog log =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -1789,6 +1793,82 @@ namespace MissionPlanner
                     };
                     prd.RunBackgroundOperationAsync();
                     return;
+
+                // 12nov2026_mavfailoverSerial start                
+                case "via File": // no terminal
+                    {
+                        using (OpenFileDialog ofd = new OpenFileDialog())
+                        {
+                            ofd.Title = "Select MAVLink Failover EXE";
+                            ofd.Filter = "Executable Files (*.exe)|*.exe";
+
+                            if (ofd.ShowDialog() == DialogResult.OK)
+                            {
+                                try
+                                {
+                                    failoverProcess = new Process();
+
+                                    failoverProcess.StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = ofd.FileName,
+                                        UseShellExecute = false,
+                                        CreateNoWindow = true,
+                                        WindowStyle = ProcessWindowStyle.Hidden,
+                                        RedirectStandardOutput = true,
+                                        RedirectStandardError = true
+                                    };
+
+                                    failoverProcess.OutputDataReceived += FailoverOutputReceived;
+                                    failoverProcess.ErrorDataReceived += FailoverOutputReceived;
+
+                                    failoverProcess.Start();
+
+                                    failoverProcess.BeginOutputReadLine();
+                                    failoverProcess.BeginErrorReadLine();
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show("Failed to start failover:\n" + ex.Message);
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                case "via FileT": //run with terminal
+                    {
+                        using (OpenFileDialog ofd = new OpenFileDialog())
+                        {
+                            ofd.Title = "Select MAVLink Failover EXE";
+                            ofd.Filter = "Executable Files (*.exe)|*.exe";
+
+                            if (ofd.ShowDialog() == DialogResult.OK)
+                            {
+                                try
+                                {
+                                    Process.Start(new ProcessStartInfo
+                                    {
+                                        FileName = ofd.FileName,
+                                        UseShellExecute = true
+                                    });
+
+                                    MessageBox.Show(
+                                        "Failover application started successfully.",
+                                        "MAVLink Failover",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Information);
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show("Failed to start application:\n" + ex.Message);
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                // 12nov2026_mavfailoverSerial end
+
                 default:
                     var extraconfig = ExtraConnectionList.Any(a => a.Label == portname);
                     if (extraconfig)
@@ -2115,6 +2195,36 @@ namespace MissionPlanner
                 return;
             }
         }
+
+        private void FailoverOutputReceived(object sender, DataReceivedEventArgs e) // 12nov2026_mavfailoverSerial
+        {
+            if (string.IsNullOrEmpty(e.Data))
+                return;
+
+            string line = e.Data;
+
+            if (line.Contains("STATUS |"))
+            {
+                UpdateFailoverLabels(line);
+            }
+        }
+        private void UpdateFailoverLabels(string status) // 12nov2026_mavfailoverSerial
+        {
+            bool rfAlive = status.Contains("RF: UP");
+            bool satAlive = status.Contains("SATCOM: UP");
+
+            bool rfActive = status.Contains("ACTIVE: RF");
+            bool satActive = status.Contains("ACTIVE: SATCOM");
+
+            // Update the existing FlightData instance
+            if (FlightData != null)
+            {
+                FlightData.UpdateFailoverStatus(
+                    rfAlive, rfActive,
+                    satAlive, satActive);
+            }
+        }
+
         private void lblLogo_click(object sender,EventArgs e)
         {
 

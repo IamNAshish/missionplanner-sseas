@@ -72,8 +72,20 @@ namespace MissionPlanner.GCSViews
 
     public partial class FlightPlanner : MyUserControl, IDeactivate, IActivate
     {
-        private static readonly Dictionary<string, List<Locationwp>> MissionCacheByMav =
-            new Dictionary<string, List<Locationwp>>();
+        // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem  private static readonly Dictionary<string, List<Locationwp>> MissionCacheByMav =
+        // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem    new Dictionary<string, List<Locationwp>>();
+
+        private class MissionCache // 18nov2026_PlannerMapHomeProblem
+        {
+            public double HomeLat { get; set; }
+            public double HomeLng { get; set; }
+            public double HomeAlt { get; set; }
+
+            public List<Locationwp> Waypoints { get; set; }
+        }
+
+        private static readonly Dictionary<string, MissionCache> MissionCacheByMav =
+            new Dictionary<string, MissionCache>();
         private MAVLink.MAV_MISSION_TYPE? _lastMissionTypeForCache;
         private static readonly string MissionPerMavDirectory =
             Path.Combine(Settings.GetDataDirectory(), "missions-per-mav");
@@ -413,17 +425,39 @@ namespace MissionPlanner.GCSViews
 
                 if (cmb_missiontype?.SelectedValue == null)
                     return;
+                // COMMENTED UNDER PlannerMapHomeProblem START
+                //var key = GetMissionCacheKey();
+                //var list = GetCommandList();
+                //var missionType = (MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue;
 
+                //lock (MissionCacheByMav)
+                //{
+                //    MissionCacheByMav[key] = list;
+                //}
+
+                //PersistMissionToDisk(missionType, list);
+                // COMMENTED UNDER PlannerMapHomeProblem END
+
+                // PlannerMapHomeProblem START
                 var key = GetMissionCacheKey();
                 var list = GetCommandList();
-                var missionType = (MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue;
+                var missionType = (MAVLink.MAV_MISSION_TYPE)cmb_missiontype.SelectedValue;
+
+                var cache = new MissionCache
+                {
+                    HomeLat = double.Parse(TXT_homelat.Text),
+                    HomeLng = double.Parse(TXT_homelng.Text),
+                    HomeAlt = double.Parse(TXT_homealt.Text),
+                    Waypoints = list.Select(a => (Locationwp)a).ToList()
+                };
 
                 lock (MissionCacheByMav)
                 {
-                    MissionCacheByMav[key] = list;
+                    MissionCacheByMav[key] = cache;
                 }
 
                 PersistMissionToDisk(missionType, list);
+                // PlannerMapHomeProblem END
             }
             catch (Exception ex)
             {
@@ -588,20 +622,57 @@ namespace MissionPlanner.GCSViews
                     return;
 
                 var key = GetMissionCacheKey();
-                List<Locationwp> cached = null;
+                // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem START
+                //List<Locationwp> cached = null;
+                //lock (MissionCacheByMav)
+                //{
+                //    if (MissionCacheByMav.TryGetValue(key, out var temp) && temp != null)
+                //        cached = temp.Select(a => (Locationwp) a).ToList();
+                //}
+                // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem END
+
+                // 18nov2026_PlannerMapHomeProblem START
+                MissionCache cached = null;
 
                 lock (MissionCacheByMav)
                 {
                     if (MissionCacheByMav.TryGetValue(key, out var temp) && temp != null)
-                        cached = temp.Select(a => (Locationwp) a).ToList();
+                    {
+                        cached = new MissionCache
+                        {
+                            HomeLat = temp.HomeLat,
+                            HomeLng = temp.HomeLng,
+                            HomeAlt = temp.HomeAlt,
+                            Waypoints = temp.Waypoints?
+                                .Select(a => (Locationwp)a)
+                                .ToList()
+                        };
+                    }
                 }
+                // 18nov2026_PlannerMapHomeProblem END
 
+                // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem START
+                //if (cached != null)
+                //{
+                //    processToScreen(cached, append: false);
+                //    writeKML();
+                //    return;
+                //} // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem END
+
+                // 18nov2026_PlannerMapHomeProblem START
                 if (cached != null)
                 {
-                    processToScreen(cached, append: false);
+                    // Restore home coordinates
+                    TXT_homelat.Text = cached.HomeLat.ToString();
+                    TXT_homelng.Text = cached.HomeLng.ToString();
+                    TXT_homealt.Text = cached.HomeAlt.ToString("0.00");
+
+                    // Restore actual waypoints only
+                    processToScreen(cached.Waypoints ?? new List<Locationwp>(),append: false,checkHome: false); 
+
                     writeKML();
                     return;
-                }
+                } // 18nov2026_PlannerMapHomeProblem END
 
                 // disk fallback (persists across reloads/app restarts)
                 var missionType = (MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue;
@@ -3171,10 +3242,28 @@ namespace MissionPlanner.GCSViews
                 {
                     var key = GetMissionCacheKey(_lastMissionTypeForCache.Value);
                     var list = GetCommandList();
+
+                    // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem START
+                    //lock (MissionCacheByMav)
+                    //{
+                    //    MissionCacheByMav[key] = list;
+                    //}                    
+                    // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem END
+
+                    // 18nov2026_PlannerMapHomeProblem START
+                    var cache = new MissionCache
+                    {
+                        HomeLat = double.Parse(TXT_homelat.Text),
+                        HomeLng = double.Parse(TXT_homelng.Text),
+                        HomeAlt = double.Parse(TXT_homealt.Text),
+                        Waypoints = list.Select(a => (Locationwp)a).ToList()
+                    };
+
                     lock (MissionCacheByMav)
                     {
-                        MissionCacheByMav[key] = list;
+                        MissionCacheByMav[key] = cache;
                     }
+                    // 18nov2026_PlannerMapHomeProblem END
 
                     PersistMissionToDisk(_lastMissionTypeForCache.Value, list);
                 }
@@ -3196,7 +3285,7 @@ namespace MissionPlanner.GCSViews
             if (rally.Count() > 0) MainMap.Overlays.Remove(rally.First());
 
             // switching mission type should keep a separate set per (sysid,compid,mission-type)
-            RestoreMissionForCurrentMav();
+            //RestoreMissionForCurrentMav(); // commented under 18nov2026_PlannerMapHomeProblem 
 
             if ((MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue == MAVLink.MAV_MISSION_TYPE.FENCE)
             {
@@ -6569,7 +6658,8 @@ namespace MissionPlanner.GCSViews
         /// <summary>
         /// Processes a loaded EEPROM to the map and datagrid
         /// </summary>
-        private void processToScreen(List<Locationwp> cmds, bool append = false)
+        //private void processToScreen(List<Locationwp> cmds, bool append = false) // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem
+        private void processToScreen(List<Locationwp> cmds,bool append = false,bool checkHome = true) // 18nov2026_PlannerMapHomeProblem
         {
             //MessageBox.Show($"processToScreen called. append={append}, cmds.Count={cmds.Count}");
             quickadd = true;
@@ -6650,7 +6740,7 @@ namespace MissionPlanner.GCSViews
                         Spline2._wp_accel_cms = MainV2.comPort.MAV.param.ContainsKey("WPNAV_ACCEL") ? MainV2.comPort.MAV.param["WPNAV_ACCEL"].float_value : 100;
                         Spline2._wp_speed_cms = MainV2.comPort.MAV.param.ContainsKey("WPNAV_SPEED") ? MainV2.comPort.MAV.param["WPNAV_SPEED"].float_value : 600;
 
-                        // ar
+                        // ar 
                         //WP_ACCEL - m/s
                         //WP_SPEED - m/s
                     }
@@ -6704,7 +6794,8 @@ namespace MissionPlanner.GCSViews
                 return (MAVLink.MAV_MISSION_TYPE) cmb_missiontype.SelectedValue;
             });
 
-            if (!append && type == MAVLink.MAV_MISSION_TYPE.MISSION)
+            //if (!append && type == MAVLink.MAV_MISSION_TYPE.MISSION) // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem 
+            if (checkHome && !append && type == MAVLink.MAV_MISSION_TYPE.MISSION) // 18nov2026_PlannerMapHomeProblem 
             {
                 try
                 {
@@ -6712,7 +6803,6 @@ namespace MissionPlanner.GCSViews
                     cellhome = Commands.Rows[0].Cells[Lat.Index] as DataGridViewTextBoxCell;
                     if (cellhome.Value != null)
                     {
-                        //MessageBox.Show($"Home prompt check: LoadedLat={cellhome.Value}, CurrentHomeLat={TXT_homelat.Text}");// test
                         if (cellhome.Value.ToString() != TXT_homelat.Text && cellhome.Value.ToString() != "0")
                         {        
 
@@ -6726,6 +6816,9 @@ namespace MissionPlanner.GCSViews
                                 TXT_homelng.Text = (double.Parse(cellhome.Value.ToString())).ToString();
                                 cellhome = Commands.Rows[0].Cells[Alt.Index] as DataGridViewTextBoxCell;
                                 TXT_homealt.Text = double.Parse(cellhome.Value.ToString()).ToString("0.00");
+
+                                // Remove the downloaded home entry for both Yes and No.
+                                Commands.Rows.Remove(Commands.Rows[0]); // 18nov2026_PlannerMapHomeProblem
                             }
                         }
                     }
@@ -6735,11 +6828,12 @@ namespace MissionPlanner.GCSViews
                     log.Error(ex.ToString());
                 } // if there is no valid home
 
-                if (Commands.RowCount > 0)
-                {
-                    log.Info("remove home from list");
-                    Commands.Rows.Remove(Commands.Rows[0]); // remove home row
-                }
+                // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem START
+                //if (Commands.RowCount > 0) 
+                //{
+                //    Commands.Rows.Remove(Commands.Rows[0]); // remove home row
+                //}  
+                // COMMENTED UNDER 18nov2026_PlannerMapHomeProblem 
             }
 
             quickadd = false;

@@ -256,6 +256,8 @@ namespace MissionPlanner.GCSViews
             this.bindingSourceStatusTab = new System.Windows.Forms.BindingSource(this.components);
             this.timer_gauge = new System.Windows.Forms.Timer(this.components);
             this.dashboardTimer = new System.Windows.Forms.Timer(this.components);
+            this.lblRFStatus = new System.Windows.Forms.Label();
+            this.lblSATStatus = new System.Windows.Forms.Label();
             this.distanceBar1 = new MissionPlanner.Controls.DistanceBar();
             this.dataGridViewDashboard = new MissionPlanner.Controls.MyDataGridView();
             this.colCRAFT = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -1364,6 +1366,8 @@ namespace MissionPlanner.GCSViews
             // tableLayoutPanel_gaugeData
             // 
             resources.ApplyResources(this.tableLayoutPanel_gaugeData, "tableLayoutPanel_gaugeData");
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lblSATStatus, 4, 1);
+            this.tableLayoutPanel_gaugeData.Controls.Add(this.lblRFStatus, 4, 0);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lblGPS2, 2, 3);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_EngineRuntime, 3, 3);
             this.tableLayoutPanel_gaugeData.Controls.Add(this.lbl_signalStrength, 3, 1);
@@ -4183,6 +4187,20 @@ namespace MissionPlanner.GCSViews
             this.dashboardTimer.Interval = 1000;
             this.dashboardTimer.Tick += new System.EventHandler(this.dashboardTimer_Tick);
             // 
+            // lblRFStatus
+            // 
+            resources.ApplyResources(this.lblRFStatus, "lblRFStatus");
+            this.lblRFStatus.BackColor = System.Drawing.Color.Gray;
+            this.lblRFStatus.ForeColor = System.Drawing.Color.White;
+            this.lblRFStatus.Name = "lblRFStatus";
+            // 
+            // lblSATStatus
+            // 
+            resources.ApplyResources(this.lblSATStatus, "lblSATStatus");
+            this.lblSATStatus.BackColor = System.Drawing.Color.Gray;
+            this.lblSATStatus.ForeColor = System.Drawing.Color.White;
+            this.lblSATStatus.Name = "lblSATStatus";
+            // 
             // distanceBar1
             // 
             resources.ApplyResources(this.distanceBar1, "distanceBar1");
@@ -4931,6 +4949,8 @@ private AGaugeApp.AGauge G_engineTemp;// 03june26_task2
         private Label lbl_EngineRuntime;
         private AGaugeApp.AGauge Galt2;
         private Label lblGPS2;
+        private Label lblRFStatus;
+        private Label lblSATStatus;
         //private Label label_batp_onGauge;
     }
 }
